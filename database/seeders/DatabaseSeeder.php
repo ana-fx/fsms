@@ -16,6 +16,9 @@ class DatabaseSeeder extends Seeder
         // Seed roles first
         $this->call(RoleSeeder::class);
 
+        // Seed food categories
+        $this->call(FoodCategorySeeder::class);
+
         // Seed users
         $this->call(UserSeeder::class);
 

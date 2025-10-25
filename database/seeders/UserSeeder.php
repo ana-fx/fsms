@@ -15,6 +15,9 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
+        // Clear existing users to avoid duplicates
+        User::whereIn('email', ['admin@fsms.com', 'supplier@fsms.com', 'foundation@fsms.com'])->delete();
+
         // Create Super Admin
         $admin = User::updateOrCreate(
             ['email' => 'admin@fsms.com'],

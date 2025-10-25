@@ -2,9 +2,90 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class FoodRequest extends Model
 {
-    //
+    use HasFactory;
+
+    protected $fillable = [
+        'foundation_id',
+        'food_category_id',
+        'title',
+        'description',
+        'quantity',
+        'unit',
+        'notes',
+        'status',
+        'requested_date',
+        'needed_date',
+        'approved_by',
+        'approved_at',
+        'admin_notes',
+    ];
+
+    protected $casts = [
+        'quantity' => 'decimal:2',
+        'requested_date' => 'date',
+        'needed_date' => 'date',
+        'approved_at' => 'datetime',
+    ];
+
+    /**
+     * Get the foundation that owns the request.
+     */
+    public function foundation(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'foundation_id');
+    }
+
+    /**
+     * Get the food category for this request.
+     */
+    public function foodCategory(): BelongsTo
+    {
+        return $this->belongsTo(FoodCategory::class);
+    }
+
+    /**
+     * Get the admin who approved this request.
+     */
+    public function approvedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'approved_by');
+    }
+
+    /**
+     * Scope a query to only include requests by a specific foundation.
+     */
+    public function scopeByFoundation($query, $foundationId)
+    {
+        return $query->where('foundation_id', $foundationId);
+    }
+
+    /**
+     * Scope a query to only include requests with a specific status.
+     */
+    public function scopeWithStatus($query, $status)
+    {
+        return $query->where('status', $status);
+    }
+
+    /**
+     * Scope a query to only include pending requests.
+     */
+    public function scopePending($query)
+    {
+        return $query->where('status', 'pending');
+    }
+
+    /**
+     * Scope a query to only include approved requests.
+     */
+    public function scopeApproved($query)
+    {
+        return $query->where('status', 'approved');
+    }
 }

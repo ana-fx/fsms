@@ -13,6 +13,19 @@ return new class extends Migration
     {
         Schema::create('food_requests', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('foundation_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('food_category_id')->constrained('food_categories')->onDelete('cascade');
+            $table->string('title');
+            $table->text('description')->nullable();
+            $table->decimal('quantity', 10, 2);
+            $table->string('unit'); // kg, liter, pcs, etc
+            $table->text('notes')->nullable();
+            $table->enum('status', ['pending', 'approved', 'rejected', 'in_progress', 'completed'])->default('pending');
+            $table->date('requested_date');
+            $table->date('needed_date');
+            $table->foreignId('approved_by')->nullable()->constrained('users')->onDelete('set null');
+            $table->timestamp('approved_at')->nullable();
+            $table->text('admin_notes')->nullable();
             $table->timestamps();
         });
     }

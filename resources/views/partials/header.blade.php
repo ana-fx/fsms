@@ -35,14 +35,17 @@
         window.Laravel = {
             csrfToken: '{{ csrf_token() }}'
         };
-        
+
         // Setup CSRF token for AJAX requests
         document.addEventListener('DOMContentLoaded', function() {
             const token = document.querySelector('meta[name="csrf-token"]');
             if (token) {
-                window.axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
+                // Only setup axios if it's available
+                if (typeof window.axios !== 'undefined' && window.axios.defaults) {
+                    window.axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
+                }
             }
-            
+
             // Refresh CSRF token every 30 minutes
             setInterval(function() {
                 fetch('/csrf-token')
@@ -75,21 +78,7 @@
 
             <!-- Navigation Menu -->
             <nav class="hidden md:flex items-center space-x-8">
-                @auth
-                    @if(auth()->user()->isSuperAdmin())
-                        <a href="{{ route('admin.dashboard') }}" class="text-gray-700 hover:text-green-600 transition-colors font-medium">
-                            <i class="fas fa-tachometer-alt mr-2"></i>Admin Panel
-                        </a>
-                    @elseif(auth()->user()->isSupplier())
-                        <a href="{{ route('supplier.dashboard') }}" class="text-gray-700 hover:text-green-600 transition-colors font-medium">
-                            <i class="fas fa-tachometer-alt mr-2"></i>Supplier Panel
-                        </a>
-                    @elseif(auth()->user()->isFoundation())
-                        <a href="{{ route('foundation.dashboard') }}" class="text-gray-700 hover:text-green-600 transition-colors font-medium">
-                            <i class="fas fa-tachometer-alt mr-2"></i>Foundation Panel
-                        </a>
-                    @endif
-                @endauth
+                <!-- Navigation menu removed -->
             </nav>
 
             <!-- User Section -->
@@ -129,9 +118,9 @@
                                         <i class="fas fa-tachometer-alt mr-3 text-green-600"></i>
                                         Admin Dashboard
                                     </a>
-                                    <a href="{{ route('admin.accounts') }}" class="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md transition-colors">
+                                    <a href="{{ route('admin.users') }}" class="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md transition-colors">
                                         <i class="fas fa-user-cog mr-3 text-green-600"></i>
-                                        Manajemen Akun
+                                        Manajemen User & Akun
                                     </a>
                                 @elseif(auth()->user()->isSupplier())
                                     <a href="{{ route('supplier.dashboard') }}" class="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md transition-colors">
@@ -146,6 +135,10 @@
                                     <a href="{{ route('foundation.dashboard') }}" class="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md transition-colors">
                                         <i class="fas fa-tachometer-alt mr-3 text-green-600"></i>
                                         Foundation Dashboard
+                                    </a>
+                                    <a href="{{ route('foundation.requests.index') }}" class="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md transition-colors">
+                                        <i class="fas fa-shopping-cart mr-3 text-green-600"></i>
+                                        Permintaan Bahan Makanan
                                     </a>
                                     <a href="{{ route('foundation.programs') }}" class="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md transition-colors">
                                         <i class="fas fa-project-diagram mr-3 text-green-600"></i>
@@ -162,7 +155,7 @@
                                         Keluar
                                     </button>
                                 </form>
-                                
+
                                 <!-- Alternative logout link -->
                                 <a href="{{ route('logout.get') }}" class="w-full flex items-center px-3 py-2 text-sm text-blue-600 hover:bg-blue-50 rounded-md transition-colors mt-2">
                                     <i class="fas fa-sign-out-alt mr-3"></i>
@@ -195,20 +188,6 @@
     <div id="mobile-menu" class="md:hidden hidden bg-white border-t border-gray-200">
         <div class="px-4 py-3 space-y-3">
             @auth
-                @if(auth()->user()->isSuperAdmin())
-                    <a href="{{ route('admin.dashboard') }}" class="block px-3 py-2 text-gray-700 hover:text-green-600 transition-colors font-medium">
-                        <i class="fas fa-tachometer-alt mr-2"></i>Admin Panel
-                    </a>
-                @elseif(auth()->user()->isSupplier())
-                    <a href="{{ route('supplier.dashboard') }}" class="block px-3 py-2 text-gray-700 hover:text-green-600 transition-colors font-medium">
-                        <i class="fas fa-tachometer-alt mr-2"></i>Supplier Panel
-                    </a>
-                @elseif(auth()->user()->isFoundation())
-                    <a href="{{ route('foundation.dashboard') }}" class="block px-3 py-2 text-gray-700 hover:text-green-600 transition-colors font-medium">
-                        <i class="fas fa-tachometer-alt mr-2"></i>Foundation Panel
-                    </a>
-                @endif
-
                 <div class="border-t border-gray-200 pt-3">
                     <div class="flex items-center space-x-3 px-3 py-2">
                         <div class="flex items-center justify-center w-8 h-8 bg-green-100 text-green-700 rounded-full font-semibold text-sm">
@@ -227,7 +206,7 @@
                             Keluar
                         </button>
                     </form>
-                    
+
                     <!-- Alternative logout link -->
                     <a href="{{ route('logout.get') }}" class="w-full flex items-center px-3 py-2 text-sm text-blue-600 hover:bg-blue-50 rounded-md transition-colors mt-2">
                         <i class="fas fa-sign-out-alt mr-2"></i>

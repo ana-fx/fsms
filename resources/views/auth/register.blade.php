@@ -42,7 +42,11 @@
                         required
                         autofocus
                         autocomplete="name"
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent @error('name') border-red-500 @enderror"
+                        @if($errors->has('name'))
+                            class="w-full px-4 py-3 border-red-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                        @else
+                            class="w-full px-4 py-3 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                        @endif
                         placeholder="Masukkan nama lengkap"
                     >
                     @error('name')
@@ -62,7 +66,11 @@
                         value="{{ old('email') }}"
                         required
                         autocomplete="email"
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent @error('email') border-red-500 @enderror"
+                        @if($errors->has('email'))
+                            class="w-full px-4 py-3 border-red-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                        @else
+                            class="w-full px-4 py-3 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                        @endif
                         placeholder="Masukkan email Anda"
                     >
                     @error('email')
@@ -82,7 +90,11 @@
                             name="password"
                             required
                             autocomplete="new-password"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent @error('password') border-red-500 @enderror"
+                            @if($errors->has('password'))
+                                class="w-full px-4 py-3 border-red-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                            @else
+                                class="w-full px-4 py-3 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                            @endif
                             placeholder="Masukkan password"
                         >
                         <button type="button" onclick="togglePassword()" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700">
@@ -123,7 +135,11 @@
                     <select
                         id="role"
                         name="role"
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent @error('role') border-red-500 @enderror"
+                        @if($errors->has('role'))
+                            class="w-full px-4 py-3 border-red-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                        @else
+                            class="w-full px-4 py-3 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                        @endif
                     >
                         <option value="">Pilih role Anda</option>
                         <option value="supplier" {{ old('role') == 'supplier' ? 'selected' : '' }}>Supplier</option>

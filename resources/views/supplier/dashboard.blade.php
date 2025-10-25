@@ -3,7 +3,12 @@
 @section('title', 'Dashboard Supplier - FSMS')
 
 @section('content')
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<div class="flex h-screen bg-gray-100">
+    @include('supplier.partials.sidebar')
+
+    <!-- Main Content -->
+    <div class="flex-1 overflow-y-auto ml-64">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <!-- Header -->
     <div class="mb-8">
         <h1 class="text-3xl font-bold text-gray-900">Dashboard Supplier</h1>
@@ -19,7 +24,7 @@
                 </div>
                 <div class="ml-4">
                     <p class="text-sm font-medium text-gray-600">Total Produk</p>
-                    <p class="text-2xl font-semibold text-gray-900">28</p>
+                    <p class="text-2xl font-semibold text-gray-900">0</p>
                 </div>
             </div>
         </div>
@@ -31,7 +36,7 @@
                 </div>
                 <div class="ml-4">
                     <p class="text-sm font-medium text-gray-600">Order Aktif</p>
-                    <p class="text-2xl font-semibold text-gray-900">5</p>
+                    <p class="text-2xl font-semibold text-gray-900">0</p>
                 </div>
             </div>
         </div>
@@ -43,7 +48,7 @@
                 </div>
                 <div class="ml-4">
                     <p class="text-sm font-medium text-gray-600">Selesai</p>
-                    <p class="text-2xl font-semibold text-gray-900">42</p>
+                    <p class="text-2xl font-semibold text-gray-900">0</p>
                 </div>
             </div>
         </div>
@@ -55,7 +60,7 @@
                 </div>
                 <div class="ml-4">
                     <p class="text-sm font-medium text-gray-600">Pendapatan</p>
-                    <p class="text-2xl font-semibold text-gray-900">Rp 15M</p>
+                    <p class="text-2xl font-semibold text-gray-900">Rp 0</p>
                 </div>
             </div>
         </div>
@@ -91,53 +96,10 @@
             <a href="#" class="text-green-600 hover:text-green-800 text-sm font-medium">Lihat Semua</a>
         </div>
 
-        <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
-                    <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID Order</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Yayasan</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Produk</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jumlah</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Harga Anda</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Harga Maksimal</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
-                    <tr>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#ORD001</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Yayasan Sejahtera</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Beras Premium</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">50 kg</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Rp 14.000/kg</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Rp 15.000/kg</td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Dipilih</span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <button class="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700 mr-2">Kirim</button>
-                            <button class="text-gray-600 hover:text-gray-800 text-sm">Detail</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#ORD002</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Yayasan Peduli</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Minyak Goreng</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">20 liter</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Rp 16.500/liter</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Rp 18.000/liter</td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Menunggu</span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <button class="text-gray-400 cursor-not-allowed px-3 py-1 rounded text-sm">Kirim</button>
-                            <button class="text-gray-600 hover:text-gray-800 text-sm">Detail</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+        <div class="text-center py-12">
+            <i class="fas fa-shopping-cart text-4xl text-gray-400 mb-4"></i>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">Belum ada order</h3>
+            <p class="text-gray-500">Tidak ada order aktif saat ini</p>
         </div>
     </div>
 
@@ -148,54 +110,16 @@
             <button class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 text-sm">Tambah Produk</button>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div class="border border-gray-200 rounded-lg p-4">
-                <div class="bg-gray-200 h-32 rounded mb-3 flex items-center justify-center">
-                    <i class="fas fa-image text-gray-400 text-2xl"></i>
-                </div>
-                <h3 class="font-semibold text-lg mb-2">Beras Premium</h3>
-                <p class="text-gray-600 text-sm mb-2">Kualitas terbaik untuk kebutuhan yayasan</p>
-                <div class="flex justify-between items-center mb-3">
-                    <span class="text-green-600 font-bold">Rp 14.000/kg</span>
-                    <span class="text-sm text-gray-500">Stok: 200 kg</span>
-                </div>
-                <div class="flex space-x-2">
-                    <button class="text-green-600 hover:text-green-800 text-sm">Edit</button>
-                    <button class="text-red-600 hover:text-red-800 text-sm">Hapus</button>
-                </div>
-            </div>
-
-            <div class="border border-gray-200 rounded-lg p-4">
-                <div class="bg-gray-200 h-32 rounded mb-3 flex items-center justify-center">
-                    <i class="fas fa-image text-gray-400 text-2xl"></i>
-                </div>
-                <h3 class="font-semibold text-lg mb-2">Minyak Goreng</h3>
-                <p class="text-gray-600 text-sm mb-2">Minyak goreng berkualitas tinggi</p>
-                <div class="flex justify-between items-center mb-3">
-                    <span class="text-green-600 font-bold">Rp 16.500/liter</span>
-                    <span class="text-sm text-gray-500">Stok: 150 liter</span>
-                </div>
-                <div class="flex space-x-2">
-                    <button class="text-green-600 hover:text-green-800 text-sm">Edit</button>
-                    <button class="text-red-600 hover:text-red-800 text-sm">Hapus</button>
-                </div>
-            </div>
-
-            <div class="border border-gray-200 rounded-lg p-4">
-                <div class="bg-gray-200 h-32 rounded mb-3 flex items-center justify-center">
-                    <i class="fas fa-image text-gray-400 text-2xl"></i>
-                </div>
-                <h3 class="font-semibold text-lg mb-2">Telur Ayam</h3>
-                <p class="text-gray-600 text-sm mb-2">Telur segar dari peternak lokal</p>
-                <div class="flex justify-between items-center mb-3">
-                    <span class="text-green-600 font-bold">Rp 2.500/butir</span>
-                    <span class="text-sm text-gray-500">Stok: 500 butir</span>
-                </div>
-                <div class="flex space-x-2">
-                    <button class="text-green-600 hover:text-green-800 text-sm">Edit</button>
-                    <button class="text-red-600 hover:text-red-800 text-sm">Hapus</button>
-                </div>
-            </div>
+        <div class="text-center py-12">
+            <i class="fas fa-box text-4xl text-gray-400 mb-4"></i>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">Belum ada produk</h3>
+            <p class="text-gray-500 mb-6">Mulai tambahkan produk pertama Anda</p>
+            <button class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold">
+                <i class="fas fa-plus mr-2"></i>
+                Tambah Produk
+            </button>
+        </div>
+    </div>
         </div>
     </div>
 </div>

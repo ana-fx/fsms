@@ -39,12 +39,8 @@ Route::middleware(['auth', 'role:super_admin'])->group(function () {
     })->name('admin.dashboard');
 
     Route::get('/admin/users', function () {
-        return view('admin.users', ['title' => 'Manage Users']);
+        return view('admin.users', ['title' => 'Manajemen User & Akun']);
     })->name('admin.users');
-
-    Route::get('/admin/accounts', function () {
-        return view('admin.accounts', ['title' => 'Manajemen Akun']);
-    })->name('admin.accounts');
 });
 
 Route::middleware(['auth', 'role:supplier'])->group(function () {
@@ -65,4 +61,16 @@ Route::middleware(['auth', 'role:foundation'])->group(function () {
     Route::get('/foundation/programs', function () {
         return view('foundation.programs', ['title' => 'Manage Programs']);
     })->name('foundation.programs');
+
+    // Food Requests Routes
+    Route::resource('foundation/requests', \App\Http\Controllers\Foundation\FoodRequestController::class)
+        ->names([
+            'index' => 'foundation.requests.index',
+            'create' => 'foundation.requests.create',
+            'store' => 'foundation.requests.store',
+            'show' => 'foundation.requests.show',
+            'edit' => 'foundation.requests.edit',
+            'update' => 'foundation.requests.update',
+            'destroy' => 'foundation.requests.destroy',
+        ]);
 });
