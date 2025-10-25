@@ -24,7 +24,7 @@
                 <i class="fas fa-sign-in-alt mr-2"></i>
                 Masuk ke Sistem
             </a>
-        </div>
+                </div>
 
         <!-- Features -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -47,7 +47,7 @@
                 <i class="fas fa-heart text-3xl text-red-600 mb-4"></i>
                 <h4 class="font-semibold text-gray-900 mb-2">Kepedulian</h4>
                 <p class="text-gray-600 text-sm">Membantu distribusi makanan untuk yang membutuhkan</p>
-            </div>
+                </div>
         </div>
     </div>
 </div>
