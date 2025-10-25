@@ -15,20 +15,46 @@
 <!-- Tailwind CSS -->
 <script src="https://cdn.tailwindcss.com"></script>
 
-<!-- Custom Styles -->
-<style>
-    .gradient-bg {
-        background: linear-gradient(135deg, #065f46 0%, #047857 100%);
-    }
+    <!-- Custom Styles -->
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #065f46 0%, #047857 100%);
+        }
 
-    .card-hover {
-        transition: transform 0.2s ease-in-out;
-    }
+        .card-hover {
+            transition: transform 0.2s ease-in-out;
+        }
 
-    .card-hover:hover {
-        transform: translateY(-2px);
-    }
-</style>
+        .card-hover:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+
+    <!-- CSRF Token Setup -->
+    <script>
+        window.Laravel = {
+            csrfToken: '{{ csrf_token() }}'
+        };
+        
+        // Setup CSRF token for AJAX requests
+        document.addEventListener('DOMContentLoaded', function() {
+            const token = document.querySelector('meta[name="csrf-token"]');
+            if (token) {
+                window.axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
+            }
+            
+            // Refresh CSRF token every 30 minutes
+            setInterval(function() {
+                fetch('/csrf-token')
+                    .then(response => response.json())
+                    .then(data => {
+                        document.querySelector('meta[name="csrf-token"]').setAttribute('content', data.csrf_token);
+                        window.Laravel.csrfToken = data.csrf_token;
+                    })
+                    .catch(error => console.log('CSRF token refresh failed:', error));
+            }, 30 * 60 * 1000); // 30 minutes
+        });
+    </script>
 
 <!-- Modern Header -->
 <header class="bg-white shadow-lg border-b border-gray-200 sticky top-0 z-50">
@@ -136,6 +162,12 @@
                                         Keluar
                                     </button>
                                 </form>
+                                
+                                <!-- Alternative logout link -->
+                                <a href="{{ route('logout.get') }}" class="w-full flex items-center px-3 py-2 text-sm text-blue-600 hover:bg-blue-50 rounded-md transition-colors mt-2">
+                                    <i class="fas fa-sign-out-alt mr-3"></i>
+                                    Keluar (Alternative)
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -195,6 +227,12 @@
                             Keluar
                         </button>
                     </form>
+                    
+                    <!-- Alternative logout link -->
+                    <a href="{{ route('logout.get') }}" class="w-full flex items-center px-3 py-2 text-sm text-blue-600 hover:bg-blue-50 rounded-md transition-colors mt-2">
+                        <i class="fas fa-sign-out-alt mr-2"></i>
+                        Keluar (Alternative)
+                    </a>
                 </div>
             @else
                 <div class="border-t border-gray-200 pt-3 space-y-2">

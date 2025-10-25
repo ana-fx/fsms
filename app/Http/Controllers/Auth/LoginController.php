@@ -45,7 +45,7 @@ class LoginController extends Controller
     /**
      * Destroy an authenticated session.
      */
-    public function destroy(Request $request): Response
+    public function destroy(Request $request)
     {
         Auth::guard('web')->logout();
 
@@ -53,6 +53,6 @@ class LoginController extends Controller
 
         $request->session()->regenerateToken();
 
-        return response()->noContent();
+        return redirect()->route('home');
     }
 }

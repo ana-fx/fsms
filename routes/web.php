@@ -9,6 +9,10 @@ Route::get('/', function () {
     return view('home');
 })->name('home');
 
+Route::get('/csrf-token', function () {
+    return response()->json(['csrf_token' => csrf_token()]);
+});
+
 // Auth Routes
 Route::get('/login', function () {
     return view('auth.login');
@@ -23,6 +27,8 @@ Route::get('/register', function () {
 Route::post('/register', [RegisterController::class, 'store']);
 
 Route::post('/logout', [LoginController::class, 'destroy'])->name('logout');
+
+Route::get('/logout', [LoginController::class, 'destroy'])->name('logout.get');
 
 
 
