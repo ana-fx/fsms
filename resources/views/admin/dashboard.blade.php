@@ -65,23 +65,23 @@
     <div class="bg-white rounded-lg shadow-md p-6 mb-8">
         <h2 class="text-xl font-semibold text-gray-900 mb-4">Aksi Cepat</h2>
         <div class="flex flex-wrap gap-4">
-            <button class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition flex items-center">
+            <button class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition flex items-center">
                 <i class="fas fa-cog mr-2"></i>
                 Set Harga Maksimal
             </button>
-            <button class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition flex items-center">
+            <button class="bg-green-700 text-white px-6 py-3 rounded-lg hover:bg-green-800 transition flex items-center">
                 <i class="fas fa-list mr-2"></i>
                 Kelola Request
             </button>
-            <button class="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition flex items-center">
+            <button class="bg-green-800 text-white px-6 py-3 rounded-lg hover:bg-green-900 transition flex items-center">
                 <i class="fas fa-users mr-2"></i>
                 Kelola Supplier
             </button>
-            <button class="bg-yellow-600 text-white px-6 py-3 rounded-lg hover:bg-yellow-700 transition flex items-center">
+            <button class="bg-green-900 text-white px-6 py-3 rounded-lg hover:bg-green-950 transition flex items-center">
                 <i class="fas fa-chart-line mr-2"></i>
                 Laporan Sistem
             </button>
-            <a href="{{ route('admin.accounts') }}" class="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition flex items-center">
+            <a href="{{ route('admin.accounts') }}" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition flex items-center">
                 <i class="fas fa-user-cog mr-2"></i>
                 Manajemen Akun
             </a>
@@ -92,7 +92,7 @@
     <div class="bg-white rounded-lg shadow-md p-6 mb-8">
         <div class="flex justify-between items-center mb-6">
             <h2 class="text-xl font-semibold text-gray-900">Request Menunggu Persetujuan</h2>
-            <a href="#" class="text-blue-600 hover:text-blue-800 text-sm font-medium">Lihat Semua</a>
+            <a href="#" class="text-green-600 hover:text-green-800 text-sm font-medium">Lihat Semua</a>
         </div>
 
         <div class="overflow-x-auto">

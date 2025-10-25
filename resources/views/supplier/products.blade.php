@@ -16,7 +16,7 @@
                     <span>Welcome, {{ auth()->user()->name }}</span>
                     <span class="bg-green-500 px-2 py-1 rounded text-sm">{{ auth()->user()->roles->first()->display_name ?? 'No Role' }}</span>
                     <a href="{{ route('supplier.dashboard') }}" class="hover:underline">Supplier Dashboard</a>
-                    <a href="{{ route('dashboard') }}" class="hover:underline">Main Dashboard</a>
+                    <a href="{{ route('home') }}" class="hover:underline">Home</a>
                     <form method="POST" action="{{ route('logout') }}" class="inline">
                         @csrf
                         <button type="submit" class="hover:underline">Logout</button>

@@ -9,14 +9,14 @@
 <body class="bg-gray-100">
     <div class="min-h-screen">
         <!-- Navigation -->
-        <nav class="bg-blue-600 text-white p-4">
+        <nav class="bg-green-600 text-white p-4">
             <div class="container mx-auto flex justify-between items-center">
                 <h1 class="text-xl font-bold">{{ $title ?? 'Manage Users' }}</h1>
                 <div class="space-x-4">
                     <span>Welcome, {{ auth()->user()->name }}</span>
-                    <span class="bg-blue-500 px-2 py-1 rounded text-sm">{{ auth()->user()->roles->first()->display_name ?? 'No Role' }}</span>
+                    <span class="bg-green-500 px-2 py-1 rounded text-sm">{{ auth()->user()->roles->first()->display_name ?? 'No Role' }}</span>
                     <a href="{{ route('admin.dashboard') }}" class="hover:underline">Admin Dashboard</a>
-                    <a href="{{ route('dashboard') }}" class="hover:underline">Main Dashboard</a>
+                    <a href="{{ route('home') }}" class="hover:underline">Home</a>
                     <form method="POST" action="{{ route('logout') }}" class="inline">
                         @csrf
                         <button type="submit" class="hover:underline">Logout</button>
@@ -61,7 +61,7 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $user->created_at->format('M d, Y') }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                    <button class="text-blue-600 hover:text-blue-900 mr-3">Edit</button>
+                                    <button class="text-green-600 hover:text-green-900 mr-3">Edit</button>
                                     <button class="text-red-600 hover:text-red-900">Delete</button>
                                 </td>
                             </tr>
@@ -73,8 +73,8 @@
                 <div class="mt-6">
                     <h3 class="text-lg font-semibold mb-4">Add New User</h3>
                     <div class="space-x-4">
-                        <button class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Add User</button>
-                        <button class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Bulk Import</button>
+                        <button class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Add User</button>
+                        <button class="bg-green-700 text-white px-4 py-2 rounded hover:bg-green-800">Bulk Import</button>
                     </div>
                 </div>
             </div>

@@ -9,14 +9,14 @@
 <body class="bg-gray-100">
     <div class="min-h-screen">
         <!-- Navigation -->
-        <nav class="bg-purple-600 text-white p-4">
+        <nav class="bg-green-600 text-white p-4">
             <div class="container mx-auto flex justify-between items-center">
                 <h1 class="text-xl font-bold">{{ $title ?? 'Manage Programs' }}</h1>
                 <div class="space-x-4">
                     <span>Welcome, {{ auth()->user()->name }}</span>
-                    <span class="bg-purple-500 px-2 py-1 rounded text-sm">{{ auth()->user()->roles->first()->display_name ?? 'No Role' }}</span>
+                    <span class="bg-green-500 px-2 py-1 rounded text-sm">{{ auth()->user()->roles->first()->display_name ?? 'No Role' }}</span>
                     <a href="{{ route('foundation.dashboard') }}" class="hover:underline">Foundation Dashboard</a>
-                    <a href="{{ route('dashboard') }}" class="hover:underline">Main Dashboard</a>
+                    <a href="{{ route('home') }}" class="hover:underline">Home</a>
                     <form method="POST" action="{{ route('logout') }}" class="inline">
                         @csrf
                         <button type="submit" class="hover:underline">Logout</button>

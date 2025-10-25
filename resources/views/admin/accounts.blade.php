@@ -65,19 +65,19 @@
     <div class="bg-white rounded-lg shadow-md p-6 mb-8">
         <h2 class="text-xl font-semibold text-gray-900 mb-4">Aksi Cepat</h2>
         <div class="flex flex-wrap gap-4">
-            <button class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition flex items-center">
+            <button class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition flex items-center">
                 <i class="fas fa-user-plus mr-2"></i>
                 Tambah Akun Baru
             </button>
-            <button class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition flex items-center">
+            <button class="bg-green-700 text-white px-6 py-3 rounded-lg hover:bg-green-800 transition flex items-center">
                 <i class="fas fa-download mr-2"></i>
                 Export Data Akun
             </button>
-            <button class="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition flex items-center">
+            <button class="bg-green-800 text-white px-6 py-3 rounded-lg hover:bg-green-900 transition flex items-center">
                 <i class="fas fa-key mr-2"></i>
                 Reset Password Massal
             </button>
-            <button class="bg-yellow-600 text-white px-6 py-3 rounded-lg hover:bg-yellow-700 transition flex items-center">
+            <button class="bg-green-900 text-white px-6 py-3 rounded-lg hover:bg-green-950 transition flex items-center">
                 <i class="fas fa-chart-bar mr-2"></i>
                 Laporan Aktivitas
             </button>
@@ -95,7 +95,7 @@
                     <option>Supplier</option>
                     <option>Foundation</option>
                 </select>
-                <input type="text" placeholder="Cari akun..." class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <input type="text" placeholder="Cari akun..." class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
             </div>
         </div>
 
@@ -141,13 +141,13 @@
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $user->created_at->format('d M Y') }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                             <div class="flex space-x-2">
-                                <button class="text-blue-600 hover:text-blue-900 text-sm" onclick="editUser({{ $user->id }})">
+                                <button class="text-green-600 hover:text-green-900 text-sm" onclick="editUser({{ $user->id }})">
                                     <i class="fas fa-edit"></i>
                                 </button>
                                 <button class="text-green-600 hover:text-green-900 text-sm" onclick="resetPassword({{ $user->id }})">
                                     <i class="fas fa-key"></i>
                                 </button>
-                                <button class="text-purple-600 hover:text-purple-900 text-sm" onclick="changeRole({{ $user->id }})">
+                                <button class="text-green-600 hover:text-green-900 text-sm" onclick="changeRole({{ $user->id }})">
                                     <i class="fas fa-user-tag"></i>
                                 </button>
                                 @if($user->id !== auth()->id())

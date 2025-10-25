@@ -65,19 +65,19 @@
     <div class="bg-white rounded-lg shadow-md p-6 mb-8">
         <h2 class="text-xl font-semibold text-gray-900 mb-4">Aksi Cepat</h2>
         <div class="flex flex-wrap gap-4">
-            <button class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition flex items-center">
+            <button class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition flex items-center">
                 <i class="fas fa-plus mr-2"></i>
                 Tambah Produk
             </button>
-            <button class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition flex items-center">
+            <button class="bg-green-700 text-white px-6 py-3 rounded-lg hover:bg-green-800 transition flex items-center">
                 <i class="fas fa-list mr-2"></i>
                 Kelola Produk
             </button>
-            <button class="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition flex items-center">
+            <button class="bg-green-800 text-white px-6 py-3 rounded-lg hover:bg-green-900 transition flex items-center">
                 <i class="fas fa-truck mr-2"></i>
                 Kelola Pengiriman
             </button>
-            <button class="bg-yellow-600 text-white px-6 py-3 rounded-lg hover:bg-yellow-700 transition flex items-center">
+            <button class="bg-green-900 text-white px-6 py-3 rounded-lg hover:bg-green-950 transition flex items-center">
                 <i class="fas fa-chart-bar mr-2"></i>
                 Laporan Penjualan
             </button>
@@ -88,7 +88,7 @@
     <div class="bg-white rounded-lg shadow-md p-6 mb-8">
         <div class="flex justify-between items-center mb-6">
             <h2 class="text-xl font-semibold text-gray-900">Order Aktif</h2>
-            <a href="#" class="text-blue-600 hover:text-blue-800 text-sm font-medium">Lihat Semua</a>
+            <a href="#" class="text-green-600 hover:text-green-800 text-sm font-medium">Lihat Semua</a>
         </div>
 
         <div class="overflow-x-auto">
@@ -117,7 +117,7 @@
                             <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Dipilih</span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <button class="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700 mr-2">Kirim</button>
+                            <button class="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700 mr-2">Kirim</button>
                             <button class="text-gray-600 hover:text-gray-800 text-sm">Detail</button>
                         </td>
                     </tr>
@@ -145,7 +145,7 @@
     <div class="bg-white rounded-lg shadow-md p-6">
         <div class="flex justify-between items-center mb-6">
             <h2 class="text-xl font-semibold text-gray-900">Kelola Produk</h2>
-            <button class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm">Tambah Produk</button>
+            <button class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 text-sm">Tambah Produk</button>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -160,7 +160,7 @@
                     <span class="text-sm text-gray-500">Stok: 200 kg</span>
                 </div>
                 <div class="flex space-x-2">
-                    <button class="text-blue-600 hover:text-blue-800 text-sm">Edit</button>
+                    <button class="text-green-600 hover:text-green-800 text-sm">Edit</button>
                     <button class="text-red-600 hover:text-red-800 text-sm">Hapus</button>
                 </div>
             </div>
@@ -176,7 +176,7 @@
                     <span class="text-sm text-gray-500">Stok: 150 liter</span>
                 </div>
                 <div class="flex space-x-2">
-                    <button class="text-blue-600 hover:text-blue-800 text-sm">Edit</button>
+                    <button class="text-green-600 hover:text-green-800 text-sm">Edit</button>
                     <button class="text-red-600 hover:text-red-800 text-sm">Hapus</button>
                 </div>
             </div>
@@ -192,7 +192,7 @@
                     <span class="text-sm text-gray-500">Stok: 500 butir</span>
                 </div>
                 <div class="flex space-x-2">
-                    <button class="text-blue-600 hover:text-blue-800 text-sm">Edit</button>
+                    <button class="text-green-600 hover:text-green-800 text-sm">Edit</button>
                     <button class="text-red-600 hover:text-red-800 text-sm">Hapus</button>
                 </div>
             </div>

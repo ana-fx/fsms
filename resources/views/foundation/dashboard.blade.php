@@ -12,11 +12,11 @@
 
     <!-- Stats Cards -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div class="bg-white rounded-lg shadow-md p-6 card-hover">
-            <div class="flex items-center">
-                <div class="p-3 rounded-full bg-blue-100 text-blue-600">
-                    <i class="fas fa-shopping-cart text-xl"></i>
-                </div>
+                <div class="bg-white rounded-lg shadow-md p-6 card-hover">
+                    <div class="flex items-center">
+                        <div class="p-3 rounded-full bg-green-100 text-green-600">
+                            <i class="fas fa-shopping-cart text-xl"></i>
+                        </div>
                 <div class="ml-4">
                     <p class="text-sm font-medium text-gray-600">Total Request</p>
                     <p class="text-2xl font-semibold text-gray-900">12</p>
@@ -65,15 +65,15 @@
     <div class="bg-white rounded-lg shadow-md p-6 mb-8">
         <h2 class="text-xl font-semibold text-gray-900 mb-4">Aksi Cepat</h2>
         <div class="flex flex-wrap gap-4">
-            <button class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition flex items-center">
+            <button class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition flex items-center">
                 <i class="fas fa-plus mr-2"></i>
                 Buat Request Baru
             </button>
-            <button class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition flex items-center">
+            <button class="bg-green-700 text-white px-6 py-3 rounded-lg hover:bg-green-800 transition flex items-center">
                 <i class="fas fa-list mr-2"></i>
                 Lihat Semua Request
             </button>
-            <button class="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition flex items-center">
+            <button class="bg-green-800 text-white px-6 py-3 rounded-lg hover:bg-green-900 transition flex items-center">
                 <i class="fas fa-chart-bar mr-2"></i>
                 Laporan Bulanan
             </button>
@@ -84,7 +84,7 @@
     <div class="bg-white rounded-lg shadow-md p-6">
         <div class="flex justify-between items-center mb-6">
             <h2 class="text-xl font-semibold text-gray-900">Request Terbaru</h2>
-            <a href="#" class="text-blue-600 hover:text-blue-800 text-sm font-medium">Lihat Semua</a>
+            <a href="#" class="text-green-600 hover:text-green-800 text-sm font-medium">Lihat Semua</a>
         </div>
 
         <div class="overflow-x-auto">
@@ -109,7 +109,7 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">25 Okt 2024</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <button class="text-blue-600 hover:text-blue-900 mr-3">Detail</button>
+                            <button class="text-green-600 hover:text-green-900 mr-3">Detail</button>
                             <button class="text-red-600 hover:text-red-900">Hapus</button>
                         </td>
                     </tr>
@@ -122,7 +122,7 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">24 Okt 2024</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <button class="text-blue-600 hover:text-blue-900 mr-3">Detail</button>
+                            <button class="text-green-600 hover:text-green-900 mr-3">Detail</button>
                             <button class="text-red-600 hover:text-red-900">Hapus</button>
                         </td>
                     </tr>
@@ -135,7 +135,7 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">23 Okt 2024</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <button class="text-blue-600 hover:text-blue-900 mr-3">Detail</button>
+                            <button class="text-green-600 hover:text-green-900 mr-3">Detail</button>
                             <button class="text-red-600 hover:text-red-900">Hapus</button>
                         </td>
                     </tr>
