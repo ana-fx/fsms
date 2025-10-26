@@ -25,9 +25,9 @@ class RoleSeeder extends Seeder
                 'description' => 'Penyedia barang atau jasa yang dapat mengelola produk dan pesanan',
             ],
             [
-                'name' => 'foundation',
-                'display_name' => 'Foundation',
-                'description' => 'Yayasan atau organisasi yang dapat mengelola program dan donasi',
+                'name' => 'customer',
+                'display_name' => 'Customer',
+                'description' => 'Pelanggan yang dapat membuat permintaan bahan makanan',
             ],
         ];
 

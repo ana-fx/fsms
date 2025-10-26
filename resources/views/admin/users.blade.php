@@ -79,8 +79,8 @@
                         <i class="fas fa-building text-xl"></i>
                     </div>
                     <div class="ml-4">
-                        <p class="text-sm font-medium text-gray-600">Foundation</p>
-                        <p class="text-2xl font-semibold text-gray-900">{{ \App\Models\User::whereHas('roles', function($q) { $q->where('name', 'foundation'); })->count() }}</p>
+                        <p class="text-sm font-medium text-gray-600">Customer</p>
+                        <p class="text-2xl font-semibold text-gray-900">{{ \App\Models\User::whereHas('roles', function($q) { $q->where('name', 'customer'); })->count() }}</p>
                     </div>
                 </div>
             </div>
@@ -104,7 +104,7 @@
                     <option>Semua Role</option>
                     <option>Super Admin</option>
                     <option>Supplier</option>
-                    <option>Foundation</option>
+                    <option>Customer</option>
                 </select>
                 <input type="text" placeholder="Cari user..." class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-sm flex-1 sm:flex-none sm:w-64">
             </div>
@@ -139,7 +139,7 @@
                                     <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
                                         {{ $user->roles->first()->display_name }}
                                     </span>
-                                @elseif($user->roles->first()->name === 'foundation')
+                                @elseif($user->roles->first()->name === 'customer')
                                     <span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
                                         {{ $user->roles->first()->display_name }}
                                     </span>
@@ -232,7 +232,7 @@
                             <option value="">Pilih Role</option>
                             <option value="super_admin" {{ old('role') == 'super_admin' ? 'selected' : '' }}>Super Admin</option>
                             <option value="supplier" {{ old('role') == 'supplier' ? 'selected' : '' }}>Supplier</option>
-                            <option value="foundation" {{ old('role') == 'foundation' ? 'selected' : '' }}>Foundation</option>
+                            <option value="customer" {{ old('role') == 'customer' ? 'selected' : '' }}>Customer</option>
                         </select>
                         @error('role') <span class="text-red-600 text-sm">{{ $message }}</span> @enderror
                     </div>
@@ -266,7 +266,7 @@
                         <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                             <option>Super Admin</option>
                             <option>Supplier</option>
-                            <option>Foundation</option>
+                            <option>Customer</option>
                         </select>
                     </div>
                     <div class="flex justify-end space-x-3">
@@ -326,7 +326,7 @@
                         <select id="newRole" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
                             <option value="super_admin">Super Admin</option>
                             <option value="supplier">Supplier</option>
-                            <option value="foundation">Foundation</option>
+                            <option value="customer">Customer</option>
                         </select>
                     </div>
                     <div class="mb-6">

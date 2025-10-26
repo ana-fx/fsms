@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="flex min-h-screen">
-    @include('foundation.partials.sidebar')
+    @include('customer.partials.sidebar')
 
     <!-- Main Content -->
     <div class="flex-1 flex flex-col lg:ml-64 min-h-screen">
@@ -13,19 +13,19 @@
         <!-- Header -->
         <div class="mb-8">
             <div class="flex items-center">
-                <a href="{{ route('foundation.requests.index') }}" class="text-gray-500 hover:text-gray-700 mr-4">
+                <a href="{{ route('customer.requests.index') }}" class="text-gray-500 hover:text-gray-700 mr-4">
                     <i class="fas fa-arrow-left text-xl"></i>
                 </a>
                 <div>
                     <h1 class="text-3xl font-bold text-gray-900">Buat Permintaan Baru</h1>
-                    <p class="mt-2 text-gray-600">Ajukan permintaan bahan makanan untuk program yayasan</p>
+                    <p class="mt-2 text-gray-600">Ajukan permintaan bahan makanan untuk program</p>
                 </div>
             </div>
         </div>
 
         <!-- Form -->
         <div class="bg-white rounded-lg shadow">
-            <form method="POST" action="{{ route('foundation.requests.store') }}" class="p-6">
+            <form method="POST" action="{{ route('customer.requests.store') }}" class="p-6">
                 @csrf
 
                 <!-- Food Category -->
@@ -135,7 +135,7 @@
 
                 <!-- Submit Buttons -->
                 <div class="flex justify-end space-x-4">
-                    <a href="{{ route('foundation.requests.index') }}"
+                    <a href="{{ route('customer.requests.index') }}"
                        class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-semibold">
                         Batal
                     </a>

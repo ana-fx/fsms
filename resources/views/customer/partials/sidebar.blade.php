@@ -1,4 +1,4 @@
-<!-- Foundation Sidebar -->
+<!-- Customer Sidebar -->
 <div id="sidebar" class="absolute top-0 left-0 bottom-0 z-[60] w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out -translate-x-full lg:relative lg:translate-x-0 overflow-y-auto" style="max-height: 100vh;">
     <!-- Logo Section -->
     <div class="p-6 border-b border-gray-200">
@@ -9,7 +9,7 @@
                 </div>
                 <div class="flex flex-col">
                     <span class="text-xl font-bold text-gray-900">FSMS</span>
-                    <span class="text-xs text-gray-500 -mt-1">Foundation Panel</span>
+                    <span class="text-xs text-gray-500 -mt-1">Customer Panel</span>
                 </div>
             </a>
             <!-- Close button for mobile -->
@@ -27,7 +27,7 @@
             </div>
             <div>
                 <p class="text-sm font-medium text-gray-900">{{ auth()->user()->name }}</p>
-                <p class="text-xs text-green-600 font-medium">Foundation</p>
+                <p class="text-xs text-green-600 font-medium">Customer</p>
             </div>
         </div>
     </div>
@@ -36,8 +36,8 @@
     <nav class="mt-6">
         <div class="px-4 space-y-2">
             <!-- Dashboard -->
-            <a href="{{ route('foundation.dashboard') }}"
-               class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('foundation.dashboard') ? 'bg-green-100 text-green-700 border-r-2 border-green-600' : 'text-gray-700 hover:bg-gray-100 hover:text-green-600' }}">
+            <a href="{{ route('customer.dashboard') }}"
+               class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('customer.dashboard') ? 'bg-green-100 text-green-700 border-r-2 border-green-600' : 'text-gray-700 hover:bg-gray-100 hover:text-green-600' }}">
                 <i class="fas fa-tachometer-alt mr-3 text-lg"></i>
                 Dashboard
             </a>
@@ -53,13 +53,13 @@
                     <i class="fas fa-chevron-down text-xs transition-transform" id="requests-arrow"></i>
                 </button>
                 <div id="requests-submenu" class="hidden ml-8 space-y-1">
-                    <a href="{{ route('foundation.requests.index') }}"
-                       class="block px-4 py-2 text-sm text-gray-600 hover:text-green-600 hover:bg-gray-50 rounded transition-colors {{ request()->routeIs('foundation.requests.index') ? 'text-green-600 bg-green-50' : '' }}">
+                    <a href="{{ route('customer.requests.index') }}"
+                       class="block px-4 py-2 text-sm text-gray-600 hover:text-green-600 hover:bg-gray-50 rounded transition-colors {{ request()->routeIs('customer.requests.index') ? 'text-green-600 bg-green-50' : '' }}">
                         <i class="fas fa-list mr-2"></i>
                         Semua Permintaan
                     </a>
-                    <a href="{{ route('foundation.requests.create') }}"
-                       class="block px-4 py-2 text-sm text-gray-600 hover:text-green-600 hover:bg-gray-50 rounded transition-colors {{ request()->routeIs('foundation.requests.create') ? 'text-green-600 bg-green-50' : '' }}">
+                    <a href="{{ route('customer.requests.create') }}"
+                       class="block px-4 py-2 text-sm text-gray-600 hover:text-green-600 hover:bg-gray-50 rounded transition-colors {{ request()->routeIs('customer.requests.create') ? 'text-green-600 bg-green-50' : '' }}">
                         <i class="fas fa-plus mr-2"></i>
                         Buat Permintaan Baru
                     </a>
@@ -67,8 +67,8 @@
             </div>
 
             <!-- Programs -->
-            <a href="{{ route('foundation.programs') }}"
-               class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('foundation.programs') ? 'bg-green-100 text-green-700 border-r-2 border-green-600' : 'text-gray-700 hover:bg-gray-100 hover:text-green-600' }}">
+            <a href="{{ route('customer.programs') }}"
+               class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('customer.programs') ? 'bg-green-100 text-green-700 border-r-2 border-green-600' : 'text-gray-700 hover:bg-gray-100 hover:text-green-600' }}">
                 <i class="fas fa-project-diagram mr-3 text-lg"></i>
                 Kelola Program
             </a>

@@ -15,7 +15,7 @@ class FoodRequestPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->isFoundation() || $user->isSuperAdmin();
+        return $user->isCustomer() || $user->isSuperAdmin();
     }
 
     /**
@@ -23,7 +23,7 @@ class FoodRequestPolicy
      */
     public function view(User $user, FoodRequest $foodRequest): bool
     {
-        return $user->isFoundation() && $foodRequest->foundation_id === $user->id
+        return $user->isCustomer() && $foodRequest->customer_id === $user->id
             || $user->isSuperAdmin();
     }
 
@@ -32,7 +32,7 @@ class FoodRequestPolicy
      */
     public function create(User $user): bool
     {
-        return $user->isFoundation();
+        return $user->isCustomer();
     }
 
     /**
@@ -40,7 +40,7 @@ class FoodRequestPolicy
      */
     public function update(User $user, FoodRequest $foodRequest): bool
     {
-        return $user->isFoundation() && $foodRequest->foundation_id === $user->id
+        return $user->isCustomer() && $foodRequest->customer_id === $user->id
             && $foodRequest->status === 'pending';
     }
 
@@ -49,7 +49,7 @@ class FoodRequestPolicy
      */
     public function delete(User $user, FoodRequest $foodRequest): bool
     {
-        return $user->isFoundation() && $foodRequest->foundation_id === $user->id
+        return $user->isCustomer() && $foodRequest->customer_id === $user->id
             && $foodRequest->status === 'pending';
     }
 

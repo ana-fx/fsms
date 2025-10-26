@@ -4,7 +4,7 @@
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
 <title>@yield('title', 'FSMS - FoodSupply Management System')</title>
-<meta name="description" content="@yield('description', 'Sistem manajemen pasokan bahan makanan yang menghubungkan yayasan, admin, dan supplier untuk distribusi makanan yang efisien dan transparan.')">
+<meta name="description" content="@yield('description', 'Sistem manajemen pasokan bahan makanan yang menghubungkan customer, admin, dan supplier untuk distribusi makanan yang efisien dan transparan.')">
 
 <!-- Favicon -->
 <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
@@ -131,16 +131,16 @@
                                         <i class="fas fa-box mr-3 text-green-600"></i>
                                         Kelola Produk
                                     </a>
-                                @elseif(auth()->user()->isFoundation())
-                                    <a href="{{ route('foundation.dashboard') }}" class="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md transition-colors">
+                                @elseif(auth()->user()->isCustomer())
+                                    <a href="{{ route('customer.dashboard') }}" class="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md transition-colors">
                                         <i class="fas fa-tachometer-alt mr-3 text-green-600"></i>
-                                        Foundation Dashboard
+                                        Customer Dashboard
                                     </a>
-                                    <a href="{{ route('foundation.requests.index') }}" class="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md transition-colors">
+                                    <a href="{{ route('customer.requests.index') }}" class="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md transition-colors">
                                         <i class="fas fa-shopping-cart mr-3 text-green-600"></i>
                                         Permintaan Bahan Makanan
                                     </a>
-                                    <a href="{{ route('foundation.programs') }}" class="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md transition-colors">
+                                    <a href="{{ route('customer.programs') }}" class="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md transition-colors">
                                         <i class="fas fa-project-diagram mr-3 text-green-600"></i>
                                         Kelola Program
                                     </a>

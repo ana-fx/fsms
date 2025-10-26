@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="flex min-h-screen">
-    @include('foundation.partials.sidebar')
+    @include('customer.partials.sidebar')
 
     <!-- Main Content -->
     <div class="flex-1 flex flex-col lg:ml-64 min-h-screen">
@@ -13,19 +13,19 @@
     <!-- Header -->
     <div class="mb-8">
         <h1 class="text-3xl font-bold text-gray-900">Buat Request Bahan Makanan</h1>
-        <p class="text-gray-600 mt-2">Ajukan permintaan bahan makanan untuk program yayasan Anda</p>
+        <p class="text-gray-600 mt-2">Ajukan permintaan bahan makanan untuk program Anda</p>
     </div>
 
     <!-- Request Form -->
     <div class="bg-white rounded-lg shadow-md p-8">
         <form class="space-y-6">
-            <!-- Foundation Info -->
+            <!-- Customer Info -->
             <div class="border-b border-gray-200 pb-6">
-                <h2 class="text-xl font-semibold text-gray-900 mb-4">Informasi Yayasan</h2>
+                <h2 class="text-xl font-semibold text-gray-900 mb-4">Informasi Customer</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Nama Yayasan</label>
-                        <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" value="Yayasan Sejahtera" readonly>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Nama Customer</label>
+                        <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" value="{{ auth()->user()->name }}" readonly>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Program</label>

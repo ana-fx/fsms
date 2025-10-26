@@ -3,11 +3,11 @@
 @section('title', 'Dashboard Supplier - FSMS')
 
 @section('content')
-<div class="flex min-h-screen">
+<div class="flex min-h-screen bg-gray-100">
     @include('supplier.partials.sidebar')
 
     <!-- Main Content -->
-    <div class="flex-1 flex flex-col lg:ml-64 min-h-screen">
+    <div class="flex-1 flex flex-col lg:ml-64">
         <div class="flex-1 bg-gray-100">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <!-- Header -->
@@ -67,29 +67,6 @@
         </div>
     </div>
 
-    <!-- Quick Actions -->
-    <div class="bg-white rounded-lg shadow-md p-6 mb-8">
-        <h2 class="text-xl font-semibold text-gray-900 mb-4">Aksi Cepat</h2>
-        <div class="flex flex-wrap gap-4">
-            <button class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition flex items-center">
-                <i class="fas fa-plus mr-2"></i>
-                Tambah Produk
-            </button>
-            <button class="bg-green-700 text-white px-6 py-3 rounded-lg hover:bg-green-800 transition flex items-center">
-                <i class="fas fa-list mr-2"></i>
-                Kelola Produk
-            </button>
-            <button class="bg-green-800 text-white px-6 py-3 rounded-lg hover:bg-green-900 transition flex items-center">
-                <i class="fas fa-truck mr-2"></i>
-                Kelola Pengiriman
-            </button>
-            <button class="bg-green-900 text-white px-6 py-3 rounded-lg hover:bg-green-950 transition flex items-center">
-                <i class="fas fa-chart-bar mr-2"></i>
-                Laporan Penjualan
-            </button>
-        </div>
-    </div>
-
     <!-- Active Orders -->
     <div class="bg-white rounded-lg shadow-md p-6 mb-8">
         <div class="flex justify-between items-center mb-6">
@@ -121,7 +98,7 @@
             </button>
         </div>
     </div>
-        </div>
+            </div>
         </div>
     </div>
 </div>

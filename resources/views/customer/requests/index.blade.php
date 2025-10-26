@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="flex min-h-screen">
-    @include('foundation.partials.sidebar')
+    @include('customer.partials.sidebar')
 
     <!-- Main Content -->
     <div class="flex-1 flex flex-col lg:ml-64 min-h-screen">
@@ -15,9 +15,9 @@
             <div class="flex items-center justify-between">
                 <div>
                     <h1 class="text-3xl font-bold text-gray-900">Permintaan Bahan Makanan</h1>
-                    <p class="mt-2 text-gray-600">Kelola permintaan bahan makanan untuk program yayasan</p>
+                    <p class="mt-2 text-gray-600">Kelola permintaan bahan makanan untuk program</p>
                 </div>
-                <a href="{{ route('foundation.requests.create') }}" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold">
+                <a href="{{ route('customer.requests.create') }}" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold">
                     <i class="fas fa-plus mr-2"></i>
                     Buat Permintaan Baru
                 </a>
@@ -154,14 +154,14 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                         <div class="flex space-x-2">
-                                            <a href="{{ route('foundation.requests.show', $request) }}" class="text-green-600 hover:text-green-900">
+                                            <a href="{{ route('customer.requests.show', $request) }}" class="text-green-600 hover:text-green-900">
                                                 <i class="fas fa-eye"></i>
                                             </a>
                                             @if($request->status === 'pending')
-                                                <a href="{{ route('foundation.requests.edit', $request) }}" class="text-blue-600 hover:text-blue-900">
+                                                <a href="{{ route('customer.requests.edit', $request) }}" class="text-blue-600 hover:text-blue-900">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
-                                                <form method="POST" action="{{ route('foundation.requests.destroy', $request) }}" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus permintaan ini?')">
+                                                <form method="POST" action="{{ route('customer.requests.destroy', $request) }}" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus permintaan ini?')">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="text-red-600 hover:text-red-900">
@@ -186,7 +186,7 @@
                     <i class="fas fa-inbox text-4xl text-gray-400 mb-4"></i>
                     <h3 class="text-lg font-medium text-gray-900 mb-2">Belum ada permintaan</h3>
                     <p class="text-gray-500 mb-6">Mulai buat permintaan bahan makanan pertama Anda</p>
-                    <a href="{{ route('foundation.requests.create') }}" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold">
+                    <a href="{{ route('customer.requests.create') }}" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold">
                         <i class="fas fa-plus mr-2"></i>
                         Buat Permintaan Baru
                     </a>

@@ -22,10 +22,10 @@ class UserSeeder extends Seeder
             'supplier1@fsms.com',
             'supplier2@fsms.com',
             'supplier3@fsms.com',
-            'foundation@fsms.com',
-            'yayasan1@fsms.com',
-            'yayasan2@fsms.com',
-            'yayasan3@fsms.com'
+            'customer@fsms.com',
+            'customer1@fsms.com',
+            'customer2@fsms.com',
+            'customer3@fsms.com'
         ])->delete();
 
         // Create Super Admin
@@ -81,45 +81,45 @@ class UserSeeder extends Seeder
             $newSupplier->assignRole('supplier');
         }
 
-        // Create Foundation
-        $foundation = User::updateOrCreate(
-            ['email' => 'foundation@fsms.com'],
+        // Create Customer
+        $customer = User::updateOrCreate(
+            ['email' => 'customer@fsms.com'],
             [
-                'name' => 'Foundation FSMS',
-                'email' => 'foundation@fsms.com',
-                'password' => Hash::make('foundation@fsms.com'),
+                'name' => 'Customer FSMS',
+                'email' => 'customer@fsms.com',
+                'password' => Hash::make('customer@fsms.com'),
                 'email_verified_at' => now(),
             ]
         );
-        $foundation->assignRole('foundation');
+        $customer->assignRole('customer');
 
-        // Create Additional Foundations
-        $foundations = [
+        // Create Additional Customers
+        $customers = [
             [
-                'name' => 'Yayasan Peduli Anak',
-                'email' => 'yayasan1@fsms.com',
+                'name' => 'Customer Peduli Anak',
+                'email' => 'customer1@fsms.com',
             ],
             [
-                'name' => 'Yayasan Bantu Lansia',
-                'email' => 'yayasan2@fsms.com',
+                'name' => 'Customer Bantu Lansia',
+                'email' => 'customer2@fsms.com',
             ],
             [
-                'name' => 'Yayasan Pemberdayaan Masyarakat',
-                'email' => 'yayasan3@fsms.com',
+                'name' => 'Customer Pemberdayaan Masyarakat',
+                'email' => 'customer3@fsms.com',
             ],
         ];
 
-        foreach ($foundations as $foundationData) {
-            $newFoundation = User::updateOrCreate(
-                ['email' => $foundationData['email']],
+        foreach ($customers as $customerData) {
+            $newCustomer = User::updateOrCreate(
+                ['email' => $customerData['email']],
                 [
-                    'name' => $foundationData['name'],
-                    'email' => $foundationData['email'],
-                    'password' => Hash::make($foundationData['email']),
+                    'name' => $customerData['name'],
+                    'email' => $customerData['email'],
+                    'password' => Hash::make($customerData['email']),
                     'email_verified_at' => now(),
                 ]
             );
-            $newFoundation->assignRole('foundation');
+            $newCustomer->assignRole('customer');
         }
 
         $this->command->info('Users created successfully:');
@@ -128,10 +128,10 @@ class UserSeeder extends Seeder
         $this->command->info('- PT. Supplier Bahan Pangan: supplier1@fsms.com');
         $this->command->info('- CV. Jaya Makmur Food: supplier2@fsms.com');
         $this->command->info('- UD. Sejahtera Bersama: supplier3@fsms.com');
-        $this->command->info('- Foundation: foundation@fsms.com');
-        $this->command->info('- Yayasan Peduli Anak: yayasan1@fsms.com');
-        $this->command->info('- Yayasan Bantu Lansia: yayasan2@fsms.com');
-        $this->command->info('- Yayasan Pemberdayaan Masyarakat: yayasan3@fsms.com');
+        $this->command->info('- Customer: customer@fsms.com');
+        $this->command->info('- Customer Peduli Anak: customer1@fsms.com');
+        $this->command->info('- Customer Bantu Lansia: customer2@fsms.com');
+        $this->command->info('- Customer Pemberdayaan Masyarakat: customer3@fsms.com');
         $this->command->info('Password for all users is the same as their email address.');
     }
 }

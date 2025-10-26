@@ -61,24 +61,24 @@ Route::middleware(['auth', 'role:supplier'])->group(function () {
     })->name('supplier.products');
 });
 
-Route::middleware(['auth', 'role:foundation'])->group(function () {
-    Route::get('/foundation', function () {
-        return view('foundation.dashboard', ['title' => 'Foundation Dashboard']);
-    })->name('foundation.dashboard');
+Route::middleware(['auth', 'role:customer'])->group(function () {
+    Route::get('/customer', function () {
+        return view('customer.dashboard', ['title' => 'Customer Dashboard']);
+    })->name('customer.dashboard');
 
-    Route::get('/foundation/programs', function () {
-        return view('foundation.programs', ['title' => 'Manage Programs']);
-    })->name('foundation.programs');
+    Route::get('/customer/programs', function () {
+        return view('customer.programs', ['title' => 'Manage Programs']);
+    })->name('customer.programs');
 
     // Food Requests Routes
-    Route::resource('foundation/requests', \App\Http\Controllers\Foundation\FoodRequestController::class)
+    Route::resource('customer/requests', \App\Http\Controllers\Customer\FoodRequestController::class)
         ->names([
-            'index' => 'foundation.requests.index',
-            'create' => 'foundation.requests.create',
-            'store' => 'foundation.requests.store',
-            'show' => 'foundation.requests.show',
-            'edit' => 'foundation.requests.edit',
-            'update' => 'foundation.requests.update',
-            'destroy' => 'foundation.requests.destroy',
+            'index' => 'customer.requests.index',
+            'create' => 'customer.requests.create',
+            'store' => 'customer.requests.store',
+            'show' => 'customer.requests.show',
+            'edit' => 'customer.requests.edit',
+            'update' => 'customer.requests.update',
+            'destroy' => 'customer.requests.destroy',
         ]);
 });

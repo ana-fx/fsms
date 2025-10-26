@@ -25,7 +25,7 @@
                 </h2>
 
                 <p class="text-xl text-gray-600 max-w-4xl mx-auto mb-12 leading-relaxed">
-                    Sistem terintegrasi yang menghubungkan yayasan, admin, dan supplier untuk memastikan
+                    Sistem terintegrasi yang menghubungkan customer, admin, dan supplier untuk memastikan
                     distribusi bahan makanan yang transparan, efisien, dan tepat sasaran.
                 </p>
 
@@ -42,10 +42,10 @@
                                 <i class="fas fa-tachometer-alt mr-2"></i>
                                 Supplier Dashboard
                             </a>
-                        @elseif(auth()->user()->isFoundation())
-                            <a href="{{ route('foundation.dashboard') }}" class="bg-green-600 text-white px-8 py-4 rounded-xl hover:bg-green-700 transition-all duration-300 transform hover:scale-105 shadow-lg font-semibold text-lg">
+                        @elseif(auth()->user()->isCustomer())
+                            <a href="{{ route('customer.dashboard') }}" class="bg-green-600 text-white px-8 py-4 rounded-xl hover:bg-green-700 transition-all duration-300 transform hover:scale-105 shadow-lg font-semibold text-lg">
                                 <i class="fas fa-tachometer-alt mr-2"></i>
-                                Foundation Dashboard
+                                Customer Dashboard
                             </a>
                         @endif
                     @else
@@ -143,9 +143,9 @@
                     <div class="bg-green-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 text-white font-bold text-xl">
                         1
                     </div>
-                    <h4 class="text-xl font-semibold text-gray-900 mb-3">Foundation Request</h4>
+                    <h4 class="text-xl font-semibold text-gray-900 mb-3">Customer Request</h4>
                     <p class="text-gray-600 leading-relaxed">
-                        Yayasan mengajukan permintaan bahan makanan melalui sistem
+                        Customer mengajukan permintaan bahan makanan melalui sistem
                     </p>
                 </div>
 
@@ -174,32 +174,12 @@
         </div>
     </div>
 
-    <!-- Stats Section -->
-    <div class="py-20 bg-green-600">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center text-white">
-                <div>
-                    <div class="text-4xl font-bold mb-2">100+</div>
-                    <div class="text-green-100">Yayasan Terdaftar</div>
-                </div>
-                <div>
-                    <div class="text-4xl font-bold mb-2">500+</div>
-                    <div class="text-green-100">Supplier Terpercaya</div>
-                </div>
-                <div>
-                    <div class="text-4xl font-bold mb-2">1000+</div>
-                    <div class="text-green-100">Distribusi Berhasil</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- CTA Section -->
     <div class="py-20 bg-white">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h3 class="text-3xl font-bold text-gray-900 mb-4">Siap Memulai?</h3>
             <p class="text-lg text-gray-600 mb-8">
-                Bergabunglah dengan ribuan yayasan dan supplier yang telah mempercayai FSMS
+                Bergabunglah dengan berbagai customer dan supplier yang telah mempercayai FSMS
             </p>
 
             @guest

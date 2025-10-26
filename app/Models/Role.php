@@ -38,10 +38,10 @@ class Role extends Model
     }
 
     /**
-     * Check if role is foundation
+     * Check if role is customer
      */
-    public function isFoundation(): bool
+    public function isCustomer(): bool
     {
-        return $this->name === 'foundation';
+        return $this->name === 'customer';
     }
 }

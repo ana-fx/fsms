@@ -26,8 +26,8 @@ class RedirectAfterLogin
                 return redirect()->route('admin.dashboard');
             } elseif ($user->isSupplier()) {
                 return redirect()->route('supplier.dashboard');
-            } elseif ($user->isFoundation()) {
-                return redirect()->route('foundation.dashboard');
+            } elseif ($user->isCustomer()) {
+                return redirect()->route('customer.dashboard');
             }
         }
 

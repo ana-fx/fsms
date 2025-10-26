@@ -1,26 +1,28 @@
 <?php
 
-namespace App\Http\Controllers\Foundation;
+namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
 use App\Models\FoodCategory;
 use App\Models\FoodRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class FoodRequestController extends Controller
 {
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
         $requests = FoodRequest::with(['foodCategory', 'approvedBy'])
-            ->byFoundation(Auth::id())
+            ->byCustomer(Auth::id())
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
-        return view('foundation.requests.index', compact('requests'));
+        return view('customer.requests.index', compact('requests'));
     }
 
     /**
@@ -29,7 +31,7 @@ class FoodRequestController extends Controller
     public function create()
     {
         $categories = FoodCategory::active()->ordered()->get();
-        return view('foundation.requests.create', compact('categories'));
+        return view('customer.requests.create', compact('categories'));
     }
 
     /**
@@ -47,13 +49,13 @@ class FoodRequestController extends Controller
             'needed_date' => 'required|date|after:today',
         ]);
 
-        $validated['foundation_id'] = Auth::id();
+        $validated['customer_id'] = Auth::id();
         $validated['requested_date'] = now()->toDateString();
         $validated['status'] = 'pending';
 
         FoodRequest::create($validated);
 
-        return redirect()->route('foundation.requests.index')
+        return redirect()->route('customer.requests.index')
             ->with('success', 'Permintaan bahan makanan berhasil diajukan!');
     }
 
@@ -62,10 +64,10 @@ class FoodRequestController extends Controller
      */
     public function show(FoodRequest $request)
     {
-        $this->authorize('view', $request);
+        Gate::authorize('view', $request);
 
         $request->load(['foodCategory', 'approvedBy']);
-        return view('foundation.requests.show', compact('request'));
+        return view('customer.requests.show', compact('request'));
     }
 
     /**
@@ -73,10 +75,10 @@ class FoodRequestController extends Controller
      */
     public function edit(FoodRequest $request)
     {
-        $this->authorize('update', $request);
+        Gate::authorize('update', $request);
 
         $categories = FoodCategory::active()->ordered()->get();
-        return view('foundation.requests.edit', compact('request', 'categories'));
+        return view('customer.requests.edit', compact('request', 'categories'));
     }
 
     /**
@@ -84,7 +86,7 @@ class FoodRequestController extends Controller
      */
     public function update(Request $request, FoodRequest $foodRequest)
     {
-        $this->authorize('update', $foodRequest);
+        Gate::authorize('update', $foodRequest);
 
         $validated = $request->validate([
             'food_category_id' => 'required|exists:food_categories,id',
@@ -98,7 +100,7 @@ class FoodRequestController extends Controller
 
         $foodRequest->update($validated);
 
-        return redirect()->route('foundation.requests.index')
+        return redirect()->route('customer.requests.index')
             ->with('success', 'Permintaan bahan makanan berhasil diperbarui!');
     }
 
@@ -107,11 +109,11 @@ class FoodRequestController extends Controller
      */
     public function destroy(FoodRequest $request)
     {
-        $this->authorize('delete', $request);
+        Gate::authorize('delete', $request);
 
         $request->delete();
 
-        return redirect()->route('foundation.requests.index')
+        return redirect()->route('customer.requests.index')
             ->with('success', 'Permintaan bahan makanan berhasil dihapus!');
     }
 }

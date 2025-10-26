@@ -58,10 +58,10 @@
                             <i class="fas fa-tachometer-alt mr-2"></i>
                             Supplier Dashboard
                         </a>
-                    @elseif(auth()->user()->isFoundation())
-                        <a href="{{ route('foundation.dashboard') }}" class="bg-green-700 text-white px-8 py-3 rounded-lg hover:bg-green-800 transition font-semibold">
+                    @elseif(auth()->user()->isCustomer())
+                        <a href="{{ route('customer.dashboard') }}" class="bg-green-700 text-white px-8 py-3 rounded-lg hover:bg-green-800 transition font-semibold">
                             <i class="fas fa-tachometer-alt mr-2"></i>
-                            Foundation Dashboard
+                            Customer Dashboard
                         </a>
                     @endif
                 @else

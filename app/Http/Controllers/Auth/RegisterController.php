@@ -25,7 +25,7 @@ class RegisterController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'role' => ['required', 'in:supplier,foundation'],
+            'role' => ['required', 'in:supplier,customer'],
             'terms' => ['required', 'accepted'],
         ]);
 
@@ -45,8 +45,8 @@ class RegisterController extends Controller
         // Redirect based on role
         if ($user->isSupplier()) {
             return redirect()->route('supplier.dashboard');
-        } elseif ($user->isFoundation()) {
-            return redirect()->route('foundation.dashboard');
+        } elseif ($user->isCustomer()) {
+            return redirect()->route('customer.dashboard');
         }
 
         return redirect()->route('home');

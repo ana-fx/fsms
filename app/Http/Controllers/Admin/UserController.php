@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Role;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth as IlluminateAuth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 
@@ -30,7 +31,7 @@ class UserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'confirmed', Password::defaults()],
-            'role' => ['required', 'string', 'in:super_admin,supplier,foundation'],
+            'role' => ['required', 'string', 'in:super_admin,supplier,customer'],
         ]);
 
         // Create the user
@@ -78,7 +79,7 @@ class UserController extends Controller
     public function destroy($id)
     {
         // Prevent deleting yourself
-        if ($id == auth()->id()) {
+        if ($id == IlluminateAuth::id()) {
             return redirect()->route('admin.users')
                 ->with('error', 'Anda tidak dapat menghapus akun sendiri!');
         }
@@ -114,7 +115,7 @@ class UserController extends Controller
     public function changeRole(Request $request, $id)
     {
         $validated = $request->validate([
-            'role' => ['required', 'string', 'in:super_admin,supplier,foundation'],
+            'role' => ['required', 'string', 'in:super_admin,supplier,customer'],
         ]);
 
         $user = User::findOrFail($id);

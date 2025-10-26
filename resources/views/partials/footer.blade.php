@@ -15,7 +15,7 @@
                     </div>
                 </div>
                 <p class="text-gray-300 text-sm leading-relaxed">
-                    Sistem manajemen pasokan bahan makanan yang menghubungkan yayasan, admin, dan supplier untuk memastikan distribusi makanan yang efisien dan transparan.
+                    Sistem manajemen pasokan bahan makanan yang menghubungkan customer, admin, dan supplier untuk memastikan distribusi makanan yang efisien dan transparan.
                 </p>
                 <div class="flex space-x-4">
                     <a href="#" class="text-gray-400 hover:text-green-400 transition-colors">
@@ -60,14 +60,14 @@
                                     <i class="fas fa-box mr-2"></i>Kelola Produk
                                 </a>
                             </li>
-                        @elseif(auth()->user()->isFoundation())
+                        @elseif(auth()->user()->isCustomer())
                             <li>
-                                <a href="{{ route('foundation.dashboard') }}" class="text-gray-300 hover:text-green-400 transition-colors text-sm">
-                                    <i class="fas fa-tachometer-alt mr-2"></i>Foundation Panel
+                                <a href="{{ route('customer.dashboard') }}" class="text-gray-300 hover:text-green-400 transition-colors text-sm">
+                                    <i class="fas fa-tachometer-alt mr-2"></i>Customer Panel
                                 </a>
                             </li>
                             <li>
-                                <a href="{{ route('foundation.programs') }}" class="text-gray-300 hover:text-green-400 transition-colors text-sm">
+                                <a href="{{ route('customer.programs') }}" class="text-gray-300 hover:text-green-400 transition-colors text-sm">
                                     <i class="fas fa-project-diagram mr-2"></i>Kelola Program
                                 </a>
                             </li>

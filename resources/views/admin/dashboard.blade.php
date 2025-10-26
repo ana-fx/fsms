@@ -3,12 +3,13 @@
 @section('title', 'Dashboard Super Admin - FSMS')
 
 @section('content')
-<div class="flex h-screen bg-gray-100">
+<div class="flex min-h-screen bg-gray-100">
     @include('admin.partials.sidebar')
 
     <!-- Main Content -->
-    <div class="flex-1 overflow-y-auto lg:ml-64">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="flex-1 flex flex-col lg:ml-64">
+        <div class="flex-1 bg-gray-100">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <!-- Header -->
     <div class="mb-8">
         <h1 class="text-2xl lg:text-3xl font-bold text-gray-900">Dashboard Super Admin</h1>
@@ -47,8 +48,8 @@
                     <i class="fas fa-building text-xl"></i>
                 </div>
                 <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-600">Yayasan Terdaftar</p>
-                    <p class="text-2xl font-semibold text-gray-900">{{ \App\Models\User::whereHas('roles', function($q) { $q->where('name', 'foundation'); })->count() }}</p>
+                    <p class="text-sm font-medium text-gray-600">Customer Terdaftar</p>
+                    <p class="text-2xl font-semibold text-gray-900">{{ \App\Models\User::whereHas('roles', function($q) { $q->where('name', 'customer'); })->count() }}</p>
                 </div>
             </div>
         </div>
@@ -97,6 +98,7 @@
             </button>
         </div>
     </div>
+            </div>
         </div>
     </div>
 </div>

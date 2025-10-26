@@ -96,11 +96,11 @@ class User extends Authenticatable
     }
 
     /**
-     * Check if user is foundation
+     * Check if user is customer
      */
-    public function isFoundation(): bool
+    public function isCustomer(): bool
     {
-        return $this->hasRole('foundation');
+        return $this->hasRole('customer');
     }
 
     /**

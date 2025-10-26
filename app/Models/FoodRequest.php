@@ -11,7 +11,7 @@ class FoodRequest extends Model
     use HasFactory;
 
     protected $fillable = [
-        'foundation_id',
+        'customer_id',
         'food_category_id',
         'title',
         'description',
@@ -34,11 +34,11 @@ class FoodRequest extends Model
     ];
 
     /**
-     * Get the foundation that owns the request.
+     * Get the customer that owns the request.
      */
-    public function foundation(): BelongsTo
+    public function customer(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'foundation_id');
+        return $this->belongsTo(User::class, 'customer_id');
     }
 
     /**
@@ -58,11 +58,11 @@ class FoodRequest extends Model
     }
 
     /**
-     * Scope a query to only include requests by a specific foundation.
+     * Scope a query to only include requests by a specific customer.
      */
-    public function scopeByFoundation($query, $foundationId)
+    public function scopeByCustomer($query, $customerId)
     {
-        return $query->where('foundation_id', $foundationId);
+        return $query->where('customer_id', $customerId);
     }
 
     /**

@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="flex min-h-screen">
-    @include('foundation.partials.sidebar')
+    @include('customer.partials.sidebar')
 
     <!-- Main Content -->
     <div class="flex-1 flex flex-col lg:ml-64 min-h-screen">
@@ -13,7 +13,7 @@
         <!-- Header -->
         <div class="mb-8">
             <h1 class="text-3xl font-bold text-gray-900">Kelola Program</h1>
-            <p class="text-gray-600 mt-2">Manajemen program dan kegiatan yayasan</p>
+            <p class="text-gray-600 mt-2">Manajemen program dan kegiatan</p>
         </div>
             <div class="bg-white rounded-lg shadow p-6">
                 <h2 class="text-2xl font-bold mb-4">Program Management</h2>
