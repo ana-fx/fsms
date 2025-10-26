@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\MaxPriceController;
 
 Route::get('/', function () {
     return view('home');
@@ -28,8 +30,6 @@ Route::post('/register', [RegisterController::class, 'store']);
 
 Route::post('/logout', [LoginController::class, 'destroy'])->name('logout');
 
-Route::get('/logout', [LoginController::class, 'destroy'])->name('logout.get');
-
 
 
 // Role-based routes
@@ -38,9 +38,17 @@ Route::middleware(['auth', 'role:super_admin'])->group(function () {
         return view('admin.dashboard', ['title' => 'Super Admin Dashboard']);
     })->name('admin.dashboard');
 
-    Route::get('/admin/users', function () {
-        return view('admin.users', ['title' => 'Manajemen User & Akun']);
-    })->name('admin.users');
+    Route::get('/admin/users', [UserController::class, 'index'])->name('admin.users');
+    Route::post('/admin/users', [UserController::class, 'store'])->name('admin.users.store');
+    Route::put('/admin/users/{id}', [UserController::class, 'update'])->name('admin.users.update');
+    Route::delete('/admin/users/{id}', [UserController::class, 'destroy'])->name('admin.users.destroy');
+    Route::post('/admin/users/{id}/change-password', [UserController::class, 'changePassword'])->name('admin.users.change-password');
+    Route::post('/admin/users/{id}/change-role', [UserController::class, 'changeRole'])->name('admin.users.change-role');
+
+    // Max Price Management
+    Route::get('/admin/max-price', [MaxPriceController::class, 'index'])->name('admin.max-price');
+    Route::post('/admin/max-price', [MaxPriceController::class, 'store'])->name('admin.max-price.store');
+    Route::post('/admin/max-price/{id}', [MaxPriceController::class, 'update'])->name('admin.max-price.update');
 });
 
 Route::middleware(['auth', 'role:supplier'])->group(function () {

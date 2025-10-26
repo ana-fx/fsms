@@ -46,7 +46,7 @@
                             </li>
                             <li>
                                 <a href="{{ route('admin.users') }}" class="text-gray-300 hover:text-green-400 transition-colors text-sm">
-                                    <i class="fas fa-user-cog mr-2"></i>Manajemen User & Akun
+                                    <i class="fas fa-user-cog mr-2"></i>Manajemen User
                                 </a>
                             </li>
                         @elseif(auth()->user()->isSupplier())

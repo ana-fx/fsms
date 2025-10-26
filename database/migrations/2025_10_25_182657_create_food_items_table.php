@@ -13,6 +13,16 @@ return new class extends Migration
     {
         Schema::create('food_items', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('supplier_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('food_category_id')->constrained('food_categories')->onDelete('cascade');
+            $table->string('name');
+            $table->text('description')->nullable();
+            $table->decimal('price', 12, 2);
+            $table->string('unit'); // kg, liter, pcs, karton, dus, dll
+            $table->integer('stock')->default(0);
+            $table->integer('min_stock')->default(0);
+            $table->string('image')->nullable();
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }

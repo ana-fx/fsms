@@ -3,12 +3,13 @@
 @section('title', 'Dashboard Yayasan - FSMS')
 
 @section('content')
-<div class="flex h-screen bg-gray-100">
+<div class="flex min-h-screen">
     @include('foundation.partials.sidebar')
 
     <!-- Main Content -->
-    <div class="flex-1 overflow-y-auto ml-64">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="flex-1 flex flex-col lg:ml-64 min-h-screen">
+        <div class="flex-1 bg-gray-100">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <!-- Header -->
     <div class="mb-8">
         <h1 class="text-3xl font-bold text-gray-900">Dashboard Yayasan</h1>
@@ -102,6 +103,7 @@
             </a>
         </div>
     </div>
+        </div>
         </div>
     </div>
 </div>

@@ -1,16 +1,22 @@
 <!-- Admin Sidebar -->
-<div class="w-64 bg-white shadow-lg border-r border-gray-200 h-screen fixed left-0 top-0 z-40">
+<div id="sidebar" class="absolute top-0 left-0 bottom-0 z-[60] w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out -translate-x-full lg:relative lg:translate-x-0 overflow-y-auto" style="max-height: 100vh;">
     <!-- Logo Section -->
     <div class="p-6 border-b border-gray-200">
-        <a href="{{ route('home') }}" class="flex items-center space-x-3 hover:opacity-80 transition-opacity">
-            <div class="flex items-center justify-center w-10 h-10 bg-gradient-to-br from-green-600 to-green-700 rounded-lg shadow-md">
-                <i class="fas fa-utensils text-white text-lg"></i>
-            </div>
-            <div class="flex flex-col">
-                <span class="text-xl font-bold text-gray-900">FSMS</span>
-                <span class="text-xs text-gray-500 -mt-1">Admin Panel</span>
-            </div>
-        </a>
+        <div class="flex items-center justify-between">
+            <a href="{{ route('home') }}" class="flex items-center space-x-3 hover:opacity-80 transition-opacity">
+                <div class="flex items-center justify-center w-10 h-10 bg-gradient-to-br from-green-600 to-green-700 rounded-lg shadow-md">
+                    <i class="fas fa-utensils text-white text-lg"></i>
+                </div>
+                <div class="flex flex-col">
+                    <span class="text-xl font-bold text-gray-900">FSMS</span>
+                    <span class="text-xs text-gray-500 -mt-1">Admin Panel</span>
+                </div>
+            </a>
+            <!-- Close button for mobile -->
+            <button id="closeSidebar" class="lg:hidden text-gray-600 hover:text-gray-900">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+        </div>
     </div>
 
     <!-- User Info -->
@@ -115,8 +121,8 @@
             </div>
 
             <!-- Price Management -->
-            <a href="#"
-               class="flex items-center px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-green-600 rounded-lg transition-colors">
+            <a href="{{ route('admin.max-price') }}"
+               class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.max-price') ? 'bg-green-100 text-green-700 border-r-2 border-green-600' : 'text-gray-700 hover:bg-gray-100 hover:text-green-600' }}">
                 <i class="fas fa-dollar-sign mr-3 text-lg"></i>
                 Set Harga Maksimal
             </a>
@@ -125,7 +131,7 @@
             <a href="{{ route('admin.users') }}"
                class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.users') ? 'bg-green-100 text-green-700 border-r-2 border-green-600' : 'text-gray-700 hover:bg-gray-100 hover:text-green-600' }}">
                 <i class="fas fa-user-cog mr-3 text-lg"></i>
-                Manajemen User & Akun
+                Manajemen User
             </a>
 
             <!-- Reports -->
@@ -175,8 +181,68 @@
     </div>
 </div>
 
-<!-- JavaScript for Submenu Toggle -->
+<!-- Sidebar Overlay for Mobile -->
+<div id="sidebarOverlay" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-[50] lg:hidden hidden"></div>
+
+<!-- JavaScript for Sidebar Toggle -->
 <script>
+// Sidebar Toggle Functions
+document.addEventListener('DOMContentLoaded', function() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    const openBtn = document.getElementById('openSidebar');
+    const mobileBtn = document.getElementById('mobile-menu-button');
+    const closeBtn = document.getElementById('closeSidebar');
+
+    // Open sidebar - can be triggered from any button with id="openSidebar" or "mobile-menu-button"
+    if (openBtn) {
+        openBtn.addEventListener('click', function() {
+            sidebar.classList.remove('-translate-x-full');
+            overlay.classList.remove('hidden');
+        });
+    }
+
+    if (mobileBtn) {
+        mobileBtn.addEventListener('click', function() {
+            sidebar.classList.remove('-translate-x-full');
+            overlay.classList.remove('hidden');
+        });
+    }
+
+    // Also listen for any element with class "open-sidebar"
+    document.querySelectorAll('.open-sidebar').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            sidebar.classList.remove('-translate-x-full');
+            overlay.classList.remove('hidden');
+        });
+    });
+
+    // Close sidebar
+    if (closeBtn) {
+        closeBtn.addEventListener('click', function() {
+            sidebar.classList.add('-translate-x-full');
+            overlay.classList.add('hidden');
+        });
+    }
+
+    // Close sidebar when clicking overlay
+    if (overlay) {
+        overlay.addEventListener('click', function() {
+            sidebar.classList.add('-translate-x-full');
+            overlay.classList.add('hidden');
+        });
+    }
+
+    // Close sidebar on escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && !sidebar.classList.contains('-translate-x-full')) {
+            sidebar.classList.add('-translate-x-full');
+            overlay.classList.add('hidden');
+        }
+    });
+});
+
+// Submenu Toggle Function
 function toggleSubmenu(menuId) {
     const submenu = document.getElementById(menuId + '-submenu');
     const arrow = document.getElementById(menuId + '-arrow');

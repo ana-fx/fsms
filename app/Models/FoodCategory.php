@@ -20,6 +20,14 @@ class FoodCategory extends Model
         'sort_order',
     ];
 
+    /**
+     * Get the max price setting for this category.
+     */
+    public function maxPriceSetting()
+    {
+        return $this->hasOne(MaxPriceSetting::class);
+    }
+
     protected $casts = [
         'is_active' => 'boolean',
         'sort_order' => 'integer',

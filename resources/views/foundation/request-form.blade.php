@@ -3,7 +3,13 @@
 @section('title', 'Buat Request Bahan Makanan - FSMS')
 
 @section('content')
-<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<div class="flex min-h-screen">
+    @include('foundation.partials.sidebar')
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col lg:ml-64 min-h-screen">
+        <div class="flex-1 bg-gray-100">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <!-- Header -->
     <div class="mb-8">
         <h1 class="text-3xl font-bold text-gray-900">Buat Request Bahan Makanan</h1>
@@ -162,6 +168,9 @@
             <p><i class="fas fa-check-circle text-green-500 mr-2"></i>Berikan catatan khusus jika ada persyaratan khusus</p>
             <p><i class="fas fa-check-circle text-green-500 mr-2"></i>Request akan diproses oleh admin dalam 1-2 hari kerja</p>
             <p><i class="fas fa-check-circle text-green-500 mr-2"></i>Anda akan mendapat notifikasi ketika request disetujui atau ditolak</p>
+        </div>
+    </div>
+        </div>
         </div>
     </div>
 </div>

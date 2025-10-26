@@ -1,18 +1,38 @@
 @extends('layouts.app')
 
-@section('title', 'Manajemen User & Akun - FSMS')
+@section('title', 'Manajemen User - FSMS')
 
 @section('content')
-<div class="flex h-screen bg-gray-100">
+<div class="flex min-h-screen">
     @include('admin.partials.sidebar')
 
     <!-- Main Content -->
-    <div class="flex-1 overflow-y-auto ml-64">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="flex-1 flex flex-col lg:ml-64 min-h-screen">
+        <div class="flex-1 bg-gray-100">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Success/Error Messages -->
+        @if(session('success'))
+            <div class="mb-6 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg">
+                <div class="flex items-center">
+                    <i class="fas fa-check-circle mr-2"></i>
+                    {{ session('success') }}
+                </div>
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+                <div class="flex items-center">
+                    <i class="fas fa-exclamation-circle mr-2"></i>
+                    {{ session('error') }}
+                </div>
+            </div>
+        @endif
+
         <!-- Header -->
         <div class="mb-8">
-            <h1 class="text-3xl font-bold text-gray-900">Manajemen User & Akun</h1>
-            <p class="text-gray-600 mt-2">Kelola semua pengguna dan akun dalam sistem FSMS</p>
+            <h1 class="text-2xl lg:text-3xl font-bold text-gray-900">Manajemen User</h1>
+            <p class="text-sm lg:text-base text-gray-600 mt-2">Kelola semua pengguna dalam sistem FSMS</p>
         </div>
 
         <!-- Stats Cards -->
@@ -66,74 +86,90 @@
             </div>
         </div>
     <!-- User Management Table -->
-    <div class="bg-white rounded-lg shadow-md p-6">
-        <div class="flex justify-between items-center mb-6">
-            <h2 class="text-xl font-semibold text-gray-900">Daftar User & Akun</h2>
-            <div class="flex space-x-2">
-                <select class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+    <div class="bg-white rounded-lg shadow-md p-4 lg:p-6">
+        <div class="flex flex-col gap-4 mb-6">
+            <!-- Header Row -->
+            <div class="flex items-center justify-between">
+                <h2 class="text-lg md:text-xl font-semibold text-gray-900">Daftar User</h2>
+                <button onclick="openAddUserModal()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition flex items-center text-sm md:text-base">
+                    <i class="fas fa-user-plus mr-2"></i>
+                    <span class="hidden sm:inline">Tambah User Baru</span>
+                    <span class="sm:hidden">Tambah</span>
+                </button>
+            </div>
+
+            <!-- Filter Row -->
+            <div class="flex flex-col sm:flex-row gap-2">
+                <select class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm flex-1 sm:flex-none sm:w-auto">
                     <option>Semua Role</option>
                     <option>Super Admin</option>
                     <option>Supplier</option>
                     <option>Foundation</option>
                 </select>
-                <input type="text" placeholder="Cari user..." class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
+                <input type="text" placeholder="Cari user..." class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-sm flex-1 sm:flex-none sm:w-64">
             </div>
         </div>
 
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
+                <thead class="bg-gray-50 hidden md:table-header-group">
                     <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Terdaftar</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                        <th class="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                        <th class="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama</th>
+                        <th class="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">Email</th>
+                        <th class="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+                        <th class="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden xl:table-cell">Status</th>
+                        <th class="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">Terdaftar</th>
+                        <th class="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
                     @foreach(\App\Models\User::with('roles')->get() as $user)
-                    <tr data-user-id="{{ $user->id }}">
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#{{ $user->id }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $user->name }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $user->email }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap">
+                    <tr data-user-id="{{ $user->id }}" class="hover:bg-gray-50">
+                        <td class="px-3 lg:px-6 py-3 md:py-4 whitespace-nowrap text-sm font-medium text-gray-900">#{{ $user->id }}</td>
+                        <td class="px-3 lg:px-6 py-3 md:py-4 whitespace-nowrap text-sm text-gray-900">{{ $user->name }}</td>
+                        <td class="px-3 lg:px-6 py-3 md:py-4 whitespace-nowrap text-sm text-gray-500 hidden lg:table-cell">{{ $user->email }}</td>
+                        <td class="px-3 lg:px-6 py-3 md:py-4 whitespace-nowrap">
                             @if($user->roles->count() > 0)
-                                <span class="px-2 py-1 text-xs font-semibold rounded-full
-                                    @if($user->roles->first()->name === 'super_admin') bg-blue-100 text-blue-800
-                                    @elseif($user->roles->first()->name === 'supplier') bg-green-100 text-green-800
-                                    @elseif($user->roles->first()->name === 'foundation') bg-yellow-100 text-yellow-800
-                                    @endif">
-                                    {{ $user->roles->first()->display_name }}
-                                </span>
+                                @if($user->roles->first()->name === 'super_admin')
+                                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                                        {{ $user->roles->first()->display_name }}
+                                    </span>
+                                @elseif($user->roles->first()->name === 'supplier')
+                                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                                        {{ $user->roles->first()->display_name }}
+                                    </span>
+                                @elseif($user->roles->first()->name === 'foundation')
+                                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                        {{ $user->roles->first()->display_name }}
+                                    </span>
+                                @endif
                             @else
                                 <span class="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">No Role</span>
                             @endif
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
+                        <td class="px-3 lg:px-6 py-3 md:py-4 whitespace-nowrap hidden xl:table-cell">
                             @if($user->email_verified_at)
                                 <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Aktif</span>
                             @else
                                 <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Belum Verifikasi</span>
                             @endif
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $user->created_at->format('d M Y') }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <div class="flex space-x-2">
-                                <button class="text-green-600 hover:text-green-900 text-sm" onclick="editUser({{ $user->id }})" title="Edit User">
-                                    <i class="fas fa-edit"></i>
+                        <td class="px-3 lg:px-6 py-3 md:py-4 whitespace-nowrap text-sm text-gray-500 hidden lg:table-cell">{{ $user->created_at->format('d M Y') }}</td>
+                        <td class="px-3 lg:px-6 py-3 md:py-4 whitespace-nowrap text-sm font-medium">
+                            <div class="flex space-x-1 md:space-x-2">
+                                <button class="text-green-600 hover:text-green-900 p-1 md:p-0" onclick="editUser({{ $user->id }})" title="Edit User">
+                                    <i class="fas fa-edit text-sm md:text-base"></i>
                                 </button>
-                                <button class="text-green-600 hover:text-green-900 text-sm" onclick="changePassword({{ $user->id }})" title="Ubah Password">
-                                    <i class="fas fa-key"></i>
+                                <button class="text-green-600 hover:text-green-900 p-1 md:p-0" onclick="changePassword({{ $user->id }})" title="Ubah Password">
+                                    <i class="fas fa-key text-sm md:text-base"></i>
                                 </button>
-                                <button class="text-green-600 hover:text-green-900 text-sm" onclick="changeRole({{ $user->id }})" title="Ubah Role">
-                                    <i class="fas fa-user-tag"></i>
+                                <button class="text-green-600 hover:text-green-900 p-1 md:p-0" onclick="changeRole({{ $user->id }})" title="Ubah Role">
+                                    <i class="fas fa-user-tag text-sm md:text-base"></i>
                                 </button>
                                 @if($user->id !== auth()->id())
-                                <button class="text-red-600 hover:text-red-900 text-sm" onclick="deleteUser({{ $user->id }})" title="Delete User">
-                                    <i class="fas fa-trash"></i>
+                                <button class="text-red-600 hover:text-red-900 p-1 md:p-0" onclick="deleteUser({{ $user->id }})" title="Delete User">
+                                    <i class="fas fa-trash text-sm md:text-base"></i>
                                 </button>
                                 @endif
                             </div>
@@ -145,35 +181,67 @@
         </div>
 
         <!-- Pagination -->
-        <div class="mt-6 flex items-center justify-between">
-            <div class="text-sm text-gray-700">
+        <div class="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="text-xs sm:text-sm text-gray-700 text-center sm:text-left">
                 Menampilkan <span class="font-medium">1</span> sampai <span class="font-medium">{{ \App\Models\User::count() }}</span> dari <span class="font-medium">{{ \App\Models\User::count() }}</span> hasil
             </div>
             @if(\App\Models\User::count() > 0)
             <div class="flex space-x-2">
-                <button class="px-3 py-2 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-50" disabled>Sebelumnya</button>
-                <button class="px-3 py-2 bg-blue-600 text-white rounded-md text-sm">1</button>
-                <button class="px-3 py-2 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-50" disabled>Selanjutnya</button>
+                <button class="px-2 sm:px-3 py-2 border border-gray-300 rounded-md text-xs sm:text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-50" disabled>Sebelumnya</button>
+                <button class="px-2 sm:px-3 py-2 bg-blue-600 text-white rounded-md text-xs sm:text-sm">1</button>
+                <button class="px-2 sm:px-3 py-2 border border-gray-300 rounded-md text-xs sm:text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-50" disabled>Selanjutnya</button>
             </div>
             @endif
         </div>
 
-        <!-- Action Buttons -->
-        <div class="mt-6 flex justify-end space-x-4">
-            <button class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition flex items-center">
-                <i class="fas fa-user-plus mr-2"></i>
-                Tambah User Baru
-            </button>
-            <button class="bg-green-700 text-white px-6 py-3 rounded-lg hover:bg-green-800 transition flex items-center">
-                <i class="fas fa-download mr-2"></i>
-                Export Data
-            </button>
-            <button class="bg-green-800 text-white px-6 py-3 rounded-lg hover:bg-green-900 transition flex items-center">
-                <i class="fas fa-users mr-2"></i>
-                Kelola Role Massal
-            </button>
+        </div>
         </div>
     </div>
+</div>
+
+<!-- Modal untuk Tambah User -->
+<div id="addUserModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
+            <div class="p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Tambah User Baru</h3>
+                <form method="POST" action="{{ route('admin.users.store') }}">
+                    @csrf
+                    <div class="mb-4">
+                        <label for="addName" class="block text-sm font-medium text-gray-700 mb-2">Nama</label>
+                        <input type="text" id="addName" name="name" value="{{ old('name') }}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" required>
+                        @error('name') <span class="text-red-600 text-sm">{{ $message }}</span> @enderror
+                    </div>
+                    <div class="mb-4">
+                        <label for="addEmail" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                        <input type="email" id="addEmail" name="email" value="{{ old('email') }}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" required>
+                        @error('email') <span class="text-red-600 text-sm">{{ $message }}</span> @enderror
+                    </div>
+                    <div class="mb-4">
+                        <label for="addPassword" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                        <input type="password" id="addPassword" name="password" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" required>
+                        @error('password') <span class="text-red-600 text-sm">{{ $message }}</span> @enderror
+                    </div>
+                    <div class="mb-4">
+                        <label for="addPasswordConfirmation" class="block text-sm font-medium text-gray-700 mb-2">Konfirmasi Password</label>
+                        <input type="password" id="addPasswordConfirmation" name="password_confirmation" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" required>
+                    </div>
+                    <div class="mb-6">
+                        <label for="addRole" class="block text-sm font-medium text-gray-700 mb-2">Role</label>
+                        <select id="addRole" name="role" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" required>
+                            <option value="">Pilih Role</option>
+                            <option value="super_admin" {{ old('role') == 'super_admin' ? 'selected' : '' }}>Super Admin</option>
+                            <option value="supplier" {{ old('role') == 'supplier' ? 'selected' : '' }}>Supplier</option>
+                            <option value="foundation" {{ old('role') == 'foundation' ? 'selected' : '' }}>Foundation</option>
+                        </select>
+                        @error('role') <span class="text-red-600 text-sm">{{ $message }}</span> @enderror
+                    </div>
+                    <div class="flex justify-end space-x-3">
+                        <button type="button" onclick="closeAddUserModal()" class="px-4 py-2 text-gray-700 bg-gray-200 rounded hover:bg-gray-300">Batal</button>
+                        <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Tambah User</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>
@@ -283,6 +351,16 @@
 
 <!-- JavaScript Functions -->
 <script>
+function openAddUserModal() {
+    document.getElementById('addUserModal').classList.remove('hidden');
+}
+
+function closeAddUserModal() {
+    document.getElementById('addUserModal').classList.add('hidden');
+    // Clear form
+    document.getElementById('addUserModal').querySelector('form').reset();
+}
+
 function editUser(userId) {
     document.getElementById('editUserModal').classList.remove('hidden');
     // Implement edit user logic

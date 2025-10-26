@@ -120,7 +120,7 @@
                                     </a>
                                     <a href="{{ route('admin.users') }}" class="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md transition-colors">
                                         <i class="fas fa-user-cog mr-3 text-green-600"></i>
-                                        Manajemen User & Akun
+                                        Manajemen User
                                     </a>
                                 @elseif(auth()->user()->isSupplier())
                                     <a href="{{ route('supplier.dashboard') }}" class="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md transition-colors">
@@ -155,12 +155,6 @@
                                         Keluar
                                     </button>
                                 </form>
-
-                                <!-- Alternative logout link -->
-                                <a href="{{ route('logout.get') }}" class="w-full flex items-center px-3 py-2 text-sm text-blue-600 hover:bg-blue-50 rounded-md transition-colors mt-2">
-                                    <i class="fas fa-sign-out-alt mr-3"></i>
-                                    Keluar (Alternative)
-                                </a>
                             </div>
                         </div>
                     </div>
@@ -176,67 +170,12 @@
                     </div>
                 @endauth
 
-                <!-- Mobile Menu Button -->
-                <button id="mobile-menu-button" class="md:hidden p-2 rounded-lg hover:bg-gray-50 transition-colors">
-                    <i class="fas fa-bars text-gray-600"></i>
+                <!-- Mobile Menu Button for Sidebar -->
+                <button id="mobile-menu-button" class="lg:hidden p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                    <i class="fas fa-bars text-gray-700 text-xl"></i>
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Mobile Menu -->
-    <div id="mobile-menu" class="md:hidden hidden bg-white border-t border-gray-200">
-        <div class="px-4 py-3 space-y-3">
-            @auth
-                <div class="border-t border-gray-200 pt-3">
-                    <div class="flex items-center space-x-3 px-3 py-2">
-                        <div class="flex items-center justify-center w-8 h-8 bg-green-100 text-green-700 rounded-full font-semibold text-sm">
-                            {{ auth()->user()->initials() }}
-                        </div>
-                        <div>
-                            <div class="text-sm font-medium text-gray-900">{{ auth()->user()->name }}</div>
-                            <div class="text-xs text-gray-500">{{ auth()->user()->roles->first()->display_name ?? 'No Role' }}</div>
-                        </div>
-                    </div>
-
-                    <form method="POST" action="{{ route('logout') }}" class="mt-3">
-                        @csrf
-                        <button type="submit" class="w-full flex items-center px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-md transition-colors">
-                            <i class="fas fa-sign-out-alt mr-2"></i>
-                            Keluar
-                        </button>
-                    </form>
-
-                    <!-- Alternative logout link -->
-                    <a href="{{ route('logout.get') }}" class="w-full flex items-center px-3 py-2 text-sm text-blue-600 hover:bg-blue-50 rounded-md transition-colors mt-2">
-                        <i class="fas fa-sign-out-alt mr-2"></i>
-                        Keluar (Alternative)
-                    </a>
-                </div>
-            @else
-                <div class="border-t border-gray-200 pt-3 space-y-2">
-                    <a href="{{ route('login') }}" class="block px-3 py-2 text-gray-700 hover:text-green-600 transition-colors font-medium">
-                        Masuk
-                    </a>
-                    <a href="{{ route('register') }}" class="block px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium text-center">
-                        Daftar
-                    </a>
-                </div>
-            @endauth
-        </div>
-    </div>
 </header>
-
-<!-- JavaScript for Mobile Menu -->
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const mobileMenuButton = document.getElementById('mobile-menu-button');
-    const mobileMenu = document.getElementById('mobile-menu');
-
-    if (mobileMenuButton && mobileMenu) {
-        mobileMenuButton.addEventListener('click', function() {
-            mobileMenu.classList.toggle('hidden');
-        });
-    }
-});
-</script>

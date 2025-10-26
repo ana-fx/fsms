@@ -3,8 +3,13 @@
 @section('title', 'Permintaan Bahan Makanan')
 
 @section('content')
-<div class="min-h-screen bg-gray-50 py-8">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex min-h-screen">
+    @include('foundation.partials.sidebar')
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col lg:ml-64 min-h-screen">
+        <div class="flex-1 bg-gray-100">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <!-- Header -->
         <div class="mb-8">
             <div class="flex items-center justify-between">
@@ -187,6 +192,8 @@
                     </a>
                 </div>
             @endif
+        </div>
+        </div>
         </div>
     </div>
 </div>

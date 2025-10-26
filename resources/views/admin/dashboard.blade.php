@@ -7,12 +7,12 @@
     @include('admin.partials.sidebar')
 
     <!-- Main Content -->
-    <div class="flex-1 overflow-y-auto ml-64">
+    <div class="flex-1 overflow-y-auto lg:ml-64">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <!-- Header -->
     <div class="mb-8">
-        <h1 class="text-3xl font-bold text-gray-900">Dashboard Super Admin</h1>
-        <p class="text-gray-600 mt-2">Kelola seluruh sistem pasokan bahan makanan dan tentukan harga maksimal</p>
+        <h1 class="text-2xl lg:text-3xl font-bold text-gray-900">Dashboard Super Admin</h1>
+        <p class="text-sm lg:text-base text-gray-600 mt-2">Kelola seluruh sistem pasokan bahan makanan dan tentukan harga maksimal</p>
     </div>
 
     <!-- Stats Cards -->
