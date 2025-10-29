@@ -3,15 +3,17 @@
 <head>
     @include('partials.head')
 </head>
-<body class="bg-gray-50">
-    <div class="flex flex-col">
+<body class="bg-gray-50 overflow-x-hidden">
+    <div class="flex flex-col min-h-screen w-full">
         @include('partials.header')
         <!-- Main Content -->
-        <main class="flex-1">
+        <main class="flex-1 flex flex-col">
             @yield('content')
         </main>
 
-        @include('partials.footer')
+        <div class="mt-auto">
+            @include('partials.footer')
+        </div>
     </div>
 
     @yield('scripts')

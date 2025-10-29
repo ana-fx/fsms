@@ -1,5 +1,5 @@
 <!-- Admin Sidebar -->
-<div id="sidebar" class="absolute top-0 left-0 bottom-0 z-[60] w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out -translate-x-full lg:relative lg:translate-x-0 overflow-y-auto" style="max-height: 100vh;">
+<div id="sidebar" class="fixed top-0 left-0 bottom-0 z-[60] w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out -translate-x-full lg:translate-x-0 flex flex-col" style="height: 100vh; overflow-y: auto; scrollbar-width: thin;">
     <!-- Logo Section -->
     <div class="p-6 border-b border-gray-200">
         <div class="flex items-center justify-between">
@@ -33,7 +33,7 @@
     </div>
 
     <!-- Navigation Menu -->
-    <nav class="mt-6">
+    <nav class="mt-6 flex-1 overflow-y-auto">
         <div class="px-4 space-y-2">
             <!-- Dashboard -->
             <a href="{{ route('admin.dashboard') }}"
@@ -170,7 +170,7 @@
     </nav>
 
     <!-- Logout Section -->
-    <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 bg-gray-50">
+    <div class="mt-auto p-4 border-t border-gray-200 bg-gray-50 flex-shrink-0">
         <form method="POST" action="{{ route('logout') }}">
             @csrf
             <button type="submit" class="w-full flex items-center px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors">

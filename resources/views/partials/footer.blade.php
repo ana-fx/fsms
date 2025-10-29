@@ -1,6 +1,7 @@
 <!-- Modern Footer -->
 @php
-    $customerRoutes = [
+    $sidebarRoutes = [
+        // Customer routes
         'customer.products',
         'customer.dashboard',
         'customer.programs',
@@ -8,12 +9,23 @@
         'customer.requests.index',
         'customer.requests.create',
         'customer.requests.show',
-        'customer.requests.edit'
+        'customer.requests.edit',
+        // Admin routes
+        'admin.dashboard',
+        'admin.users',
+        'admin.max-price',
+        // Supplier routes
+        'supplier.dashboard',
+        'supplier.products'
     ];
     $currentRoute = request()->route() ? request()->route()->getName() : null;
-    $isCustomerPage = $currentRoute && (in_array($currentRoute, $customerRoutes) || str_starts_with($currentRoute, 'customer.requests.'));
+    $hasSidebar = $currentRoute && (
+        in_array($currentRoute, $sidebarRoutes) || 
+        str_starts_with($currentRoute, 'customer.requests.') ||
+        str_starts_with($currentRoute, 'admin.')
+    );
 @endphp
-<footer class="bg-gray-900 text-white {{ $isCustomerPage ? 'lg:ml-64' : '' }}">
+<footer class="bg-gray-900 text-white w-full {{ $hasSidebar ? 'lg:ml-64' : '' }} transition-all duration-300">
     <!-- Main Footer Content -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">

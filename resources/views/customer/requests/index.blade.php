@@ -3,11 +3,16 @@
 @section('title', 'Permintaan Bahan Makanan')
 
 @section('content')
-<div class="flex">
+<div class="flex bg-gray-100 min-h-screen w-full overflow-x-hidden">
     @include('customer.partials.sidebar')
 
+    <!-- Mobile Menu Button -->
+    <button id="openSidebar" class="lg:hidden fixed top-4 left-4 z-50 p-2 bg-white rounded-lg shadow-lg hover:bg-gray-100 transition-colors">
+        <i class="fas fa-bars text-gray-700 text-xl"></i>
+    </button>
+
     <!-- Main Content -->
-    <div class="flex-1 flex flex-col lg:ml-64">
+    <div class="w-full lg:ml-64 transition-all duration-300">
         <div class="flex-1 bg-gray-100">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <!-- Header -->

@@ -1,6 +1,7 @@
 <!-- Modern Header -->
 @php
     $hideHeaderRoutes = [
+        // Customer routes
         'customer.products',
         'customer.dashboard',
         'customer.programs',
@@ -8,10 +9,28 @@
         'customer.requests.index',
         'customer.requests.create',
         'customer.requests.show',
-        'customer.requests.edit'
+        'customer.requests.edit',
+        // Admin routes
+        'admin.dashboard',
+        'admin.users',
+        'admin.users.store',
+        'admin.users.update',
+        'admin.users.destroy',
+        'admin.users.change-password',
+        'admin.users.change-role',
+        'admin.max-price',
+        'admin.max-price.store',
+        'admin.max-price.update',
+        // Supplier routes
+        'supplier.dashboard',
+        'supplier.products'
     ];
     $currentRoute = request()->route() ? request()->route()->getName() : null;
-    $shouldHideHeader = $currentRoute && (in_array($currentRoute, $hideHeaderRoutes) || str_starts_with($currentRoute, 'customer.requests.'));
+    $shouldHideHeader = $currentRoute && (
+        in_array($currentRoute, $hideHeaderRoutes) ||
+        str_starts_with($currentRoute, 'customer.requests.') ||
+        str_starts_with($currentRoute, 'admin.')
+    );
 @endphp
 @if(!$shouldHideHeader)
 <header class="bg-white shadow-lg border-b border-gray-200 sticky top-0 z-50">

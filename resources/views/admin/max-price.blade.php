@@ -7,11 +7,16 @@
     $categories = \App\Models\FoodCategory::with('maxPriceSetting')->get();
 @endphp
 
-<div class="flex min-h-screen">
+<div class="flex bg-gray-100 min-h-screen w-full overflow-x-hidden">
     @include('admin.partials.sidebar')
 
+    <!-- Mobile Menu Button -->
+    <button id="openSidebar" class="lg:hidden fixed top-4 left-4 z-50 p-2 bg-white rounded-lg shadow-lg hover:bg-gray-100 transition-colors">
+        <i class="fas fa-bars text-gray-700 text-xl"></i>
+    </button>
+
     <!-- Main Content -->
-    <div class="flex-1 flex flex-col lg:ml-64 min-h-screen">
+    <div class="w-full lg:ml-64 transition-all duration-300">
         <div class="flex-1 bg-gray-100">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <!-- Header -->
@@ -105,7 +110,7 @@
 
 <!-- Modal untuk Edit Max Price -->
 <div id="editPriceModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
-    <div class="flex items-center justify-center min-h-screen p-4">
+    <div class="flex items-center justify-center p-4">
         <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
             <div class="p-6">
                 <h3 class="text-lg font-semibold text-gray-900 mb-4">Set Harga Maksimal</h3>
