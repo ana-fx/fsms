@@ -1,5 +1,19 @@
 <!-- Modern Footer -->
-<footer class="bg-gray-900 text-white">
+@php
+    $customerRoutes = [
+        'customer.products',
+        'customer.dashboard',
+        'customer.programs',
+        'customer.cart',
+        'customer.requests.index',
+        'customer.requests.create',
+        'customer.requests.show',
+        'customer.requests.edit'
+    ];
+    $currentRoute = request()->route() ? request()->route()->getName() : null;
+    $isCustomerPage = $currentRoute && (in_array($currentRoute, $customerRoutes) || str_starts_with($currentRoute, 'customer.requests.'));
+@endphp
+<footer class="bg-gray-900 text-white {{ $isCustomerPage ? 'lg:ml-64' : '' }}">
     <!-- Main Footer Content -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -161,8 +175,8 @@
     </div>
 
     <!-- Back to Top Button -->
-    <button id="back-to-top" class="fixed bottom-6 right-6 bg-green-600 text-white p-3 rounded-full shadow-lg hover:bg-green-700 transition-all duration-300 opacity-0 invisible z-50">
-        <i class="fas fa-arrow-up"></i>
+    <button id="back-to-top" class="fixed bottom-6 right-6 bg-green-600 text-white p-2 rounded-full shadow-lg hover:bg-green-700 transition-all duration-300 opacity-0 invisible z-50 w-10 h-10 flex items-center justify-center">
+        <i class="fas fa-arrow-up text-sm"></i>
     </button>
 </footer>
 

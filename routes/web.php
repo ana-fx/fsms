@@ -1,13 +1,26 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 use Laravel\Fortify\Features;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\MaxPriceController;
+use App\Http\Controllers\Customer\ShopController;
+use App\Http\Controllers\Customer\CartController;
 
 Route::get('/', function () {
+    if (Auth::check()) {
+        $user = Auth::user();
+        if ($user->isCustomer()) {
+            return redirect()->route('customer.products');
+        } elseif ($user->isSupplier()) {
+            return redirect()->route('supplier.dashboard');
+        } elseif ($user->isSuperAdmin()) {
+            return redirect()->route('admin.dashboard');
+        }
+    }
     return view('home');
 })->name('home');
 
@@ -62,13 +75,24 @@ Route::middleware(['auth', 'role:supplier'])->group(function () {
 });
 
 Route::middleware(['auth', 'role:customer'])->group(function () {
+    // Products - Main page for customers
+    Route::get('/customer/products', [ShopController::class, 'index'])->name('customer.products');
+
     Route::get('/customer', function () {
-        return view('customer.dashboard', ['title' => 'Customer Dashboard']);
+        return redirect()->route('customer.products');
     })->name('customer.dashboard');
 
     Route::get('/customer/programs', function () {
         return view('customer.programs', ['title' => 'Manage Programs']);
     })->name('customer.programs');
+
+    // Cart Routes
+    Route::get('/customer/cart', [CartController::class, 'index'])->name('customer.cart');
+    Route::post('/customer/cart/add', [CartController::class, 'add'])->name('customer.cart.add');
+    Route::put('/customer/cart/update/{itemId}', [CartController::class, 'update'])->name('customer.cart.update');
+    Route::delete('/customer/cart/remove/{itemId}', [CartController::class, 'remove'])->name('customer.cart.remove');
+    Route::delete('/customer/cart/clear', [CartController::class, 'clear'])->name('customer.cart.clear');
+    Route::get('/customer/cart/count', [CartController::class, 'getCount'])->name('customer.cart.count');
 
     // Food Requests Routes
     Route::resource('customer/requests', \App\Http\Controllers\Customer\FoodRequestController::class)

@@ -3,7 +3,7 @@
 @section('title', 'Dashboard Customer - FSMS')
 
 @section('content')
-<div class="flex min-h-screen bg-gray-100">
+<div class="flex bg-gray-100">
     @include('customer.partials.sidebar')
 
     <!-- Main Content -->

@@ -3,11 +3,11 @@
 @section('title', 'Buat Permintaan Baru')
 
 @section('content')
-<div class="flex min-h-screen">
+<div class="flex">
     @include('customer.partials.sidebar')
 
     <!-- Main Content -->
-    <div class="flex-1 flex flex-col lg:ml-64 min-h-screen">
+    <div class="flex-1 flex flex-col lg:ml-64">
         <div class="flex-1 bg-gray-100">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <!-- Header -->

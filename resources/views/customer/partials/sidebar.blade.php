@@ -1,5 +1,5 @@
 <!-- Customer Sidebar -->
-<div id="sidebar" class="absolute top-0 left-0 bottom-0 z-[60] w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out -translate-x-full lg:relative lg:translate-x-0 overflow-y-auto" style="max-height: 100vh;">
+<div id="sidebar" class="fixed top-0 left-0 bottom-0 z-[60] w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out -translate-x-full lg:translate-x-0 flex flex-col" style="height: 100vh; overflow-y: auto; scrollbar-width: thin;">
     <!-- Logo Section -->
     <div class="p-6 border-b border-gray-200">
         <div class="flex items-center justify-between">
@@ -33,8 +33,30 @@
     </div>
 
     <!-- Navigation Menu -->
-    <nav class="mt-6">
+    <nav class="mt-6 flex-1 overflow-y-auto">
         <div class="px-4 space-y-2">
+            <!-- Product -->
+            <a href="{{ route('customer.products') }}"
+               class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('customer.products') ? 'bg-green-100 text-green-700 border-r-2 border-green-600' : 'text-gray-700 hover:bg-gray-100 hover:text-green-600' }}">
+                <i class="fas fa-box mr-3 text-lg"></i>
+                Product
+            </a>
+
+            <!-- Cart -->
+            <a href="{{ route('customer.cart') }}"
+               class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('customer.cart') ? 'bg-green-100 text-green-700 border-r-2 border-green-600' : 'text-gray-700 hover:bg-gray-100 hover:text-green-600' }}">
+                <i class="fas fa-shopping-cart mr-3 text-lg"></i>
+                Keranjang
+                @php
+                    $cartCount = array_sum(array_column(session('cart', []), 'quantity'));
+                @endphp
+                @if($cartCount > 0)
+                    <span id="cart-badge" class="ml-auto bg-green-600 text-white text-xs font-semibold px-2 py-1 rounded-full">{{ $cartCount }}</span>
+                @else
+                    <span id="cart-badge" class="hidden ml-auto bg-green-600 text-white text-xs font-semibold px-2 py-1 rounded-full">0</span>
+                @endif
+            </a>
+
             <!-- Dashboard -->
             <a href="{{ route('customer.dashboard') }}"
                class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('customer.dashboard') ? 'bg-green-100 text-green-700 border-r-2 border-green-600' : 'text-gray-700 hover:bg-gray-100 hover:text-green-600' }}">
@@ -83,7 +105,7 @@
     </nav>
 
     <!-- Logout Section -->
-    <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 bg-gray-50">
+    <div class="mt-auto p-4 border-t border-gray-200 bg-gray-50 flex-shrink-0">
         <form method="POST" action="{{ route('logout') }}">
             @csrf
             <button type="submit" class="w-full flex items-center px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors">
