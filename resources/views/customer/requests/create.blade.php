@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Buat Permintaan Baru')
+@section('title', 'Create New Request')
 
 @section('content')
 <div class="flex bg-gray-100 min-h-screen w-full overflow-x-hidden">
@@ -22,8 +22,8 @@
                     <i class="fas fa-arrow-left text-xl"></i>
                 </a>
                 <div>
-                    <h1 class="text-3xl font-bold text-gray-900">Buat Permintaan Baru</h1>
-                    <p class="mt-2 text-gray-600">Ajukan permintaan bahan makanan untuk program</p>
+                    <h1 class="text-3xl font-bold text-gray-900">Create New Request</h1>
+                    <p class="mt-2 text-gray-600">Submit ingredient requests for programs</p>
                 </div>
             </div>
         </div>
@@ -54,11 +54,11 @@
                 <!-- Title -->
                 <div class="mb-6">
                     <label for="title" class="block text-sm font-medium text-gray-700 mb-2">
-                        Judul Permintaan <span class="text-red-500">*</span>
+                        Request Title <span class="text-red-500">*</span>
                     </label>
                     <input type="text" name="title" id="title" value="{{ old('title') }}"
                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                           placeholder="Contoh: Permintaan Beras untuk Program Makan Siang" required>
+                           placeholder="Example: Rice request for Lunch Program" required>
                     @error('title')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -71,7 +71,7 @@
                     </label>
                     <textarea name="description" id="description" rows="4"
                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                              placeholder="Jelaskan detail permintaan bahan makanan...">{{ old('description') }}</textarea>
+                              placeholder="Describe the ingredient request details...">{{ old('description') }}</textarea>
                     @error('description')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -147,7 +147,7 @@
                     <button type="submit"
                             class="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold">
                         <i class="fas fa-paper-plane mr-2"></i>
-                        Ajukan Permintaan
+                        Submit Request
                     </button>
                 </div>
             </form>

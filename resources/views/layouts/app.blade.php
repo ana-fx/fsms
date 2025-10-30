@@ -4,7 +4,7 @@
     @include('partials.head')
 </head>
 <body class="bg-gray-50 overflow-x-hidden">
-    <div class="flex flex-col min-h-screen w-full">
+    <div class="flex flex-col w-full">
         @include('partials.header')
         <!-- Main Content -->
         <main class="flex-1 flex flex-col">

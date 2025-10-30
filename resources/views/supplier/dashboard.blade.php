@@ -18,7 +18,7 @@
     <!-- Header -->
     <div class="mb-8">
         <h1 class="text-3xl font-bold text-gray-900">Dashboard Supplier</h1>
-        <p class="text-gray-600 mt-2">Kelola produk Anda dan terima pesanan dari admin</p>
+        <p class="text-gray-600 mt-2">Manage your ingredients and receive orders from admin</p>
     </div>
 
     <!-- Stats Cards -->
@@ -29,7 +29,7 @@
                     <i class="fas fa-box text-xl"></i>
                 </div>
                 <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-600">Total Produk</p>
+                    <p class="text-sm font-medium text-gray-600">Total Ingredients</p>
                     <p class="text-2xl font-semibold text-gray-900">0</p>
                 </div>
             </div>
@@ -76,12 +76,12 @@
     <div class="bg-white rounded-lg shadow-md p-6 mb-8">
         <div class="flex justify-between items-center mb-6">
             <h2 class="text-xl font-semibold text-gray-900">Order Aktif</h2>
-            <a href="#" class="text-green-600 hover:text-green-800 text-sm font-medium">Lihat Semua</a>
+            <a href="#" class="text-green-600 hover:text-green-800 text-sm font-medium">View All</a>
         </div>
 
         <div class="text-center py-12">
             <i class="fas fa-shopping-cart text-4xl text-gray-400 mb-4"></i>
-            <h3 class="text-lg font-medium text-gray-900 mb-2">Belum ada order</h3>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">No orders yet</h3>
             <p class="text-gray-500">Tidak ada order aktif saat ini</p>
         </div>
     </div>
@@ -89,17 +89,17 @@
     <!-- Product Management -->
     <div class="bg-white rounded-lg shadow-md p-6">
         <div class="flex justify-between items-center mb-6">
-            <h2 class="text-xl font-semibold text-gray-900">Kelola Produk</h2>
-            <button class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 text-sm">Tambah Produk</button>
+            <h2 class="text-xl font-semibold text-gray-900">Manage Ingredients</h2>
+            <button class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 text-sm">Add Ingredient</button>
         </div>
 
         <div class="text-center py-12">
             <i class="fas fa-box text-4xl text-gray-400 mb-4"></i>
-            <h3 class="text-lg font-medium text-gray-900 mb-2">Belum ada produk</h3>
-            <p class="text-gray-500 mb-6">Mulai tambahkan produk pertama Anda</p>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">No ingredients yet</h3>
+            <p class="text-gray-500 mb-6">Start by adding your first ingredient</p>
             <button class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold">
                 <i class="fas fa-plus mr-2"></i>
-                Tambah Produk
+                Add Ingredient
             </button>
         </div>
     </div>

@@ -2,7 +2,7 @@
 @php
     $sidebarRoutes = [
         // Customer routes
-        'customer.products',
+        'customer.ingredients',
         'customer.dashboard',
         'customer.programs',
         'customer.cart',
@@ -16,7 +16,7 @@
         'admin.max-price',
         // Supplier routes
         'supplier.dashboard',
-        'supplier.products'
+        'supplier.ingredients'
     ];
     $currentRoute = request()->route() ? request()->route()->getName() : null;
     $hasSidebar = $currentRoute && (
@@ -25,7 +25,7 @@
         str_starts_with($currentRoute, 'admin.')
     );
 @endphp
-<footer class="bg-gray-900 text-white w-full {{ $hasSidebar ? 'lg:ml-64' : '' }} transition-all duration-300">
+<footer class="bg-gray-900 text-white w-full {{ $hasSidebar ? 'lg:pl-64' : '' }} transition-all duration-300">
     <!-- Main Footer Content -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -41,7 +41,7 @@
                     </div>
                 </div>
                 <p class="text-gray-300 text-sm leading-relaxed">
-                    Sistem manajemen pasokan bahan makanan yang menghubungkan customer, admin, dan supplier untuk memastikan distribusi makanan yang efisien dan transparan.
+                    A food supply management system connecting customers, admins, and suppliers to ensure efficient and transparent distribution.
                 </p>
                 <div class="flex space-x-4">
                     <a href="#" class="text-gray-400 hover:text-green-400 transition-colors">
@@ -61,7 +61,7 @@
 
             <!-- Quick Links -->
             <div class="space-y-4">
-                <h4 class="text-lg font-semibold text-white">Menu Cepat</h4>
+                <h4 class="text-lg font-semibold text-white">Quick Links</h4>
                 <ul class="space-y-2">
                     @auth
                         @if(auth()->user()->isSuperAdmin())
@@ -72,7 +72,7 @@
                             </li>
                             <li>
                                 <a href="{{ route('admin.users') }}" class="text-gray-300 hover:text-green-400 transition-colors text-sm">
-                                    <i class="fas fa-user-cog mr-2"></i>Manajemen User
+                                    <i class="fas fa-user-cog mr-2"></i>User Management
                                 </a>
                             </li>
                         @elseif(auth()->user()->isSupplier())
@@ -82,8 +82,8 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="{{ route('supplier.products') }}" class="text-gray-300 hover:text-green-400 transition-colors text-sm">
-                                    <i class="fas fa-box mr-2"></i>Kelola Produk
+                                <a href="{{ route('supplier.ingredients') }}" class="text-gray-300 hover:text-green-400 transition-colors text-sm">
+                                    <i class="fas fa-box mr-2"></i>Manage Ingredients
                                 </a>
                             </li>
                         @elseif(auth()->user()->isCustomer())
@@ -94,19 +94,19 @@
                             </li>
                             <li>
                                 <a href="{{ route('customer.programs') }}" class="text-gray-300 hover:text-green-400 transition-colors text-sm">
-                                    <i class="fas fa-project-diagram mr-2"></i>Kelola Program
+                                    <i class="fas fa-project-diagram mr-2"></i>Manage Programs
                                 </a>
                             </li>
                         @endif
                     @else
                         <li>
                             <a href="{{ route('login') }}" class="text-gray-300 hover:text-green-400 transition-colors text-sm">
-                                <i class="fas fa-sign-in-alt mr-2"></i>Masuk
+                                <i class="fas fa-sign-in-alt mr-2"></i>Login
                             </a>
                         </li>
                         <li>
                             <a href="{{ route('register') }}" class="text-gray-300 hover:text-green-400 transition-colors text-sm">
-                                <i class="fas fa-user-plus mr-2"></i>Daftar
+                                <i class="fas fa-user-plus mr-2"></i>Register
                             </a>
                         </li>
                     @endauth
@@ -115,46 +115,46 @@
 
             <!-- Features -->
             <div class="space-y-4">
-                <h4 class="text-lg font-semibold text-white">Fitur Sistem</h4>
+                <h4 class="text-lg font-semibold text-white">System Features</h4>
                 <ul class="space-y-2">
                     <li class="text-gray-300 text-sm">
                         <i class="fas fa-check-circle text-green-400 mr-2"></i>
-                        Manajemen Role & Akses
+                        Role & Access Management
                     </li>
                     <li class="text-gray-300 text-sm">
                         <i class="fas fa-check-circle text-green-400 mr-2"></i>
-                        Tracking Permintaan
+                        Request Tracking
                     </li>
                     <li class="text-gray-300 text-sm">
                         <i class="fas fa-check-circle text-green-400 mr-2"></i>
-                        Laporan Real-time
+                        Real-time Reports
                     </li>
                     <li class="text-gray-300 text-sm">
                         <i class="fas fa-check-circle text-green-400 mr-2"></i>
-                        Notifikasi Otomatis
+                        Automated Notifications
                     </li>
                     <li class="text-gray-300 text-sm">
                         <i class="fas fa-check-circle text-green-400 mr-2"></i>
-                        Dashboard Interaktif
+                        Interactive Dashboard
                     </li>
                 </ul>
             </div>
 
             <!-- Contact Info -->
             <div class="space-y-4">
-                <h4 class="text-lg font-semibold text-white">Kontak</h4>
+                <h4 class="text-lg font-semibold text-white">Contact</h4>
                 <div class="space-y-3">
                     <div class="flex items-start space-x-3">
                         <i class="fas fa-map-marker-alt text-green-400 mt-1"></i>
                         <div>
-                            <p class="text-gray-300 text-sm">Alamat</p>
+                            <p class="text-gray-300 text-sm">Address</p>
                             <p class="text-gray-400 text-xs">Jl. Teknologi No. 123<br>Jakarta Selatan, Indonesia</p>
                         </div>
                     </div>
                     <div class="flex items-start space-x-3">
                         <i class="fas fa-phone text-green-400 mt-1"></i>
                         <div>
-                            <p class="text-gray-300 text-sm">Telepon</p>
+                            <p class="text-gray-300 text-sm">Phone</p>
                             <p class="text-gray-400 text-xs">+62 21 1234 5678</p>
                         </div>
                     </div>

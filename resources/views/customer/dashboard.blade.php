@@ -18,7 +18,7 @@
     <!-- Header -->
     <div class="mb-8">
         <h1 class="text-3xl font-bold text-gray-900">Dashboard Customer</h1>
-        <p class="text-gray-600 mt-2">Kelola permintaan bahan makanan untuk program Anda</p>
+        <p class="text-gray-600 mt-2">Manage ingredient requests for your programs</p>
     </div>
 
     <!-- Stats Cards -->
@@ -76,16 +76,16 @@
     <div class="bg-white rounded-lg shadow-md p-6">
         <div class="flex justify-between items-center mb-6">
             <h2 class="text-xl font-semibold text-gray-900">Request Terbaru</h2>
-            <a href="{{ route('customer.requests.index') }}" class="text-green-600 hover:text-green-800 text-sm font-medium">Lihat Semua</a>
+            <a href="{{ route('customer.requests.index') }}" class="text-green-600 hover:text-green-800 text-sm font-medium">View All</a>
         </div>
 
         <div class="text-center py-12">
             <i class="fas fa-inbox text-4xl text-gray-400 mb-4"></i>
-            <h3 class="text-lg font-medium text-gray-900 mb-2">Belum ada permintaan</h3>
-            <p class="text-gray-500 mb-6">Mulai buat permintaan bahan makanan pertama Anda</p>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">No requests yet</h3>
+            <p class="text-gray-500 mb-6">Start by creating your first ingredient request</p>
             <a href="{{ route('customer.requests.create') }}" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold">
                 <i class="fas fa-plus mr-2"></i>
-                Buat Permintaan Baru
+                Create New Request
             </a>
         </div>
     </div>

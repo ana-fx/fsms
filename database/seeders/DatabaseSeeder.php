@@ -22,8 +22,8 @@ class DatabaseSeeder extends Seeder
         // Seed users
         $this->call(UserSeeder::class);
 
-        // Seed products for suppliers
-        $this->call(ProductSeeder::class);
+        // Seed ingredients for suppliers
+        $this->call(IngredientSeeder::class);
 
         // Seed max price settings
         $this->call(MaxPriceSettingSeeder::class);

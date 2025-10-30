@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Product - Pilih Produk - FSMS')
+@section('title', 'Ingredients - FSMS')
 
 @section('content')
 <div class="flex bg-gray-100 min-h-screen w-full overflow-x-hidden">
@@ -17,8 +17,8 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <!-- Header -->
                 <div class="mb-8">
-                    <h1 class="text-3xl font-bold text-gray-900">Product - Pilih Produk</h1>
-                    <p class="text-gray-600 mt-2">Pilih produk bahan makanan yang tersedia</p>
+                    <h1 class="text-3xl font-bold text-gray-900">Ingredients</h1>
+                    <p class="text-gray-600 mt-2">Choose available ingredients</p>
                 </div>
 
                 <!-- Search and Filter Section -->
@@ -31,7 +31,7 @@
                                        id="searchInput"
                                        name="search"
                                        value="{{ request('search') }}"
-                                       placeholder="Cari produk..."
+                                       placeholder="Search ingredients..."
                                        autocomplete="off"
                                        class="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
                                 <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
@@ -46,7 +46,7 @@
                             <select id="categorySelect"
                                     name="category"
                                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
-                                <option value="">Semua Kategori</option>
+                                <option value="">All Categories</option>
                                 @foreach($categories as $category)
                                     <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>
                                         {{ $category->name }}
@@ -70,7 +70,7 @@
                         @if($products->count() > 0)
                             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                 @foreach($products as $product)
-                                    @include('customer.partials.product-card', ['product' => $product])
+                                    @include('customer.partials.ingredient-card', ['product' => $product])
                                 @endforeach
                             </div>
 
@@ -82,17 +82,17 @@
                             <!-- Empty State -->
                             <div class="text-center py-12">
                                 <i class="fas fa-box-open text-5xl text-gray-400 mb-4"></i>
-                                <h3 class="text-xl font-medium text-gray-900 mb-2">Produk tidak ditemukan</h3>
+                                <h3 class="text-xl font-medium text-gray-900 mb-2">No ingredients found</h3>
                                 <p class="text-gray-500 mb-6" id="emptyMessage">
                                     @if(request('search') || request('category'))
-                                        Coba gunakan kata kunci atau filter yang berbeda
+                                        Try different keywords or filters
                                     @else
-                                        Belum ada produk yang tersedia saat ini
+                                        No ingredients available yet
                                     @endif
                                 </p>
                                 @if(request('search') || request('category'))
                                     <button onclick="clearSearch()" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold">
-                                        <i class="fas fa-arrow-left mr-2"></i>Lihat Semua Produk
+                                        <i class="fas fa-arrow-left mr-2"></i>View All Ingredients
                                     </button>
                                 @endif
                             </div>
@@ -152,7 +152,7 @@ function addToCart(productId) {
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('Terjadi kesalahan saat menambahkan ke keranjang');
+        alert('An error occurred while adding to the cart');
     });
 }
 
@@ -205,7 +205,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         // Prepare URL
-        const url = new URL('{{ route("customer.products") }}', window.location.origin);
+        const url = new URL('{{ route("customer.ingredients") }}', window.location.origin);
         if (search) url.searchParams.set('search', search);
         if (category) url.searchParams.set('category', category);
         url.searchParams.set('ajax', '1');

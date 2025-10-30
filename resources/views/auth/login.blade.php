@@ -1,31 +1,44 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - FoodSupply Management System</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        .gradient-bg {
-            background: linear-gradient(135deg, #065f46 0%, #047857 100%);
-        }
-    </style>
-</head>
-<body class="bg-gray-50 min-h-screen flex items-center justify-center">
-    <div class="max-w-md w-full mx-4">
-        <!-- Logo dan Header -->
-        <div class="text-center mb-8">
-            <div class="flex items-center justify-center mb-4">
-                <i class="fas fa-utensils text-4xl text-green-700 mr-3"></i>
-                <span class="text-3xl font-bold text-gray-900">FSMS</span>
-            </div>
-            <h1 class="text-2xl font-semibold text-gray-800">FoodSupply Management System</h1>
-            <p class="text-gray-600 mt-2">Masuk ke akun Anda</p>
-        </div>
+@extends('layouts.app')
 
-        <!-- Login Form -->
-        <div class="bg-white rounded-lg shadow-lg p-8">
+@section('title', 'Login - FSMS')
+
+@section('content')
+<div class="bg-gray-50 min-h-screen w-full overflow-x-hidden">
+    <div class="max-w-6xl w-full mx-auto py-10 px-4">
+        <div class="bg-white rounded-2xl shadow-xl grid grid-cols-1 lg:grid-cols-2 overflow-hidden">
+            <!-- Left Visual Panel (Desktop only) -->
+            <div class="hidden lg:block relative">
+                <div class="absolute inset-0" style="background: linear-gradient(135deg, #0f172a 0%, #1f2937 100%);"></div>
+                <img src="https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?q=80&w=1600&auto=format&fit=crop" alt="Fresh ingredients" class="absolute inset-0 w-full h-full object-cover opacity-60">
+                <div class="relative h-full w-full p-8 flex flex-col justify-between text-white">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-utensils text-2xl"></i>
+                            <span class="text-xl font-bold">FSMS</span>
+                        </div>
+                        <a href="{{ route('home') }}" class="px-3 py-1 bg-white/10 hover:bg-white/20 rounded-md text-sm">Back to website</a>
+                    </div>
+                    <div class="mt-auto">
+                        <h2 class="text-2xl font-semibold">Sourcing Ingredients,</h2>
+                        <p class="text-white/80">Nourishing Communities</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Form Panel -->
+            <div class="p-8 lg:p-10">
+                <!-- Logo and Header -->
+                <div class="mb-8">
+                    <div class="flex items-center mb-2">
+                        <i class="fas fa-utensils text-2xl text-green-700 mr-2"></i>
+                        <span class="text-2xl font-bold text-gray-900">FSMS</span>
+                    </div>
+                    <h1 class="text-xl font-semibold text-gray-800">FoodSupply Management System</h1>
+                    <p class="text-gray-600 mt-1">Sign in to your account</p>
+                </div>
+
+                <!-- Login Form -->
+                <div class="bg-white">
             <!-- Session Status -->
             @if (session('status'))
                 <div class="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
@@ -49,8 +62,8 @@
                         required
                         autofocus
                         autocomplete="email"
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent @error('email') border-red-500 @enderror"
-                        placeholder="Masukkan email Anda"
+                        class="w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent {{ $errors->has('email') ? 'border-red-500' : 'border-gray-300' }} border"
+                        placeholder="Enter your email"
                     >
                     @error('email')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -69,8 +82,8 @@
                             name="password"
                             required
                             autocomplete="current-password"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent @error('password') border-red-500 @enderror"
-                            placeholder="Masukkan password Anda"
+                            class="w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent {{ $errors->has('password') ? 'border-red-500' : 'border-gray-300' }} border"
+                            placeholder="Enter your password"
                         >
                         <button type="button" onclick="togglePassword()" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700">
                             <i id="password-icon" class="fas fa-eye"></i>
@@ -91,13 +104,13 @@
                             class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
                         >
                         <label for="remember" class="ml-2 block text-sm text-gray-700">
-                            Ingat saya
+                            Remember me
                         </label>
                     </div>
 
                     @if (Route::has('password.request'))
                         <a href="{{ route('password.request') }}" class="text-sm text-green-600 hover:text-green-800">
-                            Lupa password?
+                            Forgot password?
                         </a>
                     @endif
                 </div>
@@ -107,7 +120,7 @@
                     type="submit"
                     class="w-full bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition duration-200 font-semibold"
                 >
-                    <i class="fas fa-sign-in-alt mr-2"></i>Masuk
+                    <i class="fas fa-sign-in-alt mr-2"></i>Login
                 </button>
             </form>
 
@@ -115,9 +128,9 @@
             @if (Route::has('register'))
                 <div class="mt-6 text-center">
                     <p class="text-sm text-gray-600">
-                        Belum punya akun?
+                        Don't have an account?
                         <a href="{{ route('register') }}" class="text-green-600 hover:text-green-800 font-medium">
-                            Daftar sekarang
+                            Register now
                         </a>
                     </p>
                 </div>
@@ -147,5 +160,6 @@
             }
         }
     </script>
-</body>
-</html>
+    </div>
+</div>
+@endsection

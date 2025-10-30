@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Buat Request Bahan Makanan - FSMS')
+@section('title', 'Create Ingredient Request - FSMS')
 
 @section('content')
 <div class="flex bg-gray-100 min-h-screen w-full overflow-x-hidden">
@@ -17,8 +17,8 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <!-- Header -->
     <div class="mb-8">
-        <h1 class="text-3xl font-bold text-gray-900">Buat Request Bahan Makanan</h1>
-        <p class="text-gray-600 mt-2">Ajukan permintaan bahan makanan untuk program Anda</p>
+        <h1 class="text-3xl font-bold text-gray-900">Create Ingredient Request</h1>
+        <p class="text-gray-600 mt-2">Submit ingredient requests for your programs</p>
     </div>
 
     <!-- Request Form -->
@@ -26,18 +26,18 @@
         <form class="space-y-6">
             <!-- Customer Info -->
             <div class="border-b border-gray-200 pb-6">
-                <h2 class="text-xl font-semibold text-gray-900 mb-4">Informasi Customer</h2>
+                <h2 class="text-xl font-semibold text-gray-900 mb-4">Customer Information</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Nama Customer</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Customer Name</label>
                         <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" value="{{ auth()->user()->name }}" readonly>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Program</label>
                         <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
-                            <option>Program Makan Siang Anak</option>
-                            <option>Program Bantuan Keluarga</option>
-                            <option>Program Dapur Umum</option>
+                            <option>Children Lunch Program</option>
+                            <option>Family Assistance Program</option>
+                            <option>Community Kitchen Program</option>
                         </select>
                     </div>
                 </div>
@@ -46,9 +46,9 @@
             <!-- Food Items -->
             <div class="border-b border-gray-200 pb-6">
                 <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-xl font-semibold text-gray-900">Bahan Makanan</h2>
+                    <h2 class="text-xl font-semibold text-gray-900">Ingredients</h2>
                     <button type="button" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 text-sm">
-                        <i class="fas fa-plus mr-2"></i>Tambah Item
+                        <i class="fas fa-plus mr-2"></i>Add Item
                     </button>
                 </div>
 
@@ -56,7 +56,7 @@
                 <div class="border border-gray-200 rounded-lg p-4 mb-4">
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Nama Bahan</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Ingredient Name</label>
                             <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
                                 <option>Beras Premium</option>
                                 <option>Minyak Goreng</option>
@@ -66,11 +66,11 @@
                             </select>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Jumlah</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Quantity</label>
                             <input type="number" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="50">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Satuan</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Unit</label>
                             <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
                                 <option>kg</option>
                                 <option>liter</option>
@@ -123,43 +123,42 @@
 
             <!-- Additional Info -->
             <div class="border-b border-gray-200 pb-6">
-                <h2 class="text-xl font-semibold text-gray-900 mb-4">Informasi Tambahan</h2>
+                <h2 class="text-xl font-semibold text-gray-900 mb-4">Additional Information</h2>
                 <div class="space-y-4">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Prioritas</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Priority</label>
                         <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
                             <option>Normal</option>
-                            <option>Tinggi</option>
+                            <option>High</option>
                             <option>Urgent</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Dibutuhkan</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Required Date</label>
                         <input type="date" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Catatan Khusus</label>
-                        <textarea rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Masukkan catatan khusus jika ada..."></textarea>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Special Notes</label>
+                        <textarea rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter any special notes..."></textarea>
                     </div>
                 </div>
             </div>
 
             <!-- Budget Info -->
             <div class="bg-blue-50 rounded-lg p-4 mb-6">
-                <h3 class="text-lg font-semibold text-blue-900 mb-2">Informasi Budget</h3>
+                <h3 class="text-lg font-semibold text-blue-900 mb-2">Budget Information</h3>
                 <p class="text-blue-800 text-sm">
-                    Admin akan menentukan harga maksimal untuk setiap bahan makanan berdasarkan budget yang tersedia.
-                    Supplier akan mengajukan harga mereka yang tidak boleh melebihi batas maksimal yang ditentukan admin.
+                    Admin will set a maximum price per ingredient based on the available budget. Suppliers will propose their prices which must not exceed the admin's limit.
                 </p>
             </div>
 
             <!-- Submit Buttons -->
             <div class="flex justify-end space-x-4">
                 <button type="button" class="px-6 py-3 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition">
-                    Simpan Draft
+                    Save Draft
                 </button>
                 <button type="submit" class="px-6 py-3 bg-green-600 text-white rounded-md hover:bg-green-700 transition">
-                    <i class="fas fa-paper-plane mr-2"></i>Kirim Request
+                    <i class="fas fa-paper-plane mr-2"></i>Submit Request
                 </button>
             </div>
         </form>
@@ -167,12 +166,12 @@
 
     <!-- Help Section -->
     <div class="mt-8 bg-gray-50 rounded-lg p-6">
-        <h3 class="text-lg font-semibold text-gray-900 mb-3">Panduan Request</h3>
+        <h3 class="text-lg font-semibold text-gray-900 mb-3">Request Guide</h3>
         <div class="space-y-2 text-sm text-gray-600">
-            <p><i class="fas fa-check-circle text-green-500 mr-2"></i>Pastikan jumlah yang diminta sesuai dengan kebutuhan program</p>
-            <p><i class="fas fa-check-circle text-green-500 mr-2"></i>Berikan catatan khusus jika ada persyaratan khusus</p>
-            <p><i class="fas fa-check-circle text-green-500 mr-2"></i>Request akan diproses oleh admin dalam 1-2 hari kerja</p>
-            <p><i class="fas fa-check-circle text-green-500 mr-2"></i>Anda akan mendapat notifikasi ketika request disetujui atau ditolak</p>
+            <p><i class="fas fa-check-circle text-green-500 mr-2"></i>Ensure requested quantities match program needs</p>
+            <p><i class="fas fa-check-circle text-green-500 mr-2"></i>Add special notes if there are specific requirements</p>
+            <p><i class="fas fa-check-circle text-green-500 mr-2"></i>Requests are processed by admin within 1-2 business days</p>
+            <p><i class="fas fa-check-circle text-green-500 mr-2"></i>You will receive notifications when a request is approved or rejected</p>
         </div>
     </div>
         </div>

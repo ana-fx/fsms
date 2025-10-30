@@ -35,18 +35,18 @@
     <!-- Navigation Menu -->
     <nav class="mt-6 flex-1 overflow-y-auto">
         <div class="px-4 space-y-2">
-            <!-- Product -->
-            <a href="{{ route('customer.products') }}"
-               class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('customer.products') ? 'bg-green-100 text-green-700 border-r-2 border-green-600' : 'text-gray-700 hover:bg-gray-100 hover:text-green-600' }}">
+            <!-- Ingredients -->
+            <a href="{{ route('customer.ingredients') }}"
+               class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('customer.ingredients') ? 'bg-green-100 text-green-700 border-r-2 border-green-600' : 'text-gray-700 hover:bg-gray-100 hover:text-green-600' }}">
                 <i class="fas fa-box mr-3 text-lg"></i>
-                Product
+                Ingredients
             </a>
 
             <!-- Cart -->
             <a href="{{ route('customer.cart') }}"
                class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('customer.cart') ? 'bg-green-100 text-green-700 border-r-2 border-green-600' : 'text-gray-700 hover:bg-gray-100 hover:text-green-600' }}">
                 <i class="fas fa-shopping-cart mr-3 text-lg"></i>
-                Keranjang
+                Cart
                 @php
                     $cartCount = array_sum(array_column(session('cart', []), 'quantity'));
                 @endphp
@@ -70,7 +70,7 @@
                         onclick="toggleSubmenu('requests')">
                     <div class="flex items-center">
                         <i class="fas fa-shopping-cart mr-3 text-lg"></i>
-                        Permintaan Makanan
+                        Food Requests
                     </div>
                     <i class="fas fa-chevron-down text-xs transition-transform" id="requests-arrow"></i>
                 </button>
@@ -78,12 +78,12 @@
                     <a href="{{ route('customer.requests.index') }}"
                        class="block px-4 py-2 text-sm text-gray-600 hover:text-green-600 hover:bg-gray-50 rounded transition-colors {{ request()->routeIs('customer.requests.index') ? 'text-green-600 bg-green-50' : '' }}">
                         <i class="fas fa-list mr-2"></i>
-                        Semua Permintaan
+                        All Requests
                     </a>
                     <a href="{{ route('customer.requests.create') }}"
                        class="block px-4 py-2 text-sm text-gray-600 hover:text-green-600 hover:bg-gray-50 rounded transition-colors {{ request()->routeIs('customer.requests.create') ? 'text-green-600 bg-green-50' : '' }}">
                         <i class="fas fa-plus mr-2"></i>
-                        Buat Permintaan Baru
+                        Create New Request
                     </a>
                 </div>
             </div>
@@ -92,14 +92,14 @@
             <a href="{{ route('customer.programs') }}"
                class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('customer.programs') ? 'bg-green-100 text-green-700 border-r-2 border-green-600' : 'text-gray-700 hover:bg-gray-100 hover:text-green-600' }}">
                 <i class="fas fa-project-diagram mr-3 text-lg"></i>
-                Kelola Program
+                Manage Programs
             </a>
 
             <!-- Settings -->
             <a href="#"
                class="flex items-center px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-green-600 rounded-lg transition-colors">
                 <i class="fas fa-cog mr-3 text-lg"></i>
-                Pengaturan
+                Settings
             </a>
         </div>
     </nav>

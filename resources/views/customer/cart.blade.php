@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Keranjang - FSMS')
+@section('title', 'Cart - FSMS')
 
 @section('content')
 <div class="flex bg-gray-100 min-h-screen w-full overflow-x-hidden">
@@ -17,8 +17,8 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <!-- Header -->
                 <div class="mb-8">
-                    <h1 class="text-3xl font-bold text-gray-900">Keranjang Belanja</h1>
-                    <p class="text-gray-600 mt-2">Review produk yang akan dipesan</p>
+                    <h1 class="text-3xl font-bold text-gray-900">Shopping Cart</h1>
+                    <p class="text-gray-600 mt-2">Review items before checkout</p>
                 </div>
 
                 @if(count($items) > 0)
@@ -81,7 +81,7 @@
                                 <!-- Clear Cart Button -->
                                 <div class="mt-6 pt-6 border-t border-gray-200">
                                     <button onclick="clearCart()" class="text-red-600 hover:text-red-800 text-sm font-medium">
-                                        <i class="fas fa-trash-alt mr-2"></i>Kosongkan Keranjang
+                                        <i class="fas fa-trash-alt mr-2"></i>Clear Cart
                                     </button>
                                 </div>
                             </div>
@@ -95,7 +95,7 @@
                                 <div class="space-y-3 mb-6">
                                     <div class="flex justify-between text-sm">
                                         <span class="text-gray-600">Total Item:</span>
-                                        <span class="font-semibold">{{ count($items) }} produk</span>
+                                        <span class="font-semibold">{{ count($items) }} items</span>
                                     </div>
                                     <div class="flex justify-between text-sm">
                                         <span class="text-gray-600">Total Kuantitas:</span>
@@ -114,7 +114,7 @@
                                     <i class="fas fa-shopping-cart mr-2"></i>Lanjutkan ke Pemesanan
                                 </a>
 
-                                <a href="{{ route('customer.products') }}" class="w-full mt-3 bg-gray-200 text-gray-700 px-4 py-3 rounded-lg hover:bg-gray-300 transition-colors font-semibold text-center block">
+                                <a href="{{ route('customer.ingredients') }}" class="w-full mt-3 bg-gray-200 text-gray-700 px-4 py-3 rounded-lg hover:bg-gray-300 transition-colors font-semibold text-center block">
                                     <i class="fas fa-arrow-left mr-2"></i>Lanjutkan Belanja
                                 </a>
                             </div>
@@ -124,9 +124,9 @@
                     <!-- Empty Cart -->
                     <div class="bg-white rounded-lg shadow-md p-12 text-center">
                         <i class="fas fa-shopping-cart text-5xl text-gray-400 mb-4"></i>
-                        <h3 class="text-xl font-medium text-gray-900 mb-2">Keranjang Anda kosong</h3>
-                        <p class="text-gray-500 mb-6">Tambahkan produk ke keranjang untuk memulai</p>
-                        <a href="{{ route('customer.products') }}" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold inline-block">
+                        <h3 class="text-xl font-medium text-gray-900 mb-2">Your cart is empty</h3>
+                        <p class="text-gray-500 mb-6">Add ingredients to your cart to get started</p>
+                        <a href="{{ route('customer.ingredients') }}" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold inline-block">
                             <i class="fas fa-store mr-2"></i>Mulai Belanja
                         </a>
                     </div>
@@ -140,7 +140,7 @@
 <script>
 function updateQuantity(productId, quantity) {
     if (quantity <= 0) {
-        if (confirm('Hapus produk dari keranjang?')) {
+        if (confirm('Remove item from cart?')) {
             removeItem(productId);
         }
         return;
@@ -165,12 +165,12 @@ function updateQuantity(productId, quantity) {
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('Terjadi kesalahan saat memperbarui keranjang');
+        alert('An error occurred while updating the cart');
     });
 }
 
 function removeItem(productId) {
-    if (!confirm('Hapus produk dari keranjang?')) {
+    if (!confirm('Remove item from cart?')) {
         return;
     }
 
@@ -199,12 +199,12 @@ function removeItem(productId) {
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('Terjadi kesalahan saat menghapus produk');
+        alert('An error occurred while removing the item');
     });
 }
 
 function clearCart() {
-    if (!confirm('Kosongkan seluruh keranjang?')) {
+    if (!confirm('Clear entire cart?')) {
         return;
     }
 
@@ -225,7 +225,7 @@ function clearCart() {
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('Terjadi kesalahan saat mengosongkan keranjang');
+        alert('An error occurred while clearing the cart');
     });
 }
 

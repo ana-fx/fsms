@@ -22,7 +22,7 @@
         <!-- Header -->
         <div class="mb-8">
             <h1 class="text-2xl lg:text-3xl font-bold text-gray-900">Set Harga Maksimal</h1>
-            <p class="text-sm lg:text-base text-gray-600 mt-2">Kelola harga maksimal per kategori makanan</p>
+            <p class="text-sm lg:text-base text-gray-600 mt-2">Manage maximum price per food category</p>
         </div>
 
         <!-- Success/Error Messages -->
@@ -47,7 +47,7 @@
         <!-- Price Settings Table -->
         <div class="bg-white rounded-lg shadow-md p-6">
             <div class="mb-6">
-                <h2 class="text-xl font-semibold text-gray-900">Daftar Kategori Harga</h2>
+                <h2 class="text-xl font-semibold text-gray-900">Price Categories</h2>
                 <p class="text-sm text-gray-600 mt-1">Atur harga maksimal untuk setiap kategori makanan</p>
             </div>
 

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>404 - Halaman Tidak Ditemukan | FSMS</title>
+    <title>404 - Page Not Found | FSMS</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -14,7 +14,7 @@
 </head>
 <body class="bg-gray-50 min-h-screen flex items-center justify-center">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <!-- Logo dan Header -->
+        <!-- Logo and Header -->
         <div class="mb-8">
             <div class="flex items-center justify-center mb-6">
                 <i class="fas fa-utensils text-6xl text-green-700 mr-4"></i>
@@ -33,10 +33,9 @@
             <!-- Error Message -->
             <div class="mb-8">
                 <h2 class="text-6xl font-bold text-gray-900 mb-4">404</h2>
-                <h3 class="text-2xl font-semibold text-gray-800 mb-4">Halaman Tidak Ditemukan</h3>
+                <h3 class="text-2xl font-semibold text-gray-800 mb-4">Page Not Found</h3>
                 <p class="text-lg text-gray-600 max-w-2xl mx-auto">
-                    Maaf, halaman yang Anda cari tidak dapat ditemukan. 
-                    Halaman mungkin telah dipindahkan, dihapus, atau URL yang Anda masukkan salah.
+                    Sorry, the page you are looking for could not be found. It may have been moved, deleted, or the URL is incorrect.
                 </p>
             </div>
 
@@ -44,7 +43,7 @@
             <div class="flex flex-col sm:flex-row gap-4 justify-center mb-8">
                 <a href="{{ route('home') }}" class="bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-700 transition font-semibold">
                     <i class="fas fa-home mr-2"></i>
-                    Kembali ke Beranda
+                    Back to Home
                 </a>
                 
                 @auth
@@ -67,26 +66,26 @@
                 @else
                     <a href="{{ route('login') }}" class="bg-green-700 text-white px-8 py-3 rounded-lg hover:bg-green-800 transition font-semibold">
                         <i class="fas fa-sign-in-alt mr-2"></i>
-                        Masuk ke Sistem
+                        Login to System
                     </a>
                 @endauth
             </div>
 
             <!-- Help Section -->
             <div class="bg-gray-50 rounded-lg p-6">
-                <h4 class="text-lg font-semibold text-gray-900 mb-4">Butuh Bantuan?</h4>
+                <h4 class="text-lg font-semibold text-gray-900 mb-4">Need Help?</h4>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600">
                     <div class="flex items-center justify-center">
                         <i class="fas fa-search text-green-600 mr-2"></i>
-                        <span>Periksa URL yang Anda masukkan</span>
+                        <span>Please check the URL you entered</span>
                     </div>
                     <div class="flex items-center justify-center">
                         <i class="fas fa-arrow-left text-green-600 mr-2"></i>
-                        <span>Gunakan tombol kembali browser</span>
+                        <span>Use your browser's back button</span>
                     </div>
                     <div class="flex items-center justify-center">
                         <i class="fas fa-home text-green-600 mr-2"></i>
-                        <span>Kembali ke halaman beranda</span>
+                        <span>Return to the homepage</span>
                     </div>
                 </div>
             </div>

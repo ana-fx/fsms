@@ -21,12 +21,11 @@
 
                 <!-- Subtitle -->
                 <h2 class="text-4xl font-bold text-gray-800 mb-6">
-                    Kelola Pasokan Makanan dengan <span class="text-green-600">Efisien</span>
+                    Manage Food Supply <span class="text-green-600">Efficiently</span>
                 </h2>
 
                 <p class="text-xl text-gray-600 max-w-4xl mx-auto mb-12 leading-relaxed">
-                    Sistem terintegrasi yang menghubungkan customer, admin, dan supplier untuk memastikan
-                    distribusi bahan makanan yang transparan, efisien, dan tepat sasaran.
+                    An integrated system connecting customers, admins, and suppliers to ensure transparent, efficient, and targeted food distribution.
                 </p>
 
                 <!-- CTA Buttons -->
@@ -51,11 +50,11 @@
                     @else
                         <a href="{{ route('login') }}" class="bg-green-600 text-white px-8 py-4 rounded-xl hover:bg-green-700 transition-all duration-300 transform hover:scale-105 shadow-lg font-semibold text-lg">
                             <i class="fas fa-sign-in-alt mr-2"></i>
-                            Masuk ke Sistem
+                            Login to System
                         </a>
                         <a href="{{ route('register') }}" class="bg-white text-green-600 px-8 py-4 rounded-xl hover:bg-gray-50 transition-all duration-300 transform hover:scale-105 shadow-lg font-semibold text-lg border-2 border-green-600">
                             <i class="fas fa-user-plus mr-2"></i>
-                            Daftar Sekarang
+                            Register Now
                         </a>
                     @endauth
                 </div>
@@ -73,10 +72,10 @@
     <div class="py-20 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
-                <h3 class="text-3xl font-bold text-gray-900 mb-4">Mengapa Memilih FSMS?</h3>
-                <p class="text-lg text-gray-600 max-w-2xl mx-auto">
-                    Solusi terbaik untuk mengelola pasokan makanan dengan teknologi modern
-                </p>
+                <h3 class="text-3xl font-bold text-gray-900 mb-4">Why Choose FSMS?</h3>
+                    <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                        The best solution to manage food supply with modern technology
+                    </p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -85,9 +84,9 @@
                     <div class="bg-green-100 w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-green-200 transition-colors duration-300">
                         <i class="fas fa-shield-alt text-3xl text-green-600"></i>
                     </div>
-                    <h4 class="text-xl font-semibold text-gray-900 mb-3">Keamanan Tinggi</h4>
+                    <h4 class="text-xl font-semibold text-gray-900 mb-3">High Security</h4>
                     <p class="text-gray-600 leading-relaxed">
-                        Sistem keamanan berlapis dengan role-based access control untuk melindungi data sensitif
+                        Multi-layered security with role-based access control to protect sensitive data
                     </p>
                 </div>
 
@@ -96,9 +95,9 @@
                     <div class="bg-green-100 w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-green-200 transition-colors duration-300">
                         <i class="fas fa-chart-line text-3xl text-green-600"></i>
                     </div>
-                    <h4 class="text-xl font-semibold text-gray-900 mb-3">Transparansi Total</h4>
+                    <h4 class="text-xl font-semibold text-gray-900 mb-3">Total Transparency</h4>
                     <p class="text-gray-600 leading-relaxed">
-                        Pelacakan real-time untuk semua transaksi dan distribusi makanan
+                        Real-time tracking for all transactions and food distribution
                     </p>
                 </div>
 
@@ -107,9 +106,9 @@
                     <div class="bg-green-100 w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-green-200 transition-colors duration-300">
                         <i class="fas fa-mobile-alt text-3xl text-green-600"></i>
                     </div>
-                    <h4 class="text-xl font-semibold text-gray-900 mb-3">Responsif & Modern</h4>
+                    <h4 class="text-xl font-semibold text-gray-900 mb-3">Responsive & Modern</h4>
                     <p class="text-gray-600 leading-relaxed">
-                        Interface modern yang dapat diakses dari berbagai perangkat
+                        A modern interface accessible from multiple devices
                     </p>
                 </div>
 
@@ -118,9 +117,9 @@
                     <div class="bg-green-100 w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-green-200 transition-colors duration-300">
                         <i class="fas fa-heart text-3xl text-green-600"></i>
                     </div>
-                    <h4 class="text-xl font-semibold text-gray-900 mb-3">Kepedulian Sosial</h4>
+                    <h4 class="text-xl font-semibold text-gray-900 mb-3">Social Impact</h4>
                     <p class="text-gray-600 leading-relaxed">
-                        Membantu distribusi makanan untuk mereka yang membutuhkan
+                        Helping distribute food to those in need
                     </p>
                 </div>
             </div>
@@ -131,10 +130,10 @@
     <div class="py-20 bg-gradient-to-br from-green-50 to-emerald-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
-                <h3 class="text-3xl font-bold text-gray-900 mb-4">Cara Kerja Sistem</h3>
-                <p class="text-lg text-gray-600 max-w-2xl mx-auto">
-                    Proses sederhana untuk mengelola pasokan makanan secara efisien
-                </p>
+                <h3 class="text-3xl font-bold text-gray-900 mb-4">How the System Works</h3>
+                    <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                    A simple process to efficiently manage food supply
+                    </p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -145,7 +144,7 @@
                     </div>
                     <h4 class="text-xl font-semibold text-gray-900 mb-3">Customer Request</h4>
                     <p class="text-gray-600 leading-relaxed">
-                        Customer mengajukan permintaan bahan makanan melalui sistem
+                        Customers submit ingredient requests through the system
                     </p>
                 </div>
 
@@ -156,7 +155,7 @@
                     </div>
                     <h4 class="text-xl font-semibold text-gray-900 mb-3">Admin Review</h4>
                     <p class="text-gray-600 leading-relaxed">
-                        Admin meninjau dan menentukan harga maksimal serta supplier
+                        Admin reviews and sets maximum prices and suppliers
                     </p>
                 </div>
 
@@ -167,7 +166,7 @@
                     </div>
                     <h4 class="text-xl font-semibold text-gray-900 mb-3">Supplier Delivery</h4>
                     <p class="text-gray-600 leading-relaxed">
-                        Supplier mengirimkan bahan makanan sesuai permintaan
+                        Suppliers deliver ingredients according to the requests
                     </p>
                 </div>
             </div>
@@ -177,20 +176,20 @@
     <!-- CTA Section -->
     <div class="py-20 bg-white">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h3 class="text-3xl font-bold text-gray-900 mb-4">Siap Memulai?</h3>
-            <p class="text-lg text-gray-600 mb-8">
-                Bergabunglah dengan berbagai customer dan supplier yang telah mempercayai FSMS
-            </p>
+            <h3 class="text-3xl font-bold text-gray-900 mb-4">Ready to Get Started?</h3>
+                <p class="text-lg text-gray-600 mb-8">
+                    Join the many customers and suppliers who trust FSMS
+                </p>
 
             @guest
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
                     <a href="{{ route('register') }}" class="bg-green-600 text-white px-8 py-4 rounded-xl hover:bg-green-700 transition-all duration-300 transform hover:scale-105 shadow-lg font-semibold text-lg">
                         <i class="fas fa-rocket mr-2"></i>
-                        Daftar Sekarang
+                        Register Now
                     </a>
                     <a href="{{ route('login') }}" class="bg-white text-green-600 px-8 py-4 rounded-xl hover:bg-gray-50 transition-all duration-300 transform hover:scale-105 shadow-lg font-semibold text-lg border-2 border-green-600">
                         <i class="fas fa-sign-in-alt mr-2"></i>
-                        Masuk ke Sistem
+                        Login to System
                     </a>
                 </div>
             @endguest

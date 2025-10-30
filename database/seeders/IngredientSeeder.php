@@ -7,7 +7,7 @@ use App\Models\FoodCategory;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
-class ProductSeeder extends Seeder
+class IngredientSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -27,7 +27,7 @@ class ProductSeeder extends Seeder
         $fruitCategory = $categories->where('slug', 'buah-buahan')->first();
         $spiceCategory = $categories->where('slug', 'bumbu-rempah')->first();
 
-        // Define products for each supplier
+        // Define ingredients for each supplier
         $products = [
             // Supplier FSMS
             [
@@ -146,7 +146,7 @@ class ProductSeeder extends Seeder
             ],
         ];
 
-        // Create products for each supplier
+        // Create ingredients for each supplier
         foreach ($suppliers as $index => $supplier) {
             $supplierProducts = array_slice($products, $index * 3, 3);
 
@@ -165,7 +165,7 @@ class ProductSeeder extends Seeder
             }
         }
 
-        $this->command->info('Products created successfully for all suppliers!');
+        $this->command->info('Ingredients created successfully for all suppliers!');
     }
 }
 

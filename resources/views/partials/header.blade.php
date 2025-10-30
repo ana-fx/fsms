@@ -2,7 +2,7 @@
 @php
     $hideHeaderRoutes = [
         // Customer routes
-        'customer.products',
+        'customer.ingredients',
         'customer.dashboard',
         'customer.programs',
         'customer.cart',
@@ -23,7 +23,7 @@
         'admin.max-price.update',
         // Supplier routes
         'supplier.dashboard',
-        'supplier.products'
+        'supplier.ingredients'
     ];
     $currentRoute = request()->route() ? request()->route()->getName() : null;
     $shouldHideHeader = $currentRoute && (
@@ -93,21 +93,21 @@
                                     </a>
                                     <a href="{{ route('admin.users') }}" class="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md transition-colors">
                                         <i class="fas fa-user-cog mr-3 text-green-600"></i>
-                                        Manajemen User
+                                        User Management
                                     </a>
                                 @elseif(auth()->user()->isSupplier())
                                     <a href="{{ route('supplier.dashboard') }}" class="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md transition-colors">
                                         <i class="fas fa-tachometer-alt mr-3 text-green-600"></i>
                                         Supplier Dashboard
                                     </a>
-                                    <a href="{{ route('supplier.products') }}" class="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md transition-colors">
+                                    <a href="{{ route('supplier.ingredients') }}" class="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md transition-colors">
                                         <i class="fas fa-box mr-3 text-green-600"></i>
-                                        Kelola Produk
+                                        Manage Ingredients
                                     </a>
                                 @elseif(auth()->user()->isCustomer())
-                                    <a href="{{ route('customer.products') }}" class="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md transition-colors">
+                                    <a href="{{ route('customer.ingredients') }}" class="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md transition-colors">
                                         <i class="fas fa-box mr-3 text-green-600"></i>
-                                        Product
+                                        Ingredients
                                     </a>
                                     <a href="{{ route('customer.dashboard') }}" class="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md transition-colors">
                                         <i class="fas fa-tachometer-alt mr-3 text-green-600"></i>
@@ -115,11 +115,11 @@
                                     </a>
                                     <a href="{{ route('customer.requests.index') }}" class="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md transition-colors">
                                         <i class="fas fa-shopping-cart mr-3 text-green-600"></i>
-                                        Permintaan Bahan Makanan
+                                        Food Requests
                                     </a>
                                     <a href="{{ route('customer.programs') }}" class="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md transition-colors">
                                         <i class="fas fa-project-diagram mr-3 text-green-600"></i>
-                                        Kelola Program
+                                        Manage Programs
                                     </a>
                                 @endif
 
@@ -129,7 +129,7 @@
                                     @csrf
                                     <button type="submit" class="w-full flex items-center px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-md transition-colors">
                                         <i class="fas fa-sign-out-alt mr-3"></i>
-                                        Keluar
+                                        Logout
                                     </button>
                                 </form>
                             </div>
@@ -137,12 +137,9 @@
                     </div>
                 @else
                     <!-- Login/Register Buttons -->
-                    <div class="flex items-center space-x-3">
-                        <a href="{{ route('login') }}" class="text-gray-700 hover:text-green-600 transition-colors font-medium">
-                            Masuk
-                        </a>
-                        <a href="{{ route('register') }}" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors font-medium">
-                            Daftar
+                    <div class="flex items-center">
+                        <a href="{{ route('login') }}" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors font-medium">
+                            Login
                         </a>
                     </div>
                 @endauth

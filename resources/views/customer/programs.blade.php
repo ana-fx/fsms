@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Kelola Program - FSMS')
+@section('title', 'Manage Programs - FSMS')
 
 @section('content')
 <div class="flex bg-gray-100 min-h-screen w-full overflow-x-hidden">
@@ -17,8 +17,8 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <!-- Header -->
         <div class="mb-8">
-            <h1 class="text-3xl font-bold text-gray-900">Kelola Program</h1>
-            <p class="text-gray-600 mt-2">Manajemen program dan kegiatan</p>
+            <h1 class="text-3xl font-bold text-gray-900">Manage Programs</h1>
+            <p class="text-gray-600 mt-2">Program and activity management</p>
         </div>
             <div class="bg-white rounded-lg shadow p-6">
                 <h2 class="text-2xl font-bold mb-4">Program Management</h2>

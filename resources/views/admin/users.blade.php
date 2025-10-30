@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Manajemen User - FSMS')
+@section('title', 'User Management - FSMS')
 
 @section('content')
 <div class="flex bg-gray-100 min-h-screen w-full overflow-x-hidden">
@@ -36,8 +36,8 @@
 
         <!-- Header -->
         <div class="mb-8">
-            <h1 class="text-2xl lg:text-3xl font-bold text-gray-900">Manajemen User</h1>
-            <p class="text-sm lg:text-base text-gray-600 mt-2">Kelola semua pengguna dalam sistem FSMS</p>
+            <h1 class="text-2xl lg:text-3xl font-bold text-gray-900">User Management</h1>
+            <p class="text-sm lg:text-base text-gray-600 mt-2">Manage all users in the FSMS system</p>
         </div>
 
         <!-- Stats Cards -->
@@ -111,7 +111,7 @@
                     <option>Supplier</option>
                     <option>Customer</option>
                 </select>
-                <input type="text" placeholder="Cari user..." class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-sm flex-1 sm:flex-none sm:w-64">
+                <input type="text" placeholder="Search users..." class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-sm flex-1 sm:flex-none sm:w-64">
             </div>
         </div>
 

@@ -38,7 +38,7 @@
     <div class="flex space-x-2 mt-3">
         <button onclick="addToCart({{ $product->id }})"
                 class="flex-1 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors font-semibold">
-            <i class="fas fa-cart-plus mr-2"></i>Tambah ke Keranjang
+            <i class="fas fa-cart-plus mr-2"></i>Add to Cart
         </button>
         <button onclick="selectProduct({{ $product->id }})"
                 class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors font-semibold">

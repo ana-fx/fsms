@@ -7,7 +7,7 @@ use App\Models\FoodItem;
 use App\Models\FoodCategory;
 use Illuminate\Http\Request;
 
-class ShopController extends Controller
+class IngredientController extends Controller
 {
     /**
      * Display the product page with all available products.
@@ -42,7 +42,7 @@ class ShopController extends Controller
             if ($products->count() > 0) {
                 $html .= '<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">';
                 foreach ($products as $product) {
-                    $html .= view('customer.partials.product-card', ['product' => $product])->render();
+            $html .= view('customer.partials.ingredient-card', ['product' => $product])->render();
                 }
                 $html .= '</div>';
                 
@@ -52,17 +52,17 @@ class ShopController extends Controller
                 $html .= '</div>';
             } else {
                 $emptyMessage = ($request->has('search') && $request->search) || ($request->has('category') && $request->category)
-                    ? 'Coba gunakan kata kunci atau filter yang berbeda'
-                    : 'Belum ada produk yang tersedia saat ini';
+                    ? 'Try different keywords or filters'
+                    : 'No ingredients available yet';
                 
                 $html .= '<div class="text-center py-12">';
                 $html .= '<i class="fas fa-box-open text-5xl text-gray-400 mb-4"></i>';
-                $html .= '<h3 class="text-xl font-medium text-gray-900 mb-2">Produk tidak ditemukan</h3>';
+                $html .= '<h3 class="text-xl font-medium text-gray-900 mb-2">No ingredients found</h3>';
                 $html .= '<p class="text-gray-500 mb-6">' . $emptyMessage . '</p>';
                 
                 if (($request->has('search') && $request->search) || ($request->has('category') && $request->category)) {
                     $html .= '<button onclick="clearSearch()" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold">';
-                    $html .= '<i class="fas fa-arrow-left mr-2"></i>Lihat Semua Produk';
+                    $html .= '<i class="fas fa-arrow-left mr-2"></i>View All Ingredients';
                     $html .= '</button>';
                 }
                 $html .= '</div>';
@@ -71,7 +71,7 @@ class ShopController extends Controller
             return response()->json(['html' => $html]);
         }
 
-        return view('customer.product', compact('products', 'categories'));
+        return view('customer.ingredient', compact('products', 'categories'));
     }
 }
 

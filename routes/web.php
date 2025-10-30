@@ -7,14 +7,14 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\MaxPriceController;
-use App\Http\Controllers\Customer\ShopController;
+use App\Http\Controllers\Customer\IngredientController;
 use App\Http\Controllers\Customer\CartController;
 
 Route::get('/', function () {
     if (Auth::check()) {
         $user = Auth::user();
         if ($user->isCustomer()) {
-            return redirect()->route('customer.products');
+            return redirect()->route('customer.ingredients');
         } elseif ($user->isSupplier()) {
             return redirect()->route('supplier.dashboard');
         } elseif ($user->isSuperAdmin()) {
@@ -69,17 +69,17 @@ Route::middleware(['auth', 'role:supplier'])->group(function () {
         return view('supplier.dashboard', ['title' => 'Supplier Dashboard']);
     })->name('supplier.dashboard');
 
-    Route::get('/supplier/products', function () {
-        return view('supplier.products', ['title' => 'Manage Products']);
-    })->name('supplier.products');
+    Route::get('/supplier/ingredients', function () {
+        return view('supplier.ingredients', ['title' => 'Manage Ingredients']);
+    })->name('supplier.ingredients');
 });
 
 Route::middleware(['auth', 'role:customer'])->group(function () {
-    // Products - Main page for customers
-    Route::get('/customer/products', [ShopController::class, 'index'])->name('customer.products');
+    // Ingredients - Main page for customers
+    Route::get('/customer/ingredients', [IngredientController::class, 'index'])->name('customer.ingredients');
 
     Route::get('/customer', function () {
-        return redirect()->route('customer.products');
+        return redirect()->route('customer.ingredients');
     })->name('customer.dashboard');
 
     Route::get('/customer/programs', function () {

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Permintaan Bahan Makanan')
+@section('title', 'Food Requests')
 
 @section('content')
 <div class="flex bg-gray-100 min-h-screen w-full overflow-x-hidden">
@@ -19,12 +19,12 @@
         <div class="mb-8">
             <div class="flex items-center justify-between">
                 <div>
-                    <h1 class="text-3xl font-bold text-gray-900">Permintaan Bahan Makanan</h1>
-                    <p class="mt-2 text-gray-600">Kelola permintaan bahan makanan untuk program</p>
+                    <h1 class="text-3xl font-bold text-gray-900">Food Requests</h1>
+                    <p class="mt-2 text-gray-600">Manage ingredient requests for programs</p>
                 </div>
                 <a href="{{ route('customer.requests.create') }}" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold">
                     <i class="fas fa-plus mr-2"></i>
-                    Buat Permintaan Baru
+                    Create New Request
                 </a>
             </div>
         </div>
@@ -83,7 +83,7 @@
         <!-- Requests Table -->
         <div class="bg-white rounded-lg shadow overflow-hidden">
             <div class="px-6 py-4 border-b border-gray-200">
-                <h3 class="text-lg font-medium text-gray-900">Daftar Permintaan</h3>
+                <h3 class="text-lg font-medium text-gray-900">Request List</h3>
             </div>
 
             @if($requests->count() > 0)
@@ -166,7 +166,7 @@
                                                 <a href="{{ route('customer.requests.edit', $request) }}" class="text-blue-600 hover:text-blue-900">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
-                                                <form method="POST" action="{{ route('customer.requests.destroy', $request) }}" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus permintaan ini?')">
+                                                <form method="POST" action="{{ route('customer.requests.destroy', $request) }}" class="inline" onsubmit="return confirm('Are you sure you want to delete this request?')">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="text-red-600 hover:text-red-900">
@@ -189,11 +189,11 @@
             @else
                 <div class="text-center py-12">
                     <i class="fas fa-inbox text-4xl text-gray-400 mb-4"></i>
-                    <h3 class="text-lg font-medium text-gray-900 mb-2">Belum ada permintaan</h3>
-                    <p class="text-gray-500 mb-6">Mulai buat permintaan bahan makanan pertama Anda</p>
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">No requests yet</h3>
+                    <p class="text-gray-500 mb-6">Start by creating your first ingredient request</p>
                     <a href="{{ route('customer.requests.create') }}" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold">
                         <i class="fas fa-plus mr-2"></i>
-                        Buat Permintaan Baru
+                        Create New Request
                     </a>
                 </div>
             @endif

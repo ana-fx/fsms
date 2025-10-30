@@ -42,21 +42,21 @@
                 Dashboard
             </a>
 
-            <!-- Product Management -->
+            <!-- Ingredients Management -->
             <div class="space-y-1">
                 <button class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-green-600 rounded-lg transition-colors"
                         onclick="toggleSubmenu('products')">
                     <div class="flex items-center">
                         <i class="fas fa-box mr-3 text-lg"></i>
-                        Kelola Produk
+                        Manage Ingredients
                     </div>
                     <i class="fas fa-chevron-down text-xs transition-transform" id="products-arrow"></i>
                 </button>
                 <div id="products-submenu" class="hidden ml-8 space-y-1">
-                    <a href="{{ route('supplier.products') }}"
-                       class="block px-4 py-2 text-sm text-gray-600 hover:text-green-600 hover:bg-gray-50 rounded transition-colors {{ request()->routeIs('supplier.products') ? 'text-green-600 bg-green-50' : '' }}">
+                    <a href="{{ route('supplier.ingredients') }}"
+                       class="block px-4 py-2 text-sm text-gray-600 hover:text-green-600 hover:bg-gray-50 rounded transition-colors {{ request()->routeIs('supplier.ingredients') ? 'text-green-600 bg-green-50' : '' }}">
                         <i class="fas fa-list mr-2"></i>
-                        Daftar Produk
+                        Ingredients List
                     </a>
                 </div>
             </div>
