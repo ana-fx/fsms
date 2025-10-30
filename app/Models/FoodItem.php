@@ -4,9 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class FoodItem extends Model
 {
+    use SoftDeletes;
     protected $fillable = [
         'supplier_id',
         'food_category_id',
@@ -15,7 +17,7 @@ class FoodItem extends Model
         'price',
         'unit',
         'stock',
-        'min_stock',
+        'min_purchase',
         'image',
         'is_active',
     ];
@@ -23,7 +25,7 @@ class FoodItem extends Model
     protected $casts = [
         'price' => 'decimal:2',
         'stock' => 'integer',
-        'min_stock' => 'integer',
+        'min_purchase' => 'integer',
         'is_active' => 'boolean',
     ];
 

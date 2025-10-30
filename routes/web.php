@@ -8,10 +8,13 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\MaxPriceController;
 use App\Http\Controllers\Customer\IngredientController;
+use App\Http\Controllers\Supplier\IngredientController as SupplierIngredientController;
 use App\Http\Controllers\Customer\CartController;
+use App\Models\User;
 
 Route::get('/', function () {
     if (Auth::check()) {
+        /** @var User $user */
         $user = Auth::user();
         if ($user->isCustomer()) {
             return redirect()->route('customer.ingredients');
@@ -72,6 +75,13 @@ Route::middleware(['auth', 'role:supplier'])->group(function () {
     Route::get('/supplier/ingredients', function () {
         return view('supplier.ingredients', ['title' => 'Manage Ingredients']);
     })->name('supplier.ingredients');
+
+    // Supplier Ingredients CRUD (minimal create/store)
+    Route::get('/supplier/ingredients/create', [SupplierIngredientController::class, 'create'])->name('supplier.ingredients.create');
+    Route::post('/supplier/ingredients', [SupplierIngredientController::class, 'store'])->name('supplier.ingredients.store');
+    Route::get('/supplier/ingredients/{foodItem}/edit', [SupplierIngredientController::class, 'edit'])->name('supplier.ingredients.edit');
+    Route::put('/supplier/ingredients/{foodItem}', [SupplierIngredientController::class, 'update'])->name('supplier.ingredients.update');
+    Route::delete('/supplier/ingredients/{foodItem}', [SupplierIngredientController::class, 'destroy'])->name('supplier.ingredients.destroy');
 });
 
 Route::middleware(['auth', 'role:customer'])->group(function () {

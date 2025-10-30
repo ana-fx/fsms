@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
+use App\Models\User;
 
 class LoginController extends Controller
 {
@@ -28,7 +29,8 @@ class LoginController extends Controller
 
         $request->session()->regenerate();
 
-        $user = auth()->user();
+        /** @var User $user */
+        $user = Auth::user();
 
         // Redirect based on role
         if ($user->isSuperAdmin()) {

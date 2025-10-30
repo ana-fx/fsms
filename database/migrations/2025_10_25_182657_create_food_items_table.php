@@ -20,9 +20,10 @@ return new class extends Migration
             $table->decimal('price', 12, 2);
             $table->string('unit'); // kg, liter, pcs, karton, dus, dll
             $table->integer('stock')->default(0);
-            $table->integer('min_stock')->default(0);
+            $table->integer('min_purchase')->default(0);
             $table->string('image')->nullable();
             $table->boolean('is_active')->default(true);
+            $table->softDeletes();
             $table->timestamps();
         });
     }

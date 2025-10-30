@@ -36,7 +36,7 @@ class IngredientSeeder extends Seeder
                 'price' => 12500,
                 'unit' => 'kg',
                 'stock' => 500,
-                'min_stock' => 50,
+                'min_purchase' => 50,
                 'category' => $carbCategory,
             ],
             [
@@ -45,7 +45,7 @@ class IngredientSeeder extends Seeder
                 'price' => 35000,
                 'unit' => 'kg',
                 'stock' => 200,
-                'min_stock' => 30,
+                'min_purchase' => 30,
                 'category' => $proteinCategory,
             ],
             [
@@ -54,7 +54,7 @@ class IngredientSeeder extends Seeder
                 'price' => 15000,
                 'unit' => 'ikat',
                 'stock' => 100,
-                'min_stock' => 20,
+                'min_purchase' => 20,
                 'category' => $veggieCategory,
             ],
 
@@ -65,7 +65,7 @@ class IngredientSeeder extends Seeder
                 'price' => 15000,
                 'unit' => 'kg',
                 'stock' => 300,
-                'min_stock' => 50,
+                'min_purchase' => 50,
                 'category' => $spiceCategory,
             ],
             [
@@ -74,7 +74,7 @@ class IngredientSeeder extends Seeder
                 'price' => 25000,
                 'unit' => 'kg',
                 'stock' => 150,
-                'min_stock' => 25,
+                'min_purchase' => 25,
                 'category' => $proteinCategory,
             ],
             [
@@ -83,7 +83,7 @@ class IngredientSeeder extends Seeder
                 'price' => 28000,
                 'unit' => 'kg',
                 'stock' => 250,
-                'min_stock' => 40,
+                'min_purchase' => 40,
                 'category' => $proteinCategory,
             ],
 
@@ -94,7 +94,7 @@ class IngredientSeeder extends Seeder
                 'price' => 3500,
                 'unit' => 'bungkus',
                 'stock' => 1000,
-                'min_stock' => 100,
+                'min_purchase' => 100,
                 'category' => $carbCategory,
             ],
             [
@@ -103,7 +103,7 @@ class IngredientSeeder extends Seeder
                 'price' => 18000,
                 'unit' => 'liter',
                 'stock' => 400,
-                'min_stock' => 60,
+                'min_purchase' => 60,
                 'category' => $spiceCategory,
             ],
             [
@@ -112,7 +112,7 @@ class IngredientSeeder extends Seeder
                 'price' => 32000,
                 'unit' => 'kg',
                 'stock' => 180,
-                'min_stock' => 30,
+                'min_purchase' => 30,
                 'category' => $spiceCategory,
             ],
 
@@ -123,7 +123,7 @@ class IngredientSeeder extends Seeder
                 'price' => 15000,
                 'unit' => 'sisir',
                 'stock' => 80,
-                'min_stock' => 15,
+                'min_purchase' => 15,
                 'category' => $fruitCategory,
             ],
             [
@@ -132,7 +132,7 @@ class IngredientSeeder extends Seeder
                 'price' => 12000,
                 'unit' => 'kg',
                 'stock' => 120,
-                'min_stock' => 20,
+                'min_purchase' => 20,
                 'category' => $proteinCategory,
             ],
             [
@@ -141,7 +141,7 @@ class IngredientSeeder extends Seeder
                 'price' => 18000,
                 'unit' => 'kg',
                 'stock' => 90,
-                'min_stock' => 15,
+                'min_purchase' => 15,
                 'category' => $veggieCategory,
             ],
         ];
@@ -159,7 +159,7 @@ class IngredientSeeder extends Seeder
                     'price' => $productData['price'],
                     'unit' => $productData['unit'],
                     'stock' => $productData['stock'],
-                    'min_stock' => $productData['min_stock'],
+                    'min_purchase' => $productData['min_purchase'],
                     'is_active' => true,
                 ]);
             }
