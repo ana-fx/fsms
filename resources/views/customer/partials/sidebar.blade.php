@@ -76,14 +76,9 @@
                 </button>
                 <div id="requests-submenu" class="hidden ml-8 space-y-1">
                     <a href="{{ route('customer.requests.index') }}"
-                       class="block px-4 py-2 text-sm text-gray-600 hover:text-green-600 hover:bg-gray-50 rounded transition-colors {{ request()->routeIs('customer.requests.index') ? 'text-green-600 bg-green-50' : '' }}">
+                       class="block px-4 py-2 text-sm text-gray-600 hover:text-green-600 hover:bg-gray-50 rounded transition-colors {{ request()->routeIs('customer.requests.index') || request()->routeIs('customer.requests.checkout') ? 'text-green-600 bg-green-50' : '' }}">
                         <i class="fas fa-list mr-2"></i>
                         All Requests
-                    </a>
-                    <a href="{{ route('customer.requests.create') }}"
-                       class="block px-4 py-2 text-sm text-gray-600 hover:text-green-600 hover:bg-gray-50 rounded transition-colors {{ request()->routeIs('customer.requests.create') ? 'text-green-600 bg-green-50' : '' }}">
-                        <i class="fas fa-plus mr-2"></i>
-                        Create New Request
                     </a>
                 </div>
             </div>
@@ -96,11 +91,28 @@
             </a>
 
             <!-- Settings -->
-            <a href="#"
-               class="flex items-center px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-green-600 rounded-lg transition-colors">
-                <i class="fas fa-cog mr-3 text-lg"></i>
-                Settings
-            </a>
+            <div class="space-y-1">
+                <button class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-green-600 rounded-lg transition-colors"
+                        onclick="toggleSubmenu('settings')">
+                    <div class="flex items-center">
+                        <i class="fas fa-cog mr-3 text-lg"></i>
+                        Settings
+                    </div>
+                    <i class="fas fa-chevron-down text-xs transition-transform" id="settings-arrow"></i>
+                </button>
+                <div id="settings-submenu" class="hidden ml-8 space-y-1">
+                    <a href="{{ route('customer.settings.account') }}"
+                       class="block px-4 py-2 text-sm text-gray-600 hover:text-green-600 hover:bg-gray-50 rounded transition-colors {{ request()->routeIs('customer.settings.account') ? 'text-green-600 bg-green-50' : '' }}">
+                        <i class="fas fa-user-circle mr-2"></i>
+                        Account Settings
+                    </a>
+                    <a href="{{ route('customer.settings.delivery-addresses') }}"
+                       class="block px-4 py-2 text-sm text-gray-600 hover:text-green-600 hover:bg-gray-50 rounded transition-colors {{ request()->routeIs('customer.settings.delivery-addresses') ? 'text-green-600 bg-green-50' : '' }}">
+                        <i class="fas fa-map-marker-alt mr-2"></i>
+                        Delivery Addresses
+                    </a>
+                </div>
+            </div>
         </div>
     </nav>
 

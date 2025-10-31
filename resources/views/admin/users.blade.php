@@ -384,10 +384,70 @@ function changeRole(userId) {
 }
 
 function deleteUser(userId) {
-    if (confirm('Apakah Anda yakin ingin menghapus user ini? Tindakan ini tidak dapat dibatalkan.')) {
+    showConfirmModal('Are you sure you want to delete this user? This action cannot be undone.', function() {
         // Implement delete user logic
-        alert('User berhasil dihapus!');
+        showNotification('User deleted successfully', 'success');
+    });
+}
+
+function showNotification(message, type = 'success') {
+    const colors = {
+        success: { bg: 'bg-green-50', border: 'border-green-200', text: 'text-green-800', icon: 'fa-check-circle', iconColor: 'text-green-600' },
+        error: { bg: 'bg-red-50', border: 'border-red-200', text: 'text-red-800', icon: 'fa-exclamation-circle', iconColor: 'text-red-600' },
+        warning: { bg: 'bg-yellow-50', border: 'border-yellow-200', text: 'text-yellow-800', icon: 'fa-exclamation-triangle', iconColor: 'text-yellow-600' },
+        info: { bg: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-800', icon: 'fa-info-circle', iconColor: 'text-blue-600' }
+    };
+    
+    const color = colors[type] || colors.success;
+    
+    const notification = document.createElement('div');
+    notification.className = `fixed top-4 right-4 ${color.bg} ${color.border} border rounded-lg shadow-lg z-50 flex items-center space-x-3 p-4 animate-slide-in`;
+    notification.style.minWidth = '300px';
+    notification.innerHTML = `
+        <div class="flex-shrink-0">
+            <i class="fas ${color.icon} ${color.iconColor} text-xl"></i>
+        </div>
+        <div class="flex-1">
+            <p class="${color.text} font-medium">${message}</p>
+        </div>
+        <button onclick="this.parentElement.remove()" class="flex-shrink-0 ${color.text} hover:opacity-70 transition-opacity">
+            <i class="fas fa-times"></i>
+        </button>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.style.animation = 'slide-out 0.3s ease-out';
+        setTimeout(() => notification.remove(), 300);
+    }, 5000);
+}
+
+let confirmCallback = null;
+
+function showConfirmModal(message, callback) {
+    const modal = document.getElementById('confirmModal');
+    const messageEl = document.getElementById('confirmMessage');
+    if (modal && messageEl) {
+        messageEl.textContent = message;
+        confirmCallback = callback;
+        modal.classList.remove('hidden');
     }
+}
+
+function closeConfirmModal() {
+    const modal = document.getElementById('confirmModal');
+    if (modal) {
+        modal.classList.add('hidden');
+        confirmCallback = null;
+    }
+}
+
+function executeConfirmAction() {
+    if (confirmCallback) {
+        confirmCallback();
+    }
+    closeConfirmModal();
 }
 
 function closeModal() {

@@ -7,22 +7,31 @@
         'customer.programs',
         'customer.cart',
         'customer.requests.index',
-        'customer.requests.create',
+        'customer.requests.checkout',
         'customer.requests.show',
         'customer.requests.edit',
+        'customer.settings.account',
+        'customer.settings.delivery-addresses',
+        'customer.settings.account.password',
         // Admin routes
         'admin.dashboard',
         'admin.users',
         'admin.max-price',
+        'admin.settings.account',
+        'admin.settings.account.password',
         // Supplier routes
         'supplier.dashboard',
-        'supplier.ingredients'
+        'supplier.ingredients',
+        'supplier.settings.account',
+        'supplier.settings.account.password'
     ];
     $currentRoute = request()->route() ? request()->route()->getName() : null;
     $hasSidebar = $currentRoute && (
         in_array($currentRoute, $sidebarRoutes) || 
         str_starts_with($currentRoute, 'customer.requests.') ||
-        str_starts_with($currentRoute, 'admin.')
+        str_starts_with($currentRoute, 'customer.settings.') ||
+        str_starts_with($currentRoute, 'admin.') ||
+        str_starts_with($currentRoute, 'supplier.')
     );
 @endphp
 <footer class="bg-gray-900 text-white w-full {{ $hasSidebar ? 'lg:pl-64' : '' }} transition-all duration-300">

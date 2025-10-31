@@ -18,7 +18,7 @@
         </span>
     </div>
 
-    <!-- Price and Stock -->
+    <!-- Price and Minimum Purchase -->
     <div class="mb-3 space-y-2">
         <div class="flex justify-between items-center">
             <span class="text-green-600 font-bold text-lg">
@@ -27,16 +27,16 @@
             <span class="text-xs text-gray-500">/{{ $product->unit }}</span>
         </div>
         <div class="flex justify-between items-center text-sm">
-            <span class="text-gray-600">Stock:</span>
-            <span class="font-semibold {{ $product->stock <= 10 ? 'text-red-600' : 'text-gray-900' }}">
-                {{ $product->stock }} {{ $product->unit }}
+            <span class="text-gray-600">Min. Purchase:</span>
+            <span class="font-semibold text-blue-600">
+                {{ $product->min_purchase }} {{ $product->unit }}
             </span>
         </div>
     </div>
 
     <!-- Action Buttons -->
     <div class="flex space-x-2 mt-3">
-        <button onclick="addToCart({{ $product->id }})"
+        <button onclick="addToCart({{ $product->id }}, {{ $product->min_purchase }})"
                 class="flex-1 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors font-semibold">
             <i class="fas fa-cart-plus mr-2"></i>Add to Cart
         </button>

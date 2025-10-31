@@ -49,12 +49,7 @@
                                 @error('unit')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Stock</label>
-                                <input type="number" name="stock" value="{{ old('stock', $ingredient->stock) }}" required class="w-full px-4 py-2 border {{ $errors->has('stock') ? 'border-red-500' : 'border-gray-300' }} rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
-                                @error('stock')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Minimum Purchase</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Minimum Purchase <span class="text-red-500">*</span></label>
                                 <input type="number" name="min_purchase" value="{{ old('min_purchase', $ingredient->min_purchase) }}" required class="w-full px-4 py-2 border {{ $errors->has('min_purchase') ? 'border-red-500' : 'border-gray-300' }} rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent" placeholder="Minimum quantity per order">
                                 @error('min_purchase')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                             </div>

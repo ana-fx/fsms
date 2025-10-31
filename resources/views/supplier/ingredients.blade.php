@@ -5,8 +5,6 @@
 @section('content')
 @php
     $products = \App\Models\FoodItem::where('supplier_id', auth()->id())->with('foodCategory')->get();
-    $totalProducts = $products->count();
-    $totalValue = $products->sum(fn($p) => $p->price * $p->stock);
 @endphp
 
 <div class="flex bg-gray-100 min-h-screen w-full overflow-x-hidden">
@@ -70,7 +68,6 @@
                                 <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                                 <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
                                 <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price/Unit</th>
-                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stock</th>
                                 <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Min Purchase</th>
                                 <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                 <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
@@ -87,7 +84,6 @@
                                     <span class="inline-block px-2 py-1 text-xs font-semibold rounded" style="background: {{ $product->foodCategory->color }}20; color: {{ $product->foodCategory->color }}">{{ $product->foodCategory->name }}</span>
                                 </td>
                                 <td class="px-4 py-3 text-sm text-gray-900">Rp {{ number_format($product->price, 0, ',', '.') }}<span class="text-xs text-gray-500">/{{ $product->unit }}</span></td>
-                                <td class="px-4 py-3 text-sm text-gray-900">{{ $product->stock }} {{ $product->unit }}</td>
                                 <td class="px-4 py-3 text-sm text-gray-900">{{ $product->min_purchase }} {{ $product->unit }}</td>
                                 <td class="px-4 py-3 text-sm">
                                     @if($product->is_active)
@@ -98,11 +94,7 @@
                                 </td>
                                 <td class="px-4 py-3 text-right space-x-2">
                                     <a href="{{ route('supplier.ingredients.edit', $product) }}" class="inline-flex items-center text-blue-600 hover:text-blue-800 text-sm font-medium py-1 px-2 border border-blue-600 rounded hover:bg-blue-50 transition"><i class="fas fa-edit mr-1"></i>Edit</a>
-                                    <form action="{{ route('supplier.ingredients.destroy', $product) }}" method="POST" class="inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="inline-flex items-center text-red-600 hover:text-red-800 text-sm font-medium py-1 px-2 border border-red-600 rounded hover:bg-red-50 transition"><i class="fas fa-trash mr-1"></i>Delete</button>
-                                    </form>
+                                    <button onclick="confirmDeleteIngredient({{ $product->id }}, '{{ $product->name }}')" class="inline-flex items-center text-red-600 hover:text-red-800 text-sm font-medium py-1 px-2 border border-red-600 rounded hover:bg-red-50 transition"><i class="fas fa-trash mr-1"></i>Delete</button>
                                 </td>
                             </tr>
                             @endforeach
@@ -119,30 +111,123 @@
                     </a>
                 </div>
                 @endif
-
-                @if($totalProducts > 0)
-                <div class="mt-8">
-                    <h3 class="text-xl font-semibold mb-4">Ingredient Statistics</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        <div class="bg-green-50 p-4 rounded-lg text-center border border-green-200">
-                            <div class="text-2xl font-bold text-green-600">{{ $totalProducts }}</div>
-                            <div class="text-sm text-gray-600">Total Ingredients</div>
-                        </div>
-                        <div class="bg-purple-50 p-4 rounded-lg text-center border border-purple-200">
-                            <div class="text-2xl font-bold text-purple-600">Rp {{ number_format($totalValue, 0, ',', '.') }}</div>
-                            <div class="text-sm text-gray-600">Total Nilai</div>
-                        </div>
-                        <div class="bg-yellow-50 p-4 rounded-lg text-center border border-yellow-200">
-                            <div class="text-2xl font-bold text-yellow-600">{{ $products->sum('stock') }}</div>
-                            <div class="text-sm text-gray-600">Total Stock</div>
-                        </div>
-                    </div>
-                </div>
-                @endif
             </div>
         </div>
         </div>
         </div>
     </div>
 </div>
+
+<!-- Confirmation Modal -->
+<div id="confirmModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-50 hidden items-center justify-center" style="display: none;">
+    <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+        <div class="p-6">
+            <div class="flex items-center mb-4">
+                <div class="flex items-center justify-center w-12 h-12 rounded-full bg-yellow-100 mr-4">
+                    <i class="fas fa-exclamation-triangle text-yellow-600 text-xl"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900">Confirm Delete</h3>
+            </div>
+            <p id="confirmMessage" class="text-gray-600 mb-6"></p>
+            <form id="deleteForm" method="POST" class="inline">
+                @csrf
+                @method('DELETE')
+                <div class="flex justify-end space-x-3">
+                    <button type="button" onclick="closeConfirmModal()" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium">
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium">
+                        Delete
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@push('scripts')
+<script>
+function showNotification(message, type = 'success') {
+    const colors = {
+        success: { bg: 'bg-green-50', border: 'border-green-200', text: 'text-green-800', icon: 'fa-check-circle', iconColor: 'text-green-600' },
+        error: { bg: 'bg-red-50', border: 'border-red-200', text: 'text-red-800', icon: 'fa-exclamation-circle', iconColor: 'text-red-600' },
+        warning: { bg: 'bg-yellow-50', border: 'border-yellow-200', text: 'text-yellow-800', icon: 'fa-exclamation-triangle', iconColor: 'text-yellow-600' },
+        info: { bg: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-800', icon: 'fa-info-circle', iconColor: 'text-blue-600' }
+    };
+
+    const color = colors[type] || colors.success;
+
+    const notification = document.createElement('div');
+    notification.className = `fixed top-4 right-4 ${color.bg} ${color.border} border rounded-lg shadow-lg z-50 flex items-center space-x-3 p-4 animate-slide-in`;
+    notification.style.minWidth = '300px';
+    notification.innerHTML = `
+        <div class="flex-shrink-0">
+            <i class="fas ${color.icon} ${color.iconColor} text-xl"></i>
+        </div>
+        <div class="flex-1">
+            <p class="${color.text} font-medium">${message}</p>
+        </div>
+        <button onclick="this.parentElement.remove()" class="flex-shrink-0 ${color.text} hover:opacity-70 transition-opacity">
+            <i class="fas fa-times"></i>
+        </button>
+    `;
+
+    document.body.appendChild(notification);
+
+    setTimeout(() => {
+        notification.style.animation = 'slide-out 0.3s ease-out';
+        setTimeout(() => notification.remove(), 300);
+    }, 5000);
+}
+
+function confirmDeleteIngredient(id, name) {
+    const modal = document.getElementById('confirmModal');
+    document.getElementById('confirmMessage').textContent = `Are you sure you want to delete "${name}"? This action cannot be undone.`;
+    document.getElementById('deleteForm').action = `/supplier/ingredients/${id}`;
+    modal.classList.remove('hidden');
+    modal.style.display = 'flex';
+}
+
+function closeConfirmModal() {
+    const modal = document.getElementById('confirmModal');
+    modal.classList.add('hidden');
+    modal.style.display = 'none';
+    document.getElementById('deleteForm').action = '';
+}
+
+// Close modal when clicking outside
+document.getElementById('confirmModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeConfirmModal();
+    }
+});
+</script>
+<style>
+@keyframes slide-in {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slide-out {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+.animate-slide-in {
+    animation: slide-in 0.3s ease-out;
+}
+</style>
+@endpush
 @endsection

@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
@@ -123,5 +124,21 @@ class User extends Authenticatable
         if ($role) {
             $this->roles()->detach($role->id);
         }
+    }
+
+    /**
+     * Get the delivery addresses for the user.
+     */
+    public function deliveryAddresses(): HasMany
+    {
+        return $this->hasMany(UserDeliveryAddress::class);
+    }
+
+    /**
+     * Get the default delivery address for the user.
+     */
+    public function defaultDeliveryAddress()
+    {
+        return $this->deliveryAddresses()->where('is_default', true)->first();
     }
 }

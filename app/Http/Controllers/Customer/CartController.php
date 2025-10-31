@@ -62,11 +62,11 @@ class CartController extends Controller
 
         $product = FoodItem::findOrFail($request->product_id);
 
-        // Check stock
-        if ($product->stock < $request->quantity) {
+        // Check minimum purchase requirement
+        if ($request->quantity < $product->min_purchase) {
             return response()->json([
                 'success' => false,
-                'message' => 'Stok tidak mencukupi. Stok tersedia: ' . $product->stock . ' ' . $product->unit
+                'message' => 'Minimum purchase is ' . $product->min_purchase . ' ' . $product->unit . '. Please add at least the minimum quantity.'
             ], 400);
         }
 
@@ -74,17 +74,25 @@ class CartController extends Controller
         $itemId = $request->product_id;
 
         if (isset($cart[$itemId])) {
-            // Update quantity
+            // Update quantity (add to existing)
             $newQuantity = $cart[$itemId]['quantity'] + $request->quantity;
-            if ($newQuantity > $product->stock) {
+            
+            // Check minimum purchase for total quantity
+            if ($newQuantity < $product->min_purchase) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Stok tidak mencukupi. Stok tersedia: ' . $product->stock . ' ' . $product->unit
+                    'message' => 'Total quantity must be at least ' . $product->min_purchase . ' ' . $product->unit
                 ], 400);
             }
             $cart[$itemId]['quantity'] = $newQuantity;
         } else {
-            // Add new item
+            // Add new item - ensure it meets minimum purchase
+            if ($request->quantity < $product->min_purchase) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Minimum purchase is ' . $product->min_purchase . ' ' . $product->unit
+                ], 400);
+            }
             $cart[$itemId] = [
                 'quantity' => $request->quantity,
             ];
@@ -94,7 +102,7 @@ class CartController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Produk berhasil ditambahkan ke keranjang',
+            'message' => 'Item added to cart successfully',
             'cart_count' => $this->getCartCount(),
         ]);
     }
@@ -114,14 +122,15 @@ class CartController extends Controller
         if (!isset($cart[$itemId])) {
             return response()->json([
                 'success' => false,
-                'message' => 'Item tidak ditemukan di keranjang'
+                'message' => 'Item not found in cart'
             ], 404);
         }
 
-        if ($request->quantity > $product->stock) {
+        // Check minimum purchase requirement
+        if ($request->quantity > 0 && $request->quantity < $product->min_purchase) {
             return response()->json([
                 'success' => false,
-                'message' => 'Stok tidak mencukupi. Stok tersedia: ' . $product->stock . ' ' . $product->unit
+                'message' => 'Minimum purchase is ' . $product->min_purchase . ' ' . $product->unit . '. Please enter at least the minimum quantity.'
             ], 400);
         }
 
@@ -136,7 +145,7 @@ class CartController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Keranjang berhasil diperbarui',
+            'message' => 'Cart updated successfully',
             'cart_count' => $this->getCartCount(),
         ]);
     }

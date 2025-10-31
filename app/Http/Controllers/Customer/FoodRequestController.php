@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
 use App\Models\FoodCategory;
+use App\Models\FoodItem;
 use App\Models\FoodRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -26,12 +27,40 @@ class FoodRequestController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Show the checkout page with cart items and delivery address form.
      */
-    public function create()
+    public function checkout()
     {
-        $categories = FoodCategory::active()->ordered()->get();
-        return view('customer.requests.create', compact('categories'));
+        // Get cart items from session
+        $cartItems = [];
+        $cart = session()->get('cart', []);
+        $total = 0;
+        
+        foreach ($cart as $itemId => $item) {
+            $product = FoodItem::with('foodCategory')->find($itemId);
+            if ($product) {
+                $subtotal = $product->price * $item['quantity'];
+                $cartItems[] = [
+                    'product' => $product,
+                    'quantity' => $item['quantity'],
+                    'subtotal' => $subtotal,
+                ];
+                $total += $subtotal;
+            }
+        }
+        
+        // Redirect to cart if cart is empty
+        if (empty($cartItems)) {
+            return redirect()->route('customer.cart')
+                ->with('error', 'Your cart is empty. Please add items to cart first.');
+        }
+        
+        // Get user's delivery addresses
+        $user = Auth::user();
+        $addresses = $user->deliveryAddresses()->orderBy('is_default', 'desc')->get();
+        $defaultAddress = $user->defaultDeliveryAddress();
+        
+        return view('customer.requests.checkout', compact('cartItems', 'total', 'addresses', 'defaultAddress', 'user'));
     }
 
     /**
@@ -39,24 +68,52 @@ class FoodRequestController extends Controller
      */
     public function store(Request $request)
     {
+        // Validate cart items exist
+        $cart = session()->get('cart', []);
+        if (empty($cart)) {
+            return redirect()->route('customer.cart')
+                ->with('error', 'Your cart is empty.');
+        }
+        
         $validated = $request->validate([
-            'food_category_id' => 'required|exists:food_categories,id',
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'quantity' => 'required|numeric|min:0.01',
-            'unit' => 'required|string|max:50',
-            'notes' => 'nullable|string',
+            'recipient_name' => 'required|string|max:255',
+            'recipient_phone' => 'required|string|max:20',
+            'delivery_address' => 'required|string',
+            'city' => 'required|string|max:100',
+            'postal_code' => 'nullable|string|max:10',
+            'delivery_notes' => 'nullable|string',
             'needed_date' => 'required|date|after:today',
         ]);
 
-        $validated['customer_id'] = Auth::id();
-        $validated['requested_date'] = now()->toDateString();
-        $validated['status'] = 'pending';
+        // Create a request for each cart item
+        foreach ($cart as $itemId => $item) {
+            $product = FoodItem::with('foodCategory')->find($itemId);
+            if ($product) {
+                FoodRequest::create([
+                    'customer_id' => Auth::id(),
+                    'food_category_id' => $product->food_category_id,
+                    'title' => $product->name . ' Request',
+                    'description' => 'Request for ' . $item['quantity'] . ' ' . $product->unit . ' of ' . $product->name,
+                    'quantity' => $item['quantity'],
+                    'unit' => $product->unit,
+                    'recipient_name' => $validated['recipient_name'],
+                    'recipient_phone' => $validated['recipient_phone'],
+                    'delivery_address' => $validated['delivery_address'],
+                    'city' => $validated['city'],
+                    'postal_code' => $validated['postal_code'] ?? null,
+                    'delivery_notes' => $validated['delivery_notes'] ?? null,
+                    'needed_date' => $validated['needed_date'],
+                    'requested_date' => now()->toDateString(),
+                    'status' => 'pending',
+                ]);
+            }
+        }
 
-        FoodRequest::create($validated);
+        // Clear cart after successful checkout
+        session()->forget('cart');
 
         return redirect()->route('customer.requests.index')
-            ->with('success', 'Permintaan bahan makanan berhasil diajukan!');
+            ->with('success', 'Order placed successfully!');
     }
 
     /**

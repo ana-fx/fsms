@@ -39,22 +39,27 @@
                                             <div class="flex-1">
                                                 <h3 class="font-semibold text-lg text-gray-900 mb-1">{{ $item['product']->name }}</h3>
                                                 <p class="text-sm text-gray-500 mb-2">{{ Str::limit($item['product']->description, 50) }}</p>
+                                                <p class="text-xs text-blue-600 mb-2">
+                                                    <i class="fas fa-info-circle mr-1"></i>Min. Purchase: {{ $item['product']->min_purchase }} {{ $item['product']->unit }}
+                                                </p>
                                                 
                                                 <div class="flex items-center justify-between">
                                                     <!-- Quantity Control -->
                                                     <div class="flex items-center space-x-3">
-                                                        <button onclick="updateQuantity({{ $item['product']->id }}, {{ $item['quantity'] - 1 }})" 
-                                                                class="w-8 h-8 flex items-center justify-center border border-gray-300 rounded hover:bg-gray-100 transition-colors">
+                                                        <button onclick="decrementQuantity({{ $item['product']->id }}, {{ $item['quantity'] }}, {{ $item['product']->min_purchase }})" 
+                                                                class="w-8 h-8 flex items-center justify-center border border-gray-300 rounded hover:bg-gray-100 transition-colors {{ $item['quantity'] <= $item['product']->min_purchase ? 'opacity-50 cursor-not-allowed' : '' }}"
+                                                                {{ $item['quantity'] <= $item['product']->min_purchase ? 'disabled' : '' }}>
                                                             <i class="fas fa-minus text-xs"></i>
                                                         </button>
                                                         <input type="number" 
                                                                id="quantity-{{ $item['product']->id }}"
                                                                value="{{ $item['quantity'] }}" 
-                                                               min="0.01" 
+                                                               min="{{ $item['product']->min_purchase }}" 
                                                                step="0.01"
-                                                               onchange="updateQuantity({{ $item['product']->id }}, this.value)"
+                                                               onchange="updateQuantity({{ $item['product']->id }}, this.value, {{ $item['product']->min_purchase }})"
+                                                               onblur="validateQuantity({{ $item['product']->id }}, this.value, {{ $item['product']->min_purchase }})"
                                                                class="w-20 text-center border border-gray-300 rounded py-1 text-sm">
-                                                        <button onclick="updateQuantity({{ $item['product']->id }}, {{ $item['quantity'] + 1 }})" 
+                                                        <button onclick="incrementQuantity({{ $item['product']->id }}, {{ $item['quantity'] }}, {{ $item['product']->min_purchase }})" 
                                                                 class="w-8 h-8 flex items-center justify-center border border-gray-300 rounded hover:bg-gray-100 transition-colors">
                                                             <i class="fas fa-plus text-xs"></i>
                                                         </button>
@@ -110,12 +115,12 @@
                                     </div>
                                 </div>
 
-                                <a href="{{ route('customer.requests.create') }}" class="w-full bg-green-600 text-white px-4 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold text-center block">
-                                    <i class="fas fa-shopping-cart mr-2"></i>Lanjutkan ke Pemesanan
+                                <a href="{{ route('customer.requests.checkout') }}" class="w-full bg-green-600 text-white px-4 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold text-center block">
+                                    <i class="fas fa-shopping-cart mr-2"></i>Continue to Checkout
                                 </a>
 
                                 <a href="{{ route('customer.ingredients') }}" class="w-full mt-3 bg-gray-200 text-gray-700 px-4 py-3 rounded-lg hover:bg-gray-300 transition-colors font-semibold text-center block">
-                                    <i class="fas fa-arrow-left mr-2"></i>Lanjutkan Belanja
+                                    <i class="fas fa-arrow-left mr-2"></i>Continue Shopping
                                 </a>
                             </div>
                         </div>
@@ -136,13 +141,161 @@
     </div>
 </div>
 
+<!-- Confirmation Modal -->
+<div id="confirmModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-50 hidden items-center justify-center" style="display: none;">
+    <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+        <div class="p-6">
+            <div class="flex items-center mb-4">
+                <div class="flex items-center justify-center w-12 h-12 rounded-full bg-yellow-100 mr-4">
+                    <i class="fas fa-exclamation-triangle text-yellow-600 text-xl"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900">Confirm Action</h3>
+            </div>
+            <p id="confirmMessage" class="text-gray-600 mb-6"></p>
+            <div class="flex justify-end space-x-3">
+                <button onclick="closeConfirmModal()" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium">
+                    Cancel
+                </button>
+                <button id="confirmButton" onclick="executeConfirmAction()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium">
+                    Confirm
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @push('scripts')
 <script>
-function updateQuantity(productId, quantity) {
-    if (quantity <= 0) {
-        if (confirm('Remove item from cart?')) {
-            removeItem(productId);
-        }
+let confirmCallback = null;
+
+function showNotification(message, type = 'success') {
+    const colors = {
+        success: { bg: 'bg-green-50', border: 'border-green-200', text: 'text-green-800', icon: 'fa-check-circle', iconColor: 'text-green-600' },
+        error: { bg: 'bg-red-50', border: 'border-red-200', text: 'text-red-800', icon: 'fa-exclamation-circle', iconColor: 'text-red-600' },
+        warning: { bg: 'bg-yellow-50', border: 'border-yellow-200', text: 'text-yellow-800', icon: 'fa-exclamation-triangle', iconColor: 'text-yellow-600' },
+        info: { bg: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-800', icon: 'fa-info-circle', iconColor: 'text-blue-600' }
+    };
+    
+    const color = colors[type] || colors.success;
+    
+    const notification = document.createElement('div');
+    notification.className = `fixed top-4 right-4 ${color.bg} ${color.border} border rounded-lg shadow-lg z-50 flex items-center space-x-3 p-4 animate-slide-in`;
+    notification.style.minWidth = '300px';
+    notification.innerHTML = `
+        <div class="flex-shrink-0">
+            <i class="fas ${color.icon} ${color.iconColor} text-xl"></i>
+        </div>
+        <div class="flex-1">
+            <p class="${color.text} font-medium">${message}</p>
+        </div>
+        <button onclick="this.parentElement.remove()" class="flex-shrink-0 ${color.text} hover:opacity-70 transition-opacity">
+            <i class="fas fa-times"></i>
+        </button>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+        notification.style.animation = 'slide-out 0.3s ease-out';
+        setTimeout(() => notification.remove(), 300);
+    }, 5000);
+}
+
+function showConfirmModal(message, callback) {
+    const modal = document.getElementById('confirmModal');
+    document.getElementById('confirmMessage').textContent = message;
+    confirmCallback = callback;
+    modal.classList.remove('hidden');
+    modal.style.display = 'flex';
+}
+
+function closeConfirmModal() {
+    const modal = document.getElementById('confirmModal');
+    modal.classList.add('hidden');
+    modal.style.display = 'none';
+    confirmCallback = null;
+}
+
+function executeConfirmAction() {
+    if (confirmCallback) {
+        confirmCallback();
+    }
+    closeConfirmModal();
+}
+
+// Close modal when clicking outside
+document.getElementById('confirmModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeConfirmModal();
+    }
+});
+</script>
+<style>
+@keyframes slide-in {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slide-out {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+.animate-slide-in {
+    animation: slide-in 0.3s ease-out;
+}
+</style>
+<script>
+function decrementQuantity(productId, currentQuantity, minPurchase) {
+    const newQuantity = Math.max(minPurchase, currentQuantity - 1);
+    if (newQuantity < currentQuantity) {
+        updateQuantity(productId, newQuantity, minPurchase);
+    }
+}
+
+function incrementQuantity(productId, currentQuantity, minPurchase) {
+    const newQuantity = currentQuantity + 1;
+    updateQuantity(productId, newQuantity, minPurchase);
+}
+
+function validateQuantity(productId, quantity, minPurchase) {
+    const qty = parseFloat(quantity) || 0;
+    if (qty > 0 && qty < minPurchase) {
+        showNotification(`Minimum purchase is ${minPurchase}. Setting to minimum.`, 'warning');
+        document.getElementById(`quantity-${productId}`).value = minPurchase;
+        updateQuantity(productId, minPurchase, minPurchase);
+    }
+}
+
+function updateQuantity(productId, quantity, minPurchase = 1) {
+    const qty = parseFloat(quantity) || 0;
+    
+    // Ensure quantity is at least min_purchase
+    if (qty > 0 && qty < minPurchase) {
+        showNotification(`Minimum purchase is ${minPurchase}. Please enter at least ${minPurchase}.`, 'warning');
+        // Reset input to minimum
+        document.getElementById(`quantity-${productId}`).value = minPurchase;
+        updateQuantity(productId, minPurchase, minPurchase);
+        return;
+    }
+
+    if (qty <= 0) {
+        showConfirmModal('Remove item from cart?', function() {
+            removeItem(productId, false);
+        });
         return;
     }
 
@@ -153,24 +306,31 @@ function updateQuantity(productId, quantity) {
             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
             'X-Requested-With': 'XMLHttpRequest'
         },
-        body: JSON.stringify({ quantity: quantity })
+        body: JSON.stringify({ quantity: qty })
     })
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            location.reload();
+            showNotification('Cart updated successfully', 'success');
+            setTimeout(() => location.reload(), 500);
         } else {
-            alert(data.message || 'Terjadi kesalahan');
+            showNotification(data.message || 'An error occurred', 'error');
+            // Reset to previous value if validation fails
+            location.reload();
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('An error occurred while updating the cart');
+        showNotification('An error occurred while updating the cart', 'error');
+        location.reload();
     });
 }
 
-function removeItem(productId) {
-    if (!confirm('Remove item from cart?')) {
+function removeItem(productId, showConfirm = true) {
+    if (showConfirm) {
+        showConfirmModal('Remove item from cart?', function() {
+            removeItem(productId, false);
+        });
         return;
     }
 
@@ -184,48 +344,50 @@ function removeItem(productId) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
+            showNotification('Item removed from cart', 'success');
             document.getElementById(`cart-item-${productId}`).remove();
             updateCartCount();
             
             // Reload if cart is empty
-            if (document.querySelectorAll('[id^="cart-item-"]').length === 0) {
-                location.reload();
-            } else {
-                location.reload();
-            }
+            setTimeout(() => {
+                if (document.querySelectorAll('[id^="cart-item-"]').length === 0) {
+                    location.reload();
+                } else {
+                    location.reload();
+                }
+            }, 500);
         } else {
-            alert(data.message || 'Terjadi kesalahan');
+            showNotification(data.message || 'An error occurred', 'error');
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('An error occurred while removing the item');
+        showNotification('An error occurred while removing the item', 'error');
     });
 }
 
 function clearCart() {
-    if (!confirm('Clear entire cart?')) {
-        return;
-    }
-
-    fetch('/customer/cart/clear', {
-        method: 'DELETE',
-        headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-            'X-Requested-With': 'XMLHttpRequest'
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            location.reload();
-        } else {
-            alert(data.message || 'Terjadi kesalahan');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('An error occurred while clearing the cart');
+    showConfirmModal('Clear entire cart? This action cannot be undone.', function() {
+        fetch('/customer/cart/clear', {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showNotification('Cart cleared successfully', 'success');
+                setTimeout(() => location.reload(), 500);
+            } else {
+                showNotification(data.message || 'An error occurred', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('An error occurred while clearing the cart', 'error');
+        });
     });
 }
 

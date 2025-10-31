@@ -106,14 +106,47 @@
 
 @section('scripts')
 <script>
-function selectProduct(productId) {
-    // Redirect to create food request with selected product
-    window.location.href = '{{ route("customer.requests.create") }}?product_id=' + productId;
+function showNotification(message, type = 'success') {
+    const colors = {
+        success: { bg: 'bg-green-50', border: 'border-green-200', text: 'text-green-800', icon: 'fa-check-circle', iconColor: 'text-green-600' },
+        error: { bg: 'bg-red-50', border: 'border-red-200', text: 'text-red-800', icon: 'fa-exclamation-circle', iconColor: 'text-red-600' },
+        warning: { bg: 'bg-yellow-50', border: 'border-yellow-200', text: 'text-yellow-800', icon: 'fa-exclamation-triangle', iconColor: 'text-yellow-600' },
+        info: { bg: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-800', icon: 'fa-info-circle', iconColor: 'text-blue-600' }
+    };
+    
+    const color = colors[type] || colors.success;
+    
+    const notification = document.createElement('div');
+    notification.className = `fixed top-4 right-4 ${color.bg} ${color.border} border rounded-lg shadow-lg z-50 flex items-center space-x-3 p-4 animate-slide-in`;
+    notification.style.minWidth = '300px';
+    notification.innerHTML = `
+        <div class="flex-shrink-0">
+            <i class="fas ${color.icon} ${color.iconColor} text-xl"></i>
+        </div>
+        <div class="flex-1">
+            <p class="${color.text} font-medium">${message}</p>
+        </div>
+        <button onclick="this.parentElement.remove()" class="flex-shrink-0 ${color.text} hover:opacity-70 transition-opacity">
+            <i class="fas fa-times"></i>
+        </button>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.style.animation = 'slide-out 0.3s ease-out';
+        setTimeout(() => notification.remove(), 300);
+    }, 5000);
 }
 
-function addToCart(productId) {
-    // Get default quantity (1)
-    const quantity = 1;
+function selectProduct(productId) {
+    // Redirect to create food request with selected product
+    window.location.href = '{{ route("customer.requests.checkout") }}?product_id=' + productId;
+}
+
+function addToCart(productId, minPurchase = 1) {
+    // Use min_purchase as default quantity
+    const quantity = minPurchase || 1;
     
     fetch('{{ route("customer.cart.add") }}', {
         method: 'POST',
@@ -130,29 +163,15 @@ function addToCart(productId) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            // Show success message
-            const notification = document.createElement('div');
-            notification.className = 'fixed top-4 right-4 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg z-50 flex items-center space-x-2';
-            notification.innerHTML = `
-                <i class="fas fa-check-circle"></i>
-                <span>${data.message}</span>
-            `;
-            document.body.appendChild(notification);
-            
-            // Update cart count
+            showNotification(data.message || 'Item added to cart successfully', 'success');
             updateCartCount();
-            
-            // Remove notification after 3 seconds
-            setTimeout(() => {
-                notification.remove();
-            }, 3000);
         } else {
-            alert(data.message || 'Terjadi kesalahan');
+            showNotification(data.message || 'An error occurred', 'error');
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('An error occurred while adding to the cart');
+        showNotification('An error occurred while adding to the cart', 'error');
     });
 }
 
@@ -354,7 +373,34 @@ function clearSearch() {
     if (window.performSearch) {
         window.performSearch();
     }
-}
-</script>
-@endsection
+       }
+   </script>
+   <style>
+   @keyframes slide-in {
+       from {
+           transform: translateX(100%);
+           opacity: 0;
+       }
+       to {
+           transform: translateX(0);
+           opacity: 1;
+       }
+   }
+
+   @keyframes slide-out {
+       from {
+           transform: translateX(0);
+           opacity: 1;
+       }
+       to {
+           transform: translateX(100%);
+           opacity: 0;
+       }
+   }
+
+   .animate-slide-in {
+       animation: slide-in 0.3s ease-out;
+   }
+   </style>
+   @endsection
 

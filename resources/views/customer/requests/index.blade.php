@@ -17,15 +17,9 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <!-- Header -->
         <div class="mb-8">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h1 class="text-3xl font-bold text-gray-900">Food Requests</h1>
-                    <p class="mt-2 text-gray-600">Manage ingredient requests for programs</p>
-                </div>
-                <a href="{{ route('customer.requests.create') }}" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold">
-                    <i class="fas fa-plus mr-2"></i>
-                    Create New Request
-                </a>
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900">Food Requests</h1>
+                <p class="mt-2 text-gray-600">Manage ingredient requests for programs</p>
             </div>
         </div>
 
@@ -166,13 +160,9 @@
                                                 <a href="{{ route('customer.requests.edit', $request) }}" class="text-blue-600 hover:text-blue-900">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
-                                                <form method="POST" action="{{ route('customer.requests.destroy', $request) }}" class="inline" onsubmit="return confirm('Are you sure you want to delete this request?')">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="text-red-600 hover:text-red-900">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                </form>
+                                                <button onclick="confirmDeleteRequest({{ $request->id }}, '{{ $request->title }}')" class="text-red-600 hover:text-red-900">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
                                             @endif
                                         </div>
                                     </td>
@@ -190,10 +180,10 @@
                 <div class="text-center py-12">
                     <i class="fas fa-inbox text-4xl text-gray-400 mb-4"></i>
                     <h3 class="text-lg font-medium text-gray-900 mb-2">No requests yet</h3>
-                    <p class="text-gray-500 mb-6">Start by creating your first ingredient request</p>
-                    <a href="{{ route('customer.requests.create') }}" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold">
-                        <i class="fas fa-plus mr-2"></i>
-                        Create New Request
+                    <p class="text-gray-500 mb-6">Start by adding items to your cart and proceed to checkout</p>
+                    <a href="{{ route('customer.ingredients') }}" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold">
+                        <i class="fas fa-shopping-cart mr-2"></i>
+                        Browse Ingredients
                     </a>
                 </div>
             @endif
@@ -202,4 +192,57 @@
         </div>
     </div>
 </div>
+
+<!-- Confirmation Modal -->
+<div id="confirmModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-50 hidden items-center justify-center" style="display: none;">
+    <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+        <div class="p-6">
+            <div class="flex items-center mb-4">
+                <div class="flex items-center justify-center w-12 h-12 rounded-full bg-yellow-100 mr-4">
+                    <i class="fas fa-exclamation-triangle text-yellow-600 text-xl"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900">Confirm Delete</h3>
+            </div>
+            <p id="confirmMessage" class="text-gray-600 mb-6"></p>
+            <form id="deleteForm" method="POST" class="inline">
+                @csrf
+                @method('DELETE')
+                <div class="flex justify-end space-x-3">
+                    <button type="button" onclick="closeConfirmModal()" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium">
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium">
+                        Delete
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@push('scripts')
+<script>
+function confirmDeleteRequest(id, title) {
+    const modal = document.getElementById('confirmModal');
+    document.getElementById('confirmMessage').textContent = `Are you sure you want to delete "${title}"? This action cannot be undone.`;
+    document.getElementById('deleteForm').action = `/customer/requests/${id}`;
+    modal.classList.remove('hidden');
+    modal.style.display = 'flex';
+}
+
+function closeConfirmModal() {
+    const modal = document.getElementById('confirmModal');
+    modal.classList.add('hidden');
+    modal.style.display = 'none';
+    document.getElementById('deleteForm').action = '';
+}
+
+// Close modal when clicking outside
+document.getElementById('confirmModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeConfirmModal();
+    }
+});
+</script>
+@endpush
 @endsection

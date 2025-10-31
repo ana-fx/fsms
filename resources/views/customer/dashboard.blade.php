@@ -82,10 +82,10 @@
         <div class="text-center py-12">
             <i class="fas fa-inbox text-4xl text-gray-400 mb-4"></i>
             <h3 class="text-lg font-medium text-gray-900 mb-2">No requests yet</h3>
-            <p class="text-gray-500 mb-6">Start by creating your first ingredient request</p>
-            <a href="{{ route('customer.requests.create') }}" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold">
-                <i class="fas fa-plus mr-2"></i>
-                Create New Request
+            <p class="text-gray-500 mb-6">Start by adding items to your cart and proceed to checkout</p>
+            <a href="{{ route('customer.ingredients') }}" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold">
+                <i class="fas fa-shopping-cart mr-2"></i>
+                Browse Ingredients
             </a>
         </div>
     </div>

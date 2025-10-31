@@ -9,7 +9,10 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\MaxPriceController;
 use App\Http\Controllers\Customer\IngredientController;
 use App\Http\Controllers\Supplier\IngredientController as SupplierIngredientController;
+use App\Http\Controllers\Supplier\AccountSettingsController as SupplierAccountSettingsController;
 use App\Http\Controllers\Customer\CartController;
+use App\Http\Controllers\Customer\AccountSettingsController;
+use App\Http\Controllers\Admin\AccountSettingsController as AdminAccountSettingsController;
 use App\Models\User;
 
 Route::get('/', function () {
@@ -65,6 +68,14 @@ Route::middleware(['auth', 'role:super_admin'])->group(function () {
     Route::get('/admin/max-price', [MaxPriceController::class, 'index'])->name('admin.max-price');
     Route::post('/admin/max-price', [MaxPriceController::class, 'store'])->name('admin.max-price.store');
     Route::post('/admin/max-price/{id}', [MaxPriceController::class, 'update'])->name('admin.max-price.update');
+
+    // Admin Account Settings Routes
+    Route::get('/admin/settings/account', [AdminAccountSettingsController::class, 'index'])
+        ->name('admin.settings.account');
+    Route::put('/admin/settings/account', [AdminAccountSettingsController::class, 'update'])
+        ->name('admin.settings.account.update');
+    Route::put('/admin/settings/account/password', [AdminAccountSettingsController::class, 'updatePassword'])
+        ->name('admin.settings.account.password');
 });
 
 Route::middleware(['auth', 'role:supplier'])->group(function () {
@@ -82,6 +93,14 @@ Route::middleware(['auth', 'role:supplier'])->group(function () {
     Route::get('/supplier/ingredients/{foodItem}/edit', [SupplierIngredientController::class, 'edit'])->name('supplier.ingredients.edit');
     Route::put('/supplier/ingredients/{foodItem}', [SupplierIngredientController::class, 'update'])->name('supplier.ingredients.update');
     Route::delete('/supplier/ingredients/{foodItem}', [SupplierIngredientController::class, 'destroy'])->name('supplier.ingredients.destroy');
+
+    // Supplier Account Settings Routes
+    Route::get('/supplier/settings/account', [SupplierAccountSettingsController::class, 'index'])
+        ->name('supplier.settings.account');
+    Route::put('/supplier/settings/account', [SupplierAccountSettingsController::class, 'update'])
+        ->name('supplier.settings.account.update');
+    Route::put('/supplier/settings/account/password', [SupplierAccountSettingsController::class, 'updatePassword'])
+        ->name('supplier.settings.account.password');
 });
 
 Route::middleware(['auth', 'role:customer'])->group(function () {
@@ -104,15 +123,37 @@ Route::middleware(['auth', 'role:customer'])->group(function () {
     Route::delete('/customer/cart/clear', [CartController::class, 'clear'])->name('customer.cart.clear');
     Route::get('/customer/cart/count', [CartController::class, 'getCount'])->name('customer.cart.count');
 
+    // Checkout Route (must be before resource routes to avoid route conflict)
+    Route::get('customer/requests/checkout', [\App\Http\Controllers\Customer\FoodRequestController::class, 'checkout'])
+        ->name('customer.requests.checkout');
+
     // Food Requests Routes
     Route::resource('customer/requests', \App\Http\Controllers\Customer\FoodRequestController::class)
+        ->except(['create'])
         ->names([
             'index' => 'customer.requests.index',
-            'create' => 'customer.requests.create',
             'store' => 'customer.requests.store',
             'show' => 'customer.requests.show',
             'edit' => 'customer.requests.edit',
             'update' => 'customer.requests.update',
             'destroy' => 'customer.requests.destroy',
         ]);
+
+    // Account Settings Routes
+    Route::get('/customer/settings/account', [AccountSettingsController::class, 'index'])
+        ->name('customer.settings.account');
+    Route::put('/customer/settings/account', [AccountSettingsController::class, 'update'])
+        ->name('customer.settings.account.update');
+    Route::put('/customer/settings/account/password', [AccountSettingsController::class, 'updatePassword'])
+        ->name('customer.settings.account.password');
+
+    // Delivery Addresses Routes
+    Route::get('/customer/settings/delivery-addresses', [AccountSettingsController::class, 'deliveryAddresses'])
+        ->name('customer.settings.delivery-addresses');
+    Route::post('/customer/settings/delivery-addresses', [AccountSettingsController::class, 'storeAddress'])
+        ->name('customer.settings.delivery-addresses.store');
+    Route::put('/customer/settings/delivery-addresses/{id}', [AccountSettingsController::class, 'updateAddress'])
+        ->name('customer.settings.delivery-addresses.update');
+    Route::delete('/customer/settings/delivery-addresses/{id}', [AccountSettingsController::class, 'deleteAddress'])
+        ->name('customer.settings.delivery-addresses.delete');
 });
