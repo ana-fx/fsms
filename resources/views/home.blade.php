@@ -73,9 +73,9 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
                 <h3 class="text-3xl font-bold text-gray-900 mb-4">Why Choose FSMS?</h3>
-                    <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">
                         The best solution to manage food supply with modern technology
-                    </p>
+                </p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -131,9 +131,9 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
                 <h3 class="text-3xl font-bold text-gray-900 mb-4">How the System Works</h3>
-                    <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">
                     A simple process to efficiently manage food supply
-                    </p>
+                </p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -177,9 +177,9 @@
     <div class="py-20 bg-white">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h3 class="text-3xl font-bold text-gray-900 mb-4">Ready to Get Started?</h3>
-                <p class="text-lg text-gray-600 mb-8">
+            <p class="text-lg text-gray-600 mb-8">
                     Join the many customers and suppliers who trust FSMS
-                </p>
+            </p>
 
             @guest
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">

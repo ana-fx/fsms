@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class FoodItem extends Model
@@ -43,5 +44,13 @@ class FoodItem extends Model
     public function foodCategory(): BelongsTo
     {
         return $this->belongsTo(FoodCategory::class);
+    }
+
+    /**
+     * Get all food requests for this item.
+     */
+    public function foodRequests(): HasMany
+    {
+        return $this->hasMany(FoodRequest::class);
     }
 }

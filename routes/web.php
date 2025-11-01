@@ -107,9 +107,9 @@ Route::middleware(['auth', 'role:customer'])->group(function () {
     // Ingredients - Main page for customers
     Route::get('/customer/ingredients', [IngredientController::class, 'index'])->name('customer.ingredients');
 
-    Route::get('/customer', function () {
-        return redirect()->route('customer.ingredients');
-    })->name('customer.dashboard');
+    // Dashboard - redirects to food requests (which is now the dashboard)
+    Route::get('/customer', [\App\Http\Controllers\Customer\FoodRequestController::class, 'index'])
+        ->name('customer.dashboard');
 
     Route::get('/customer/programs', function () {
         return view('customer.programs', ['title' => 'Manage Programs']);
@@ -126,6 +126,10 @@ Route::middleware(['auth', 'role:customer'])->group(function () {
     // Checkout Route (must be before resource routes to avoid route conflict)
     Route::get('customer/requests/checkout', [\App\Http\Controllers\Customer\FoodRequestController::class, 'checkout'])
         ->name('customer.requests.checkout');
+    
+    // Upload Payment Proof Route (must be before resource routes to avoid route conflict)
+    Route::post('customer/requests/upload-payment-proof', [\App\Http\Controllers\Customer\FoodRequestController::class, 'uploadPaymentProof'])
+        ->name('customer.requests.upload-payment-proof');
 
     // Food Requests Routes
     Route::resource('customer/requests', \App\Http\Controllers\Customer\FoodRequestController::class)

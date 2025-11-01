@@ -34,83 +34,83 @@
 
     <!-- Navigation Menu -->
     <nav class="mt-6 flex-1 overflow-y-auto">
-        <div class="px-4 space-y-2">
-            <!-- Ingredients -->
-            <a href="{{ route('customer.ingredients') }}"
-               class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('customer.ingredients') ? 'bg-green-100 text-green-700 border-r-2 border-green-600' : 'text-gray-700 hover:bg-gray-100 hover:text-green-600' }}">
-                <i class="fas fa-box mr-3 text-lg"></i>
-                Ingredients
-            </a>
-
-            <!-- Cart -->
-            <a href="{{ route('customer.cart') }}"
-               class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('customer.cart') ? 'bg-green-100 text-green-700 border-r-2 border-green-600' : 'text-gray-700 hover:bg-gray-100 hover:text-green-600' }}">
-                <i class="fas fa-shopping-cart mr-3 text-lg"></i>
-                Cart
-                @php
-                    $cartCount = array_sum(array_column(session('cart', []), 'quantity'));
-                @endphp
-                @if($cartCount > 0)
-                    <span id="cart-badge" class="ml-auto bg-green-600 text-white text-xs font-semibold px-2 py-1 rounded-full">{{ $cartCount }}</span>
-                @else
-                    <span id="cart-badge" class="hidden ml-auto bg-green-600 text-white text-xs font-semibold px-2 py-1 rounded-full">0</span>
-                @endif
-            </a>
-
-            <!-- Dashboard -->
-            <a href="{{ route('customer.dashboard') }}"
-               class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('customer.dashboard') ? 'bg-green-100 text-green-700 border-r-2 border-green-600' : 'text-gray-700 hover:bg-gray-100 hover:text-green-600' }}">
-                <i class="fas fa-tachometer-alt mr-3 text-lg"></i>
-                Dashboard
-            </a>
-
-            <!-- Food Requests -->
+        <div class="px-4 space-y-4">
+            <!-- Main Section -->
             <div class="space-y-1">
-                <button class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-green-600 rounded-lg transition-colors"
-                        onclick="toggleSubmenu('requests')">
-                    <div class="flex items-center">
-                        <i class="fas fa-shopping-cart mr-3 text-lg"></i>
-                        Food Requests
-                    </div>
-                    <i class="fas fa-chevron-down text-xs transition-transform" id="requests-arrow"></i>
-                </button>
-                <div id="requests-submenu" class="hidden ml-8 space-y-1">
-                    <a href="{{ route('customer.requests.index') }}"
-                       class="block px-4 py-2 text-sm text-gray-600 hover:text-green-600 hover:bg-gray-50 rounded transition-colors {{ request()->routeIs('customer.requests.index') || request()->routeIs('customer.requests.checkout') ? 'text-green-600 bg-green-50' : '' }}">
-                        <i class="fas fa-list mr-2"></i>
-                        All Requests
-                    </a>
-                </div>
+                <a href="{{ route('customer.dashboard') }}"
+                   class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('customer.dashboard') || request()->routeIs('customer.requests.index') ? 'bg-green-100 text-green-700 border-r-2 border-green-600' : 'text-gray-700 hover:bg-gray-100 hover:text-green-600' }}">
+                    <i class="fas fa-home mr-3 text-lg"></i>
+                    Dashboard
+                </a>
             </div>
 
-            <!-- Programs -->
-            <a href="{{ route('customer.programs') }}"
-               class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('customer.programs') ? 'bg-green-100 text-green-700 border-r-2 border-green-600' : 'text-gray-700 hover:bg-gray-100 hover:text-green-600' }}">
-                <i class="fas fa-project-diagram mr-3 text-lg"></i>
-                Manage Programs
-            </a>
-
-            <!-- Settings -->
+            <!-- Shopping Section -->
             <div class="space-y-1">
-                <button class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-green-600 rounded-lg transition-colors"
-                        onclick="toggleSubmenu('settings')">
-                    <div class="flex items-center">
-                        <i class="fas fa-cog mr-3 text-lg"></i>
-                        Settings
+                <div class="px-4 py-2">
+                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Shopping</p>
+                </div>
+                <a href="{{ route('customer.ingredients') }}"
+                   class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('customer.ingredients') ? 'bg-green-100 text-green-700 border-r-2 border-green-600' : 'text-gray-700 hover:bg-gray-100 hover:text-green-600' }}">
+                    <i class="fas fa-box mr-3 text-lg"></i>
+                    Ingredients
+                </a>
+                <a href="{{ route('customer.cart') }}"
+                   class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('customer.cart') ? 'bg-green-100 text-green-700 border-r-2 border-green-600' : 'text-gray-700 hover:bg-gray-100 hover:text-green-600' }}">
+                    <i class="fas fa-shopping-cart mr-3 text-lg"></i>
+                    Cart
+                    @php
+                        $cartCount = array_sum(array_column(session('cart', []), 'quantity'));
+                    @endphp
+                    @if($cartCount > 0)
+                        <span id="cart-badge" class="ml-auto bg-green-600 text-white text-xs font-semibold px-2 py-1 rounded-full">{{ $cartCount }}</span>
+                    @else
+                        <span id="cart-badge" class="hidden ml-auto bg-green-600 text-white text-xs font-semibold px-2 py-1 rounded-full">0</span>
+                    @endif
+                </a>
+            </div>
+
+
+            <!-- Programs Section -->
+            <div class="space-y-1">
+                <div class="px-4 py-2">
+                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Programs</p>
+                </div>
+                <a href="{{ route('customer.programs') }}"
+                   class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('customer.programs') ? 'bg-green-100 text-green-700 border-r-2 border-green-600' : 'text-gray-700 hover:bg-gray-100 hover:text-green-600' }}">
+                    <i class="fas fa-project-diagram mr-3 text-lg"></i>
+                    Manage Programs
+                </a>
+            </div>
+
+            <!-- Settings Section -->
+            <div class="space-y-1">
+                <div class="px-4 py-2">
+                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Settings</p>
+                </div>
+                @php
+                    $isSettingsActive = request()->routeIs('customer.settings.*');
+                @endphp
+                <div class="space-y-1">
+                    <button class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ $isSettingsActive ? 'bg-green-100 text-green-700 border-r-2 border-green-600' : 'text-gray-700 hover:bg-gray-100 hover:text-green-600' }}"
+                            onclick="toggleSubmenu('settings')">
+                        <div class="flex items-center">
+                            <i class="fas fa-cog mr-3 text-lg"></i>
+                            Settings
+                        </div>
+                        <i class="fas fa-chevron-down text-xs transition-transform {{ $isSettingsActive ? 'rotate-180' : '' }}" id="settings-arrow"></i>
+                    </button>
+                    <div id="settings-submenu" class="{{ $isSettingsActive ? '' : 'hidden' }} ml-8 space-y-1">
+                        <a href="{{ route('customer.settings.account') }}"
+                           class="block px-4 py-2 text-sm text-gray-600 hover:text-green-600 hover:bg-gray-50 rounded transition-colors {{ request()->routeIs('customer.settings.account') ? 'text-green-600 bg-green-50 font-medium' : '' }}">
+                            <i class="fas fa-user-circle mr-2"></i>
+                            Account Settings
+                        </a>
+                        <a href="{{ route('customer.settings.delivery-addresses') }}"
+                           class="block px-4 py-2 text-sm text-gray-600 hover:text-green-600 hover:bg-gray-50 rounded transition-colors {{ request()->routeIs('customer.settings.delivery-addresses') ? 'text-green-600 bg-green-50 font-medium' : '' }}">
+                            <i class="fas fa-map-marker-alt mr-2"></i>
+                            Delivery Addresses
+                        </a>
                     </div>
-                    <i class="fas fa-chevron-down text-xs transition-transform" id="settings-arrow"></i>
-                </button>
-                <div id="settings-submenu" class="hidden ml-8 space-y-1">
-                    <a href="{{ route('customer.settings.account') }}"
-                       class="block px-4 py-2 text-sm text-gray-600 hover:text-green-600 hover:bg-gray-50 rounded transition-colors {{ request()->routeIs('customer.settings.account') ? 'text-green-600 bg-green-50' : '' }}">
-                        <i class="fas fa-user-circle mr-2"></i>
-                        Account Settings
-                    </a>
-                    <a href="{{ route('customer.settings.delivery-addresses') }}"
-                       class="block px-4 py-2 text-sm text-gray-600 hover:text-green-600 hover:bg-gray-50 rounded transition-colors {{ request()->routeIs('customer.settings.delivery-addresses') ? 'text-green-600 bg-green-50' : '' }}">
-                        <i class="fas fa-map-marker-alt mr-2"></i>
-                        Delivery Addresses
-                    </a>
                 </div>
             </div>
         </div>
@@ -178,10 +178,25 @@ function toggleSubmenu(menuId) {
 
     if (submenu.classList.contains('hidden')) {
         submenu.classList.remove('hidden');
+        arrow.classList.add('rotate-180');
         arrow.style.transform = 'rotate(180deg)';
     } else {
         submenu.classList.add('hidden');
+        arrow.classList.remove('rotate-180');
         arrow.style.transform = 'rotate(0deg)';
     }
 }
+
+// Auto-expand settings submenu on page load if active
+document.addEventListener('DOMContentLoaded', function() {
+    @if(request()->routeIs('customer.settings.*'))
+    const settingsSubmenu = document.getElementById('settings-submenu');
+    const settingsArrow = document.getElementById('settings-arrow');
+    if (settingsSubmenu && settingsArrow) {
+        settingsSubmenu.classList.remove('hidden');
+        settingsArrow.classList.add('rotate-180');
+        settingsArrow.style.transform = 'rotate(180deg)';
+    }
+    @endif
+});
 </script>

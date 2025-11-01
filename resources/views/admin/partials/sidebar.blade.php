@@ -165,7 +165,7 @@
                 <button class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-green-600 rounded-lg transition-colors"
                         onclick="toggleSubmenu('settings')">
                     <div class="flex items-center">
-                        <i class="fas fa-cog mr-3 text-lg"></i>
+                <i class="fas fa-cog mr-3 text-lg"></i>
                         Settings
                     </div>
                     <i class="fas fa-chevron-down text-xs transition-transform" id="settings-arrow"></i>

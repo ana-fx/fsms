@@ -151,7 +151,7 @@
 
             <!-- Login Link -->
             <div class="mt-6 text-center">
-                    <p class="text-sm text-gray-600">
+                <p class="text-sm text-gray-600">
                     Already have an account?
                         <a href="{{ route('login') }}" class="text-green-600 hover:text-green-800 font-medium">
                         Login here
@@ -159,8 +159,8 @@
                 </p>
             </div>
         </div>
+        </div>
     </div>
-</div>
 
 @section('scripts')
     <script>

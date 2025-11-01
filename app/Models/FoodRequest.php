@@ -5,14 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Str;
 
 class FoodRequest extends Model
 {
     use HasFactory;
 
     protected $fillable = [
+        'order_number',
         'customer_id',
         'food_category_id',
+        'food_item_id',
         'title',
         'description',
         'quantity',
@@ -24,6 +27,8 @@ class FoodRequest extends Model
         'city',
         'postal_code',
         'delivery_notes',
+        'payment_proof',
+        'payment_proof_uploaded_at',
         'status',
         'requested_date',
         'needed_date',
@@ -37,6 +42,7 @@ class FoodRequest extends Model
         'requested_date' => 'date',
         'needed_date' => 'date',
         'approved_at' => 'datetime',
+        'payment_proof_uploaded_at' => 'datetime',
     ];
 
     /**
@@ -53,6 +59,14 @@ class FoodRequest extends Model
     public function foodCategory(): BelongsTo
     {
         return $this->belongsTo(FoodCategory::class);
+    }
+
+    /**
+     * Get the food item (product) for this request.
+     */
+    public function foodItem(): BelongsTo
+    {
+        return $this->belongsTo(FoodItem::class);
     }
 
     /**
@@ -93,5 +107,60 @@ class FoodRequest extends Model
     public function scopeApproved($query)
     {
         return $query->where('status', 'approved');
+    }
+
+    /**
+     * Boot method to generate order number before creating.
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($foodRequest) {
+            if (empty($foodRequest->order_number)) {
+                $foodRequest->order_number = static::generateOrderNumber();
+            }
+        });
+    }
+
+    /**
+     * Generate unique order number format: FSMS-YYYYMMDD-XXXXX
+     */
+    protected static function generateOrderNumber(): string
+    {
+        $prefix = 'FSMS-' . now()->format('Ymd') . '-';
+        
+        // Get last order number with same prefix today
+        $lastOrder = static::where('order_number', 'like', $prefix . '%')
+            ->orderBy('id', 'desc')
+            ->first();
+
+        if ($lastOrder) {
+            // Extract the sequence number and increment
+            $sequence = intval(substr($lastOrder->order_number, -5));
+            $sequence++;
+        } else {
+            // First order of the day
+            $sequence = 1;
+        }
+
+        return $prefix . str_pad($sequence, 5, '0', STR_PAD_LEFT);
+    }
+
+    /**
+     * Get the route key for the model.
+     * Allow access by order_number instead of id.
+     */
+    public function getRouteKeyName()
+    {
+        return 'order_number';
+    }
+
+    /**
+     * Get the order number for display.
+     */
+    public function getOrderNumberAttribute($value)
+    {
+        return $value;
     }
 }

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Food Requests')
+@section('title', 'Dashboard - FSMS')
 
 @section('content')
 <div class="flex bg-gray-100 min-h-screen w-full overflow-x-hidden">
@@ -17,9 +17,9 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <!-- Header -->
         <div class="mb-8">
-            <div>
-                <h1 class="text-3xl font-bold text-gray-900">Food Requests</h1>
-                <p class="mt-2 text-gray-600">Manage ingredient requests for programs</p>
+                <div>
+                <h1 class="text-3xl font-bold text-gray-900">Dashboard</h1>
+                <p class="mt-2 text-gray-600">Manage your ingredient requests and track order status</p>
             </div>
         </div>
 
@@ -77,7 +77,7 @@
         <!-- Requests Table -->
         <div class="bg-white rounded-lg shadow overflow-hidden">
             <div class="px-6 py-4 border-b border-gray-200">
-                <h3 class="text-lg font-medium text-gray-900">Request List</h3>
+                <h3 class="text-lg font-medium text-gray-900">Food Requests</h3>
             </div>
 
             @if($requests->count() > 0)
@@ -86,10 +86,10 @@
                         <thead class="bg-gray-50">
                             <tr>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Kategori
+                                    Order Number
                                 </th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Judul
+                                    Item
                                 </th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Jumlah
@@ -114,7 +114,8 @@
                                                 <i class="{{ $request->foodCategory->icon }} text-sm" style="color: {{ $request->foodCategory->color }}"></i>
                                             </div>
                                             <div class="ml-3">
-                                                <div class="text-sm font-medium text-gray-900">{{ $request->foodCategory->name }}</div>
+                                                <div class="text-sm font-medium text-gray-900">{{ $request->order_number ?? 'N/A' }}</div>
+                                                <div class="text-xs text-gray-500">{{ $request->foodCategory->name }}</div>
                                             </div>
                                         </div>
                                     </td>
@@ -161,8 +162,8 @@
                                                     <i class="fas fa-edit"></i>
                                                 </a>
                                                 <button onclick="confirmDeleteRequest({{ $request->id }}, '{{ $request->title }}')" class="text-red-600 hover:text-red-900">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
                                             @endif
                                         </div>
                                     </td>

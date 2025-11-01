@@ -114,25 +114,38 @@
                                         Manage Ingredients
                                     </a>
                                 @elseif(auth()->user()->isCustomer())
+                                    <a href="{{ route('customer.dashboard') }}" class="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md transition-colors">
+                                        <i class="fas fa-home mr-3 text-green-600"></i>
+                                        Dashboard
+                                    </a>
                                     <a href="{{ route('customer.ingredients') }}" class="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md transition-colors">
                                         <i class="fas fa-box mr-3 text-green-600"></i>
                                         Ingredients
                                     </a>
-                                    <a href="{{ route('customer.dashboard') }}" class="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md transition-colors">
-                                        <i class="fas fa-tachometer-alt mr-3 text-green-600"></i>
-                                        Customer Dashboard
-                                    </a>
-                                    <a href="{{ route('customer.requests.index') }}" class="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md transition-colors">
+                                    <a href="{{ route('customer.cart') }}" class="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md transition-colors">
                                         <i class="fas fa-shopping-cart mr-3 text-green-600"></i>
-                                        Food Requests
+                                        Cart
+                                        @php
+                                            $cartCount = array_sum(array_column(session('cart', []), 'quantity'));
+                                        @endphp
+                                        @if($cartCount > 0)
+                                            <span class="ml-auto bg-green-600 text-white text-xs font-semibold px-2 py-0.5 rounded-full">{{ $cartCount }}</span>
+                                        @endif
                                     </a>
                                     <a href="{{ route('customer.programs') }}" class="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md transition-colors">
                                         <i class="fas fa-project-diagram mr-3 text-green-600"></i>
                                         Manage Programs
                                     </a>
+                                    <div class="border-t border-gray-100 my-2"></div>
+                                    <a href="{{ route('customer.settings.account') }}" class="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md transition-colors">
+                                        <i class="fas fa-cog mr-3 text-green-600"></i>
+                                        Settings
+                                    </a>
                                 @endif
 
+                                @if(auth()->check())
                                 <div class="border-t border-gray-100 my-2"></div>
+                                @endif
 
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf

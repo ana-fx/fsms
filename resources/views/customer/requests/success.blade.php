@@ -1,0 +1,368 @@
+@extends('layouts.app')
+
+@section('title', isset($request) ? 'Invoice ' . $request->order_number : 'Order Invoices')
+
+@section('content')
+<div class="flex bg-gray-100 min-h-screen w-full overflow-x-hidden">
+    @include('customer.partials.sidebar')
+
+    <!-- Mobile Menu Button -->
+    <button id="openSidebar" class="lg:hidden fixed top-4 left-4 z-50 p-2 bg-white rounded-lg shadow-lg hover:bg-gray-100 transition-colors print:hidden">
+        <i class="fas fa-bars text-gray-700 text-xl"></i>
+    </button>
+
+    <!-- Main Content -->
+    <div class="w-full lg:ml-64 transition-all duration-300">
+        <div class="flex-1 bg-white min-h-screen">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+                @if(isset($request))
+                    <!-- Single Invoice View (from show method) -->
+                    <div class="bg-white border-2 border-gray-200 rounded-lg shadow-sm mb-8 print:shadow-none">
+                        <div class="print:hidden border-b border-gray-200 p-4 bg-gray-50 flex justify-between items-center">
+                            <h1 class="text-2xl font-bold text-gray-900">Invoice</h1>
+                            <button onclick="window.print()" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors font-semibold">
+                                <i class="fas fa-print mr-2"></i>Print Invoice
+                            </button>
+                        </div>
+                        <div class="p-8">
+                            <!-- Company & Invoice Info -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8 pb-8 border-b-2 border-gray-300">
+                                <div>
+                                    <h2 class="text-2xl font-bold text-gray-900 mb-2">FSMS</h2>
+                                    <p class="text-gray-600 text-sm">FoodSupply Management System</p>
+                                    <p class="text-gray-600 text-sm mt-1">Jakarta, Indonesia</p>
+                                </div>
+                                <div class="text-right">
+                                    <h3 class="text-xl font-bold text-gray-900 mb-2">Invoice</h3>
+                                    <p class="text-gray-700 font-semibold">Order #{{ $request->order_number }}</p>
+                                    <p class="text-gray-600 text-sm mt-1">Date: {{ $request->created_at->format('d M Y') }}</p>
+                                    <p class="text-gray-600 text-sm">
+                                        Status:
+                                        @php
+                                            $statusConfigs = [
+                                                'pending' => ['color' => 'bg-yellow-100 text-yellow-800', 'label' => 'Pending'],
+                                                'approved' => ['color' => 'bg-green-100 text-green-800', 'label' => 'Approved'],
+                                                'rejected' => ['color' => 'bg-red-100 text-red-800', 'label' => 'Rejected'],
+                                                'in_progress' => ['color' => 'bg-blue-100 text-blue-800', 'label' => 'In Progress'],
+                                                'completed' => ['color' => 'bg-purple-100 text-purple-800', 'label' => 'Completed'],
+                                            ];
+                                            $config = $statusConfigs[$request->status] ?? $statusConfigs['pending'];
+                                        @endphp
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full {{ $config['color'] }}">
+                                            {{ $config['label'] }}
+                                        </span>
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Customer Info -->
+                            <div class="mb-8">
+                                <h3 class="text-lg font-bold text-gray-900 mb-4">Bill To:</h3>
+                                <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                                    <p class="font-semibold text-gray-900">{{ auth()->user()->name }}</p>
+                                    <p class="text-gray-600 text-sm">{{ auth()->user()->email }}</p>
+                                    @if(isset($orderData['delivery']['delivery_address']))
+                                        <div class="mt-3 pt-3 border-t border-gray-200">
+                                            <p class="text-gray-900 font-medium">{{ $orderData['delivery']['recipient_name'] }}</p>
+                                            <p class="text-gray-600 text-sm">{{ $orderData['delivery']['recipient_phone'] }}</p>
+                                            <p class="text-gray-600 text-sm">{{ $orderData['delivery']['delivery_address'] }}</p>
+                                            <p class="text-gray-600 text-sm">{{ $orderData['delivery']['city'] }} {{ $orderData['delivery']['postal_code'] ?? '' }}</p>
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <!-- Items Table -->
+                            <div class="mb-8">
+                                <table class="w-full border-collapse">
+                                    <thead>
+                                        <tr class="bg-gray-100">
+                                            <th class="border border-gray-300 px-4 py-3 text-left text-sm font-semibold text-gray-900">Item</th>
+                                            <th class="border border-gray-300 px-4 py-3 text-center text-sm font-semibold text-gray-900">Qty</th>
+                                            <th class="border border-gray-300 px-4 py-3 text-right text-sm font-semibold text-gray-900">Price</th>
+                                            <th class="border border-gray-300 px-4 py-3 text-right text-sm font-semibold text-gray-900">Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($orderData['items'] as $item)
+                                            <tr>
+                                                <td class="border border-gray-300 px-4 py-3">
+                                                    <div class="font-semibold text-gray-900">{{ $item['product']->name }}</div>
+                                                    @if($item['product']->description)
+                                                        <div class="text-sm text-gray-600">{{ Str::limit($item['product']->description, 60) }}</div>
+                                                    @endif
+                                                </td>
+                                                <td class="border border-gray-300 px-4 py-3 text-center text-gray-700">
+                                                    {{ number_format($item['quantity'], 2) }} {{ $item['product']->unit }}
+                                                </td>
+                                                <td class="border border-gray-300 px-4 py-3 text-right text-gray-700">
+                                                    Rp {{ number_format($item['product']->price, 0, ',', '.') }}
+                                                </td>
+                                                <td class="border border-gray-300 px-4 py-3 text-right font-semibold text-gray-900">
+                                                    Rp {{ number_format($item['subtotal'], 0, ',', '.') }}
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="3" class="border border-gray-300 px-4 py-3 text-right font-bold text-gray-900">Grand Total:</td>
+                                            <td class="border border-gray-300 px-4 py-3 text-right font-bold text-xl text-green-600">
+                                                Rp {{ number_format($orderData['total'], 0, ',', '.') }}
+                                            </td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+
+
+                            <!-- Footer -->
+                            <div class="text-center text-sm text-gray-600 pt-8 border-t border-gray-200 print:hidden">
+                                <p>Thank you for your business!</p>
+                            </div>
+                        </div>
+                    </div>
+                @else
+                    <!-- Multiple Invoices View (from success page) -->
+                    @if(isset($orderData['suppliers']) && count($orderData['suppliers']) > 0)
+                        @foreach($orderData['suppliers'] as $supplierId => $supplierData)
+                            <div class="invoice-section bg-white border-2 border-gray-200 rounded-lg shadow-sm mb-8 print:shadow-none print:break-after-page" id="invoice-{{ $supplierId }}">
+                                <!-- Supplier Invoice Header -->
+                                <div class="print:hidden border-b border-gray-200 p-4 bg-gray-50 flex justify-between items-center">
+                                    <h1 class="text-2xl font-bold text-gray-900">Invoice - {{ $supplierData['supplier']->name }}</h1>
+                                    <button onclick="printInvoice('invoice-{{ $supplierId }}')" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors font-semibold">
+                                        <i class="fas fa-print mr-2"></i>Print Invoice
+                                    </button>
+                                </div>
+                                <div class="p-8">
+                                    <!-- Company & Supplier Info -->
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8 pb-8 border-b-2 border-gray-300">
+                                        <div>
+                                            <h2 class="text-xl font-bold text-gray-900 mb-1">{{ $supplierData['supplier']->name }}</h2>
+                                            <p class="text-gray-600 text-sm">{{ $supplierData['supplier']->email }}</p>
+                                        </div>
+                                        <div class="text-right">
+                                            <h3 class="text-lg font-bold text-gray-900 mb-2">Invoice</h3>
+                                            <p class="text-gray-600 text-sm mt-1">Date: {{ now()->format('d M Y') }}</p>
+                                        </div>
+                                    </div>
+
+                                    <!-- Customer Info -->
+                                    <div class="mb-8">
+                                        <h3 class="text-lg font-bold text-gray-900 mb-4">Bill To:</h3>
+                                        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                                            <p class="font-semibold text-gray-900">{{ auth()->user()->name }}</p>
+                                            <p class="text-gray-600 text-sm">{{ auth()->user()->email }}</p>
+                                            @if(isset($orderData['delivery']['delivery_address']))
+                                                <div class="mt-3 pt-3 border-t border-gray-200">
+                                                    <p class="text-gray-900 font-medium">{{ $orderData['delivery']['recipient_name'] }}</p>
+                                                    <p class="text-gray-600 text-sm">{{ $orderData['delivery']['recipient_phone'] }}</p>
+                                                    <p class="text-gray-600 text-sm">{{ $orderData['delivery']['delivery_address'] }}</p>
+                                                    <p class="text-gray-600 text-sm">{{ $orderData['delivery']['city'] }} {{ $orderData['delivery']['postal_code'] ?? '' }}</p>
+                                                </div>
+                                            @endif
+                                        </div>
+                                    </div>
+
+                                    <!-- Items Table -->
+                                    <div class="mb-8">
+                                        <table class="w-full border-collapse">
+                                            <thead>
+                                                <tr class="bg-gray-100">
+                                                    <th class="border border-gray-300 px-4 py-3 text-left text-sm font-semibold text-gray-900">Item</th>
+                                                    <th class="border border-gray-300 px-4 py-3 text-center text-sm font-semibold text-gray-900">Qty</th>
+                                                    <th class="border border-gray-300 px-4 py-3 text-right text-sm font-semibold text-gray-900">Price</th>
+                                                    <th class="border border-gray-300 px-4 py-3 text-right text-sm font-semibold text-gray-900">Total</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach($supplierData['items'] as $item)
+                                                    <tr>
+                                                        <td class="border border-gray-300 px-4 py-3">
+                                                            <div class="font-semibold text-gray-900">{{ $item['product']->name }}</div>
+                                                            @if($item['product']->description)
+                                                                <div class="text-sm text-gray-600">{{ Str::limit($item['product']->description, 60) }}</div>
+                                                            @endif
+                                                        </td>
+                                                        <td class="border border-gray-300 px-4 py-3 text-center text-gray-700">
+                                                            {{ number_format($item['quantity'], 2) }} {{ $item['product']->unit }}
+                                                        </td>
+                                                        <td class="border border-gray-300 px-4 py-3 text-right text-gray-700">
+                                                            Rp {{ number_format($item['product']->price, 0, ',', '.') }}
+                                                        </td>
+                                                        <td class="border border-gray-300 px-4 py-3 text-right font-semibold text-gray-900">
+                                                            Rp {{ number_format($item['subtotal'], 0, ',', '.') }}
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <td colspan="3" class="border border-gray-300 px-4 py-3 text-right font-bold text-gray-900">Subtotal:</td>
+                                                    <td class="border border-gray-300 px-4 py-3 text-right font-bold text-gray-900">
+                                                        Rp {{ number_format($supplierData['total'], 0, ',', '.') }}
+                                                    </td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+
+                                    <!-- Footer -->
+                                    <div class="text-center text-sm text-gray-600 pt-8 border-t border-gray-200 print:hidden">
+                                        <p>Thank you for your business!</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Payment Upload for this supplier -->
+                            @php
+                                $supplierPaymentUploaded = true;
+                                foreach($supplierData['request_ids'] as $reqId) {
+                                    $req = $requests->firstWhere('id', $reqId);
+                                    if (!$req || !$req->payment_proof) {
+                                        $supplierPaymentUploaded = false;
+                                        break;
+                                    }
+                                }
+                            @endphp
+
+                            @if(!$supplierPaymentUploaded)
+                            <div class="invoice-upload-section bg-yellow-50 border-2 border-yellow-300 rounded-lg p-6 mb-8">
+                                <h3 class="text-lg font-bold text-gray-900 mb-3 flex items-center">
+                                    <i class="fas fa-exclamation-triangle text-yellow-600 mr-2"></i>
+                                    Payment Required for {{ $supplierData['supplier']->name }}
+                                </h3>
+                                <p class="text-gray-700 mb-4">Please upload payment proof for this invoice:</p>
+
+                                <form method="POST" action="{{ route('customer.requests.upload-payment-proof') }}" enctype="multipart/form-data" class="space-y-4">
+                                    @csrf
+
+                                    @foreach($supplierData['request_ids'] as $requestId)
+                                        <input type="hidden" name="request_ids[]" value="{{ $requestId }}">
+                                    @endforeach
+
+                                    <div>
+                                        <label for="payment_proof_{{ $supplierId }}" class="block text-sm font-medium text-gray-700 mb-2">
+                                            Payment Proof File <span class="text-red-500">*</span>
+                                        </label>
+                                        <input type="file" id="payment_proof_{{ $supplierId }}" name="payment_proof" accept="image/*,.pdf"
+                                               class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-600 file:text-white hover:file:bg-green-700" required>
+                                    </div>
+
+                                    <div>
+                                        <label for="payment_notes_{{ $supplierId }}" class="block text-sm font-medium text-gray-700 mb-2">
+                                            Payment Notes (Optional)
+                                        </label>
+                                        <textarea name="payment_notes" id="payment_notes_{{ $supplierId }}" rows="2"
+                                                  class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                                                  placeholder="Add any additional notes about your payment..."></textarea>
+                                    </div>
+
+                                    <button type="submit"
+                                            class="w-full bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold">
+                                        <i class="fas fa-upload mr-2"></i>Upload Payment Proof for {{ $supplierData['supplier']->name }}
+                                    </button>
+                                </form>
+                            </div>
+                            @else
+                            <div class="invoice-upload-section bg-green-50 border-2 border-green-300 rounded-lg p-6 mb-8">
+                                <h3 class="text-lg font-bold text-gray-900 mb-2 flex items-center">
+                                    <i class="fas fa-check-circle text-green-600 mr-2"></i>
+                                    Payment Proof Uploaded for {{ $supplierData['supplier']->name }}
+                                </h3>
+                                <p class="text-gray-700">Your payment has been received. Order is being processed.</p>
+                            </div>
+                            @endif
+                        @endforeach
+                    @endif
+                @endif
+
+                <!-- Action Buttons -->
+                <div id="actionButtons" class="print:hidden flex gap-4 justify-center">
+                    <a href="{{ route('customer.requests.index') }}"
+                       class="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700 transition-colors font-semibold">
+                        <i class="fas fa-arrow-left mr-2"></i>Back to Orders
+                    </a>
+                    <a href="{{ route('customer.ingredients') }}"
+                       class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors font-semibold">
+                        <i class="fas fa-shopping-bag mr-2"></i>Continue Shopping
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@push('styles')
+<style>
+@media print {
+    @page {
+        margin: 0.5cm;
+    }
+    .sidebar, .print\\:hidden, button, nav {
+        display: none !important;
+    }
+    body {
+        margin: 0;
+        padding: 0;
+    }
+    .lg\\:ml-64 {
+        margin-left: 0 !important;
+    }
+    .invoice-section {
+        page-break-after: auto !important;
+    }
+}
+
+/* Hide all invoice sections when printing specific invoice */
+body.printing-invoice .invoice-section:not(.invoice-to-print) {
+    display: none !important;
+}
+
+body.printing-invoice .invoice-upload-section {
+    display: none !important;
+}
+
+body.printing-invoice #actionButtons {
+    display: none !important;
+}
+</style>
+@endpush
+
+@push('scripts')
+<script>
+function printInvoice(invoiceId) {
+    // Add printing class to body
+    document.body.classList.add('printing-invoice');
+
+    // Add class to the invoice to print
+    const invoiceElement = document.getElementById(invoiceId);
+    if (invoiceElement) {
+        invoiceElement.classList.add('invoice-to-print');
+    }
+
+    // Trigger print
+    window.print();
+
+    // Clean up after print dialog closes
+    setTimeout(() => {
+        document.body.classList.remove('printing-invoice');
+        if (invoiceElement) {
+            invoiceElement.classList.remove('invoice-to-print');
+        }
+    }, 100);
+}
+</script>
+@endpush
+
+@if(session('status'))
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const alert = @json(session('status'));
+    const type = alert.type || 'success';
+    alert(alert.message);
+});
+</script>
+@endif
+@endsection

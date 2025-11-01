@@ -7,6 +7,18 @@
     $ingredients = \App\Models\FoodItem::where('supplier_id', auth()->id())->with('foodCategory')->latest()->get();
     $totalIngredients = $ingredients->count();
     $activeIngredients = $ingredients->where('is_active', true)->count();
+    
+    // Get orders for this supplier's ingredients
+    $ingredientIds = $ingredients->pluck('id');
+    $orders = \App\Models\FoodRequest::whereIn('food_item_id', $ingredientIds)
+        ->with(['foodItem.foodCategory', 'customer'])
+        ->orderBy('created_at', 'desc')
+        ->get();
+    
+    $pendingOrders = $orders->where('status', 'pending')->count();
+    $approvedOrders = $orders->where('status', 'approved')->count();
+    $inProgressOrders = $orders->where('status', 'in_progress')->count();
+    $recentOrders = $orders->take(5);
 @endphp
 <div class="flex bg-gray-100 min-h-screen w-full overflow-x-hidden">
     @include('supplier.partials.sidebar')
@@ -54,41 +66,124 @@
 
         <div class="bg-white rounded-lg shadow-md p-6 card-hover">
             <div class="flex items-center">
-                <div class="p-3 rounded-full bg-purple-100 text-purple-600">
-                    <i class="fas fa-shopping-cart text-xl"></i>
+                <div class="p-3 rounded-full bg-yellow-100 text-yellow-600">
+                    <i class="fas fa-clock text-xl"></i>
                 </div>
                 <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-600">Active Orders</p>
-                    <p class="text-2xl font-semibold text-gray-900">0</p>
+                    <p class="text-sm font-medium text-gray-600">Pending Orders</p>
+                    <p class="text-2xl font-semibold text-gray-900">{{ $pendingOrders }}</p>
                 </div>
             </div>
         </div>
 
         <div class="bg-white rounded-lg shadow-md p-6 card-hover">
             <div class="flex items-center">
-                <div class="p-3 rounded-full bg-yellow-100 text-yellow-600">
-                    <i class="fas fa-dollar-sign text-xl"></i>
+                <div class="p-3 rounded-full bg-blue-100 text-blue-600">
+                    <i class="fas fa-truck text-xl"></i>
                 </div>
                 <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-600">Revenue</p>
-                    <p class="text-2xl font-semibold text-gray-900">Rp 0</p>
+                    <p class="text-sm font-medium text-gray-600">In Progress</p>
+                    <p class="text-2xl font-semibold text-gray-900">{{ $inProgressOrders }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-6 card-hover">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-green-100 text-green-600">
+                    <i class="fas fa-check-circle text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Approved Orders</p>
+                    <p class="text-2xl font-semibold text-gray-900">{{ $approvedOrders }}</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Active Orders -->
+    <!-- Recent Orders -->
     <div class="bg-white rounded-lg shadow-md p-6 mb-8">
         <div class="flex justify-between items-center mb-6">
-            <h2 class="text-xl font-semibold text-gray-900">Active Orders</h2>
-            <a href="#" class="text-green-600 hover:text-green-800 text-sm font-medium">View All</a>
+            <h2 class="text-xl font-semibold text-gray-900">Recent Orders</h2>
         </div>
 
-        <div class="text-center py-12">
-            <i class="fas fa-shopping-cart text-4xl text-gray-400 mb-4"></i>
-            <h3 class="text-lg font-medium text-gray-900 mb-2">No orders yet</h3>
-            <p class="text-gray-500">No active orders at the moment</p>
-        </div>
+        @if($recentOrders->count() > 0)
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order #</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        @foreach($recentOrders as $order)
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">
+                                {{ $order->order_number ?? 'N/A' }}
+                            </td>
+                            <td class="px-4 py-3">
+                                <div class="flex items-center">
+                                    @if($order->foodItem)
+                                        <div class="p-2 rounded-lg" style="background-color: {{ $order->foodItem->foodCategory->color }}20">
+                                            <i class="{{ $order->foodItem->foodCategory->icon }} text-sm" style="color: {{ $order->foodItem->foodCategory->color }}"></i>
+                                        </div>
+                                        <div class="ml-3">
+                                            <div class="text-sm font-medium text-gray-900">{{ $order->foodItem->name }}</div>
+                                            <div class="text-xs text-gray-500">Rp {{ number_format($order->foodItem->price, 0, ',', '.') }}/{{ $order->foodItem->unit }}</div>
+                                        </div>
+                                    @else
+                                        <div class="text-sm font-medium text-gray-900">{{ $order->title }}</div>
+                                    @endif
+                                </div>
+                            </td>
+                            <td class="px-4 py-3 text-sm">
+                                <div class="text-gray-900">{{ $order->customer->name }}</div>
+                                <div class="text-gray-500 text-xs">{{ $order->customer->email }}</div>
+                            </td>
+                            <td class="px-4 py-3 text-sm text-gray-900">
+                                {{ number_format($order->quantity, 2) }} {{ $order->unit }}
+                            </td>
+                            <td class="px-4 py-3 whitespace-nowrap text-sm">
+                                @php
+                                    $statusColors = [
+                                        'pending' => 'bg-yellow-100 text-yellow-800',
+                                        'approved' => 'bg-green-100 text-green-800',
+                                        'rejected' => 'bg-red-100 text-red-800',
+                                        'in_progress' => 'bg-blue-100 text-blue-800',
+                                        'completed' => 'bg-purple-100 text-purple-800',
+                                    ];
+                                    $statusLabels = [
+                                        'pending' => 'Pending',
+                                        'approved' => 'Approved',
+                                        'rejected' => 'Rejected',
+                                        'in_progress' => 'In Progress',
+                                        'completed' => 'Completed',
+                                    ];
+                                @endphp
+                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full {{ $statusColors[$order->status] }}">
+                                    {{ $statusLabels[$order->status] }}
+                                </span>
+                            </td>
+                            <td class="px-4 py-3 text-sm text-gray-500 whitespace-nowrap">
+                                {{ $order->created_at->format('d M Y') }}
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        @else
+            <div class="text-center py-12">
+                <i class="fas fa-inbox text-4xl text-gray-400 mb-4"></i>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">No orders yet</h3>
+                <p class="text-gray-500">Start by adding active ingredients to receive orders</p>
+            </div>
+        @endif
     </div>
 
     <!-- Ingredients Management -->

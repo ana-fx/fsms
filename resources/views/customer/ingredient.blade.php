@@ -373,8 +373,8 @@ function clearSearch() {
     if (window.performSearch) {
         window.performSearch();
     }
-       }
-   </script>
+}
+</script>
    <style>
    @keyframes slide-in {
        from {
@@ -402,5 +402,5 @@ function clearSearch() {
        animation: slide-in 0.3s ease-out;
    }
    </style>
-   @endsection
+@endsection
 

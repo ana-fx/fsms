@@ -12,7 +12,7 @@
         </main>
 
         <div class="mt-auto">
-            @include('partials.footer')
+        @include('partials.footer')
         </div>
     </div>
 

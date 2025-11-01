@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use App\Models\Role;
+use App\Models\UserDeliveryAddress;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -93,19 +94,94 @@ class UserSeeder extends Seeder
         );
         $customer->assignRole('customer');
 
+        // Add sample delivery addresses for customer
+        $customer->deliveryAddresses()->updateOrCreate(
+            ['label' => 'Home'],
+            [
+                'recipient_name' => 'Customer FSMS',
+                'recipient_phone' => '081234567890',
+                'delivery_address' => 'Jl. Sudirman No. 123, Gedung Plaza Indonesia',
+                'city' => 'Jakarta Pusat',
+                'postal_code' => '10220',
+                'is_default' => true,
+            ]
+        );
+        $customer->deliveryAddresses()->updateOrCreate(
+            ['label' => 'Office'],
+            [
+                'recipient_name' => 'Customer FSMS',
+                'recipient_phone' => '081234567891',
+                'delivery_address' => 'Jl. Thamrin No. 45, Lantai 10',
+                'city' => 'Jakarta Pusat',
+                'postal_code' => '10230',
+                'is_default' => false,
+            ]
+        );
+
         // Create Additional Customers
         $customers = [
             [
                 'name' => 'Customer Peduli Anak',
                 'email' => 'customer1@fsms.com',
+                'addresses' => [
+                    [
+                        'label' => 'Head Office',
+                        'recipient_name' => 'Customer Peduli Anak',
+                        'recipient_phone' => '081234567892',
+                        'delivery_address' => 'Jl. Kebon Jeruk No. 88, Ruko Harmoni',
+                        'city' => 'Jakarta Barat',
+                        'postal_code' => '11530',
+                        'is_default' => true,
+                    ],
+                    [
+                        'label' => 'Branch Office',
+                        'recipient_name' => 'Customer Peduli Anak',
+                        'recipient_phone' => '081234567893',
+                        'delivery_address' => 'Jl. Gatot Subroto No. 200, Menara BCA',
+                        'city' => 'Jakarta Selatan',
+                        'postal_code' => '12190',
+                        'is_default' => false,
+                    ],
+                ],
             ],
             [
                 'name' => 'Customer Bantu Lansia',
                 'email' => 'customer2@fsms.com',
+                'addresses' => [
+                    [
+                        'label' => 'Main Office',
+                        'recipient_name' => 'Customer Bantu Lansia',
+                        'recipient_phone' => '081234567894',
+                        'delivery_address' => 'Jl. Senopati No. 15, Kebayoran Baru',
+                        'city' => 'Jakarta Selatan',
+                        'postal_code' => '12190',
+                        'is_default' => true,
+                    ],
+                ],
             ],
             [
                 'name' => 'Customer Pemberdayaan Masyarakat',
                 'email' => 'customer3@fsms.com',
+                'addresses' => [
+                    [
+                        'label' => 'Central Office',
+                        'recipient_name' => 'Customer Pemberdayaan Masyarakat',
+                        'recipient_phone' => '081234567895',
+                        'delivery_address' => 'Jl. HR Rasuna Said No. 5, Kuningan',
+                        'city' => 'Jakarta Selatan',
+                        'postal_code' => '12940',
+                        'is_default' => true,
+                    ],
+                    [
+                        'label' => 'Field Office',
+                        'recipient_name' => 'Customer Pemberdayaan Masyarakat',
+                        'recipient_phone' => '081234567896',
+                        'delivery_address' => 'Jl. Raya Bogor KM 30, Cimanggis',
+                        'city' => 'Depok',
+                        'postal_code' => '16452',
+                        'is_default' => false,
+                    ],
+                ],
             ],
         ];
 
@@ -120,6 +196,23 @@ class UserSeeder extends Seeder
                 ]
             );
             $newCustomer->assignRole('customer');
+
+            // Add sample delivery addresses for additional customers
+            if (isset($customerData['addresses'])) {
+                foreach ($customerData['addresses'] as $address) {
+                    $newCustomer->deliveryAddresses()->updateOrCreate(
+                        ['label' => $address['label']],
+                        [
+                            'recipient_name' => $address['recipient_name'],
+                            'recipient_phone' => $address['recipient_phone'],
+                            'delivery_address' => $address['delivery_address'],
+                            'city' => $address['city'],
+                            'postal_code' => $address['postal_code'],
+                            'is_default' => $address['is_default'],
+                        ]
+                    );
+                }
+            }
         }
 
         $this->command->info('Users created successfully:');

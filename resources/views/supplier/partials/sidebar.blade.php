@@ -36,10 +36,20 @@
     <nav class="mt-6 flex-1 overflow-y-auto">
         <div class="px-4 space-y-2">
             <!-- Dashboard -->
+            @php
+                // Get pending orders count for this supplier
+                $ingredientIds = \App\Models\FoodItem::where('supplier_id', auth()->id())->pluck('id');
+                $pendingOrdersCount = \App\Models\FoodRequest::whereIn('food_item_id', $ingredientIds)
+                    ->where('status', 'pending')
+                    ->count();
+            @endphp
             <a href="{{ route('supplier.dashboard') }}"
                class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('supplier.dashboard') ? 'bg-green-100 text-green-700 border-r-2 border-green-600' : 'text-gray-700 hover:bg-gray-100 hover:text-green-600' }}">
                 <i class="fas fa-tachometer-alt mr-3 text-lg"></i>
                 Dashboard
+                @if($pendingOrdersCount > 0)
+                    <span class="ml-auto bg-yellow-500 text-white text-xs font-semibold px-2 py-1 rounded-full">{{ $pendingOrdersCount }}</span>
+                @endif
             </a>
 
             <!-- Ingredients Management -->

@@ -85,11 +85,14 @@ class AccountSettingsController extends Controller
             'delivery_address' => 'required|string',
             'city' => 'required|string|max:100',
             'postal_code' => 'nullable|string|max:10',
-            'is_default' => 'nullable|boolean',
+            'is_default' => 'required|in:0,1',
         ]);
 
+        // Convert string to boolean
+        $validated['is_default'] = (bool) $validated['is_default'];
+
         // If this is set as default, unset other defaults
-        if ($request->has('is_default') && $request->is_default) {
+        if ($validated['is_default']) {
             $user->deliveryAddresses()->update(['is_default' => false]);
         }
 
@@ -97,7 +100,7 @@ class AccountSettingsController extends Controller
         UserDeliveryAddress::create($validated);
 
         return redirect()->route('customer.settings.delivery-addresses')
-            ->with('success', 'Delivery address added successfully!');
+            ->with('status', ['type' => 'success', 'message' => 'Delivery address added successfully!']);
     }
 
     /**
@@ -115,18 +118,29 @@ class AccountSettingsController extends Controller
             'delivery_address' => 'required|string',
             'city' => 'required|string|max:100',
             'postal_code' => 'nullable|string|max:10',
-            'is_default' => 'nullable|boolean',
+            'is_default' => 'required|in:0,1',
         ]);
 
+        // Convert string to boolean
+        $validated['is_default'] = (bool) $validated['is_default'];
+        
+        $wasDefault = $address->is_default;
+
         // If this is set as default, unset other defaults
-        if ($request->has('is_default') && $request->is_default) {
+        if ($validated['is_default']) {
             $user->deliveryAddresses()->where('id', '!=', $id)->update(['is_default' => false]);
+        } else if ($wasDefault) {
+            // If unsetting default and this was the default, set another address as default if available
+            $otherAddress = $user->deliveryAddresses()->where('id', '!=', $id)->first();
+            if ($otherAddress) {
+                $otherAddress->update(['is_default' => true]);
+            }
         }
 
         $address->update($validated);
 
         return redirect()->route('customer.settings.delivery-addresses')
-            ->with('success', 'Delivery address updated successfully!');
+            ->with('status', ['type' => 'success', 'message' => 'Delivery address updated successfully!']);
     }
 
     /**
@@ -136,9 +150,18 @@ class AccountSettingsController extends Controller
     {
         $user = Auth::user();
         $address = $user->deliveryAddresses()->findOrFail($id);
+        $wasDefault = $address->is_default;
         $address->delete();
 
+        // If deleted address was default and there are other addresses, set the first one as default
+        if ($wasDefault) {
+            $remainingAddress = $user->deliveryAddresses()->first();
+            if ($remainingAddress) {
+                $remainingAddress->update(['is_default' => true]);
+            }
+        }
+
         return redirect()->route('customer.settings.delivery-addresses')
-            ->with('success', 'Delivery address deleted successfully!');
+            ->with('status', ['type' => 'success', 'message' => 'Delivery address deleted successfully!']);
     }
 }

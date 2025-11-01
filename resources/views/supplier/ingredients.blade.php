@@ -32,10 +32,10 @@
                         <div class="flex">
                             <div class="flex-shrink-0">
                                 <i class="fas fa-check-circle text-red-600"></i>
-                            </div>
+                </div>
                             <div class="ml-3">
                                 <p class="text-sm font-medium text-red-800">{{ $alert['message'] ?? $alert }}</p>
-                            </div>
+                        </div>
                         </div>
                     </div>
                 @else
@@ -100,7 +100,7 @@
                             @endforeach
                         </tbody>
                     </table>
-                </div>
+                        </div>
                 @else
                 <div class="text-center py-12">
                     <i class="fas fa-box text-4xl text-gray-400 mb-4"></i>

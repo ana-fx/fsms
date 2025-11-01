@@ -35,9 +35,9 @@
                     </div>
                     <h1 class="text-xl font-semibold text-gray-800">FoodSupply Management System</h1>
                     <p class="text-gray-600 mt-1">Sign in to your account</p>
-                </div>
+        </div>
 
-                <!-- Login Form -->
+        <!-- Login Form -->
                 <div class="bg-white">
             <!-- Session Status -->
             @if (session('status'))
