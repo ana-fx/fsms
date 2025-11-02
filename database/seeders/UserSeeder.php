@@ -35,6 +35,7 @@ class UserSeeder extends Seeder
             [
                 'name' => 'Super Admin FSMS',
                 'email' => 'admin@fsms.com',
+                'phone' => '081234567800',
                 'password' => Hash::make('admin@fsms.com'),
                 'email_verified_at' => now(),
             ]
@@ -47,6 +48,7 @@ class UserSeeder extends Seeder
             [
                 'name' => 'Supplier FSMS',
                 'email' => 'supplier@fsms.com',
+                'phone' => '081234567801',
                 'password' => Hash::make('supplier@fsms.com'),
                 'email_verified_at' => now(),
             ]
@@ -58,14 +60,17 @@ class UserSeeder extends Seeder
             [
                 'name' => 'PT. Supplier Bahan Pangan',
                 'email' => 'supplier1@fsms.com',
+                'phone' => '081234567802',
             ],
             [
                 'name' => 'CV. Jaya Makmur Food',
                 'email' => 'supplier2@fsms.com',
+                'phone' => '081234567803',
             ],
             [
                 'name' => 'UD. Sejahtera Bersama',
                 'email' => 'supplier3@fsms.com',
+                'phone' => '081234567804',
             ],
         ];
 
@@ -75,6 +80,7 @@ class UserSeeder extends Seeder
                 [
                     'name' => $supplierData['name'],
                     'email' => $supplierData['email'],
+                    'phone' => $supplierData['phone'],
                     'password' => Hash::make($supplierData['email']),
                     'email_verified_at' => now(),
                 ]
@@ -88,6 +94,7 @@ class UserSeeder extends Seeder
             [
                 'name' => 'Customer FSMS',
                 'email' => 'customer@fsms.com',
+                'phone' => '081234567890',
                 'password' => Hash::make('customer@fsms.com'),
                 'email_verified_at' => now(),
             ]
@@ -123,6 +130,7 @@ class UserSeeder extends Seeder
             [
                 'name' => 'Customer Peduli Anak',
                 'email' => 'customer1@fsms.com',
+                'phone' => '081234567892',
                 'addresses' => [
                     [
                         'label' => 'Head Office',
@@ -147,6 +155,7 @@ class UserSeeder extends Seeder
             [
                 'name' => 'Customer Bantu Lansia',
                 'email' => 'customer2@fsms.com',
+                'phone' => '081234567894',
                 'addresses' => [
                     [
                         'label' => 'Main Office',
@@ -162,6 +171,7 @@ class UserSeeder extends Seeder
             [
                 'name' => 'Customer Pemberdayaan Masyarakat',
                 'email' => 'customer3@fsms.com',
+                'phone' => '081234567895',
                 'addresses' => [
                     [
                         'label' => 'Central Office',
@@ -191,6 +201,7 @@ class UserSeeder extends Seeder
                 [
                     'name' => $customerData['name'],
                     'email' => $customerData['email'],
+                    'phone' => $customerData['phone'],
                     'password' => Hash::make($customerData['email']),
                     'email_verified_at' => now(),
                 ]

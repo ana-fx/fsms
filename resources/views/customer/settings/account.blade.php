@@ -73,6 +73,20 @@
                             @enderror
                         </div>
 
+                        <!-- Phone -->
+                        <div class="mb-6">
+                            <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-phone mr-2 text-green-600"></i>
+                                Phone Number <span class="text-red-500">*</span>
+                            </label>
+                            <input type="tel" name="phone" id="phone" value="{{ old('phone', $user->phone) }}"
+                                   class="w-full px-3 py-2 border {{ $errors->has('phone') ? 'border-red-500' : 'border-gray-300' }} rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                                   placeholder="Enter your phone number (e.g., 081234567890)" required>
+                            @error('phone')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
                         <div class="flex justify-end">
                             <button type="submit"
                                     class="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold">

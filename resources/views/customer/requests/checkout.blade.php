@@ -189,9 +189,13 @@
                                 </div>
 
                                 <!-- Calendar Modal -->
-                                <div id="calendarModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50">
-                                    <div class="flex items-center justify-center min-h-full p-4">
-                                        <div class="bg-white rounded-xl shadow-2xl max-w-sm w-full overflow-hidden">
+                                <div id="calendarModal" class="fixed inset-0 z-[100] hidden" style="display: none;">
+                                    <!-- Background overlay - transparent -->
+                                    <div class="fixed inset-0 bg-transparent transition-opacity" onclick="toggleCalendar()"></div>
+                                    
+                                    <!-- Modal panel - centered in content area (accounting for sidebar) -->
+                                    <div class="fixed inset-0 flex items-center justify-center p-2 sm:p-4 pointer-events-none" style="left: 0; right: 0; top: 0; bottom: 0;">
+                                        <div class="relative bg-white rounded-xl shadow-2xl max-w-sm w-full overflow-hidden pointer-events-auto" onclick="event.stopPropagation()">
                                             <!-- Calendar Header -->
                                             <div class="bg-gradient-to-r from-green-600 to-green-700 px-6 py-4 flex justify-between items-center">
                                                 <button onclick="changeMonth(-1)" class="text-white hover:bg-white hover:bg-opacity-20 rounded-lg p-2 transition-colors">
@@ -504,9 +508,44 @@ minDate.setDate(today.getDate() + 1); // Minimum date is tomorrow
 // Toggle calendar modal
 function toggleCalendar() {
     const modal = document.getElementById('calendarModal');
-    modal.classList.toggle('hidden');
-    if (!modal.classList.contains('hidden')) {
+    const isOpening = modal.classList.contains('hidden');
+    
+    if (isOpening) {
+        // Opening modal
+        // Disable body scroll
+        document.body.style.overflow = 'hidden';
+        
+        // Calculate center position considering sidebar on desktop
+        const isDesktop = window.innerWidth >= 1024; // lg breakpoint
+        const sidebarWidth = isDesktop ? 256 : 0; // 64 * 4 = 256px (lg:ml-64)
+        
+        // Get viewport dimensions
+        const viewportWidth = window.innerWidth;
+        
+        // Calculate available width (viewport minus sidebar)
+        const availableWidth = viewportWidth - sidebarWidth;
+        
+        // Center modal in available content area
+        const modalContainer = modal.querySelector('.fixed.inset-0.flex');
+        if (modalContainer) {
+            modalContainer.style.left = sidebarWidth + 'px';
+            modalContainer.style.width = availableWidth + 'px';
+        }
+        
+        // Show modal
+        modal.classList.remove('hidden');
+        modal.style.display = 'block';
+        
+        // Render calendar
         renderCalendar();
+    } else {
+        // Closing modal
+        // Enable body scroll
+        document.body.style.overflow = '';
+        
+        // Hide modal
+        modal.classList.add('hidden');
+        modal.style.display = 'none';
     }
 }
 
@@ -606,8 +645,44 @@ function selectToday() {
 // Close calendar when clicking outside
 document.addEventListener('click', function(event) {
     const modal = document.getElementById('calendarModal');
-    if (event.target === modal) {
-        toggleCalendar();
+    const modalContainer = modal.querySelector('.fixed.inset-0.flex');
+    if (modal && !modal.classList.contains('hidden')) {
+        // Check if click is on the overlay (not on modal content)
+        if (event.target === modal || event.target === modal.querySelector('.fixed.inset-0.bg-transparent')) {
+            toggleCalendar();
+        }
+    }
+});
+
+// Handle window resize to keep modal centered
+let calendarResizeTimeout;
+window.addEventListener('resize', function() {
+    const modal = document.getElementById('calendarModal');
+    if (modal && !modal.classList.contains('hidden')) {
+        clearTimeout(calendarResizeTimeout);
+        calendarResizeTimeout = setTimeout(function() {
+            // Recalculate modal position on resize
+            const isDesktop = window.innerWidth >= 1024;
+            const sidebarWidth = isDesktop ? 256 : 0;
+            const viewportWidth = window.innerWidth;
+            const availableWidth = viewportWidth - sidebarWidth;
+            
+            const modalContainer = modal.querySelector('.fixed.inset-0.flex');
+            if (modalContainer) {
+                modalContainer.style.left = sidebarWidth + 'px';
+                modalContainer.style.width = availableWidth + 'px';
+            }
+        }, 100);
+    }
+});
+
+// Close modal on ESC key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        const modal = document.getElementById('calendarModal');
+        if (modal && !modal.classList.contains('hidden')) {
+            toggleCalendar();
+        }
     }
 });
 </script>
