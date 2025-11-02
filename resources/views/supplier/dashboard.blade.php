@@ -16,8 +16,10 @@
         ->get();
     
     $pendingOrders = $orders->where('status', 'pending')->count();
-    $approvedOrders = $orders->where('status', 'approved')->count();
-    $inProgressOrders = $orders->where('status', 'in_progress')->count();
+    $paymentPendingOrders = $orders->where('status', 'payment_pending')->count();
+    $paidOrders = $orders->where('status', 'paid')->count();
+    $shippingOrders = $orders->where('status', 'shipping')->count();
+    $deliveredOrders = $orders->where('status', 'delivered')->count();
     $recentOrders = $orders->take(5);
 @endphp
 <div class="flex bg-gray-100 min-h-screen w-full overflow-x-hidden">
@@ -39,7 +41,7 @@
     </div>
 
     <!-- Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-6 mb-8">
         <div class="bg-white rounded-lg shadow-md p-6 card-hover">
             <div class="flex items-center">
                 <div class="p-3 rounded-full bg-blue-100 text-blue-600">
@@ -70,8 +72,20 @@
                     <i class="fas fa-clock text-xl"></i>
                 </div>
                 <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-600">Pending Orders</p>
-                    <p class="text-2xl font-semibold text-gray-900">{{ $pendingOrders }}</p>
+                    <p class="text-sm font-medium text-gray-600">Payment Pending</p>
+                    <p class="text-2xl font-semibold text-gray-900">{{ $paymentPendingOrders }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-6 card-hover">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-green-100 text-green-600">
+                    <i class="fas fa-money-bill text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Paid</p>
+                    <p class="text-2xl font-semibold text-gray-900">{{ $paidOrders }}</p>
                 </div>
             </div>
         </div>
@@ -82,20 +96,20 @@
                     <i class="fas fa-truck text-xl"></i>
                 </div>
                 <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-600">In Progress</p>
-                    <p class="text-2xl font-semibold text-gray-900">{{ $inProgressOrders }}</p>
+                    <p class="text-sm font-medium text-gray-600">Shipping</p>
+                    <p class="text-2xl font-semibold text-gray-900">{{ $shippingOrders }}</p>
                 </div>
             </div>
         </div>
 
         <div class="bg-white rounded-lg shadow-md p-6 card-hover">
             <div class="flex items-center">
-                <div class="p-3 rounded-full bg-green-100 text-green-600">
-                    <i class="fas fa-check-circle text-xl"></i>
+                <div class="p-3 rounded-full bg-indigo-100 text-indigo-600">
+                    <i class="fas fa-box-check text-xl"></i>
                 </div>
                 <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-600">Approved Orders</p>
-                    <p class="text-2xl font-semibold text-gray-900">{{ $approvedOrders }}</p>
+                    <p class="text-sm font-medium text-gray-600">Delivered</p>
+                    <p class="text-2xl font-semibold text-gray-900">{{ $deliveredOrders }}</p>
                 </div>
             </div>
         </div>
@@ -151,18 +165,22 @@
                             <td class="px-4 py-3 whitespace-nowrap text-sm">
                                 @php
                                     $statusColors = [
-                                        'pending' => 'bg-yellow-100 text-yellow-800',
-                                        'approved' => 'bg-green-100 text-green-800',
-                                        'rejected' => 'bg-red-100 text-red-800',
-                                        'in_progress' => 'bg-blue-100 text-blue-800',
+                                        'pending' => 'bg-gray-100 text-gray-800',
+                                        'payment_pending' => 'bg-yellow-100 text-yellow-800',
+                                        'paid' => 'bg-green-100 text-green-800',
+                                        'shipping' => 'bg-blue-100 text-blue-800',
+                                        'delivered' => 'bg-indigo-100 text-indigo-800',
                                         'completed' => 'bg-purple-100 text-purple-800',
+                                        'rejected' => 'bg-red-100 text-red-800',
                                     ];
                                     $statusLabels = [
                                         'pending' => 'Pending',
-                                        'approved' => 'Approved',
-                                        'rejected' => 'Rejected',
-                                        'in_progress' => 'In Progress',
+                                        'payment_pending' => 'Payment Pending',
+                                        'paid' => 'Paid',
+                                        'shipping' => 'Shipping',
+                                        'delivered' => 'Delivered',
                                         'completed' => 'Completed',
+                                        'rejected' => 'Rejected',
                                     ];
                                 @endphp
                                 <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full {{ $statusColors[$order->status] }}">

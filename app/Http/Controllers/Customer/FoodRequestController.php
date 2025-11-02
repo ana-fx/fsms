@@ -15,11 +15,84 @@ class FoodRequestController extends Controller
 {
 
     /**
+     * Display the customer dashboard with statistics.
+     */
+    public function dashboard()
+    {
+        /** @var User $user */
+        $user = Auth::user();
+        
+        $requests = FoodRequest::with(['foodCategory'])
+            ->byCustomer(Auth::id())
+            ->get();
+
+        $stats = [
+            'pending' => $requests->where('status', 'pending')->count(),
+            'payment_pending' => $requests->where('status', 'payment_pending')->count(),
+            'paid' => $requests->where('status', 'paid')->count(),
+            'shipping' => $requests->where('status', 'shipping')->count(),
+            'delivered' => $requests->where('status', 'delivered')->count(),
+            'completed' => $requests->where('status', 'completed')->count(),
+            'rejected' => $requests->where('status', 'rejected')->count(),
+            'total' => $requests->count(),
+        ];
+
+        // Get cart info
+        $cart = session()->get('cart', []);
+        $cartItems = [];
+        $cartTotal = 0;
+        $cartCount = 0;
+
+        foreach ($cart as $itemId => $item) {
+            $product = FoodItem::with('foodCategory')->find($itemId);
+            if ($product) {
+                $subtotal = $product->price * $item['quantity'];
+                $cartItems[] = [
+                    'product' => $product,
+                    'quantity' => $item['quantity'],
+                    'subtotal' => $subtotal,
+                ];
+                $cartTotal += $subtotal;
+                $cartCount += $item['quantity'];
+            }
+        }
+
+        // Get delivery addresses count
+        $addressesCount = $user->deliveryAddresses()->count();
+
+        // Get chart data - Requests by status for pie chart
+        $statusDistribution = [
+            'pending' => $stats['pending'],
+            'payment_pending' => $stats['payment_pending'],
+            'paid' => $stats['paid'],
+            'shipping' => $stats['shipping'],
+            'delivered' => $stats['delivered'],
+            'completed' => $stats['completed'],
+            'rejected' => $stats['rejected'],
+        ];
+
+        // Get daily trend data (last 30 days)
+        $dailyTrend = [];
+        for ($i = 29; $i >= 0; $i--) {
+            $date = now()->subDays($i);
+            $count = FoodRequest::byCustomer(Auth::id())
+                ->whereDate('created_at', $date->format('Y-m-d'))
+                ->count();
+            $dailyTrend[] = [
+                'date' => $date->format('d M'),
+                'count' => $count,
+            ];
+        }
+
+        return view('customer.dashboard', compact('stats', 'cartItems', 'cartTotal', 'cartCount', 'addressesCount', 'statusDistribution', 'dailyTrend'));
+    }
+
+    /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $requests = FoodRequest::with(['foodCategory', 'approvedBy'])
+        $requests = FoodRequest::with(['foodCategory', 'foodItem'])
             ->byCustomer(Auth::id())
             ->orderBy('created_at', 'desc')
             ->paginate(10);
@@ -157,7 +230,7 @@ class FoodRequestController extends Controller
                     'delivery_notes' => $validated['delivery_notes'] ?? null,
                     'needed_date' => $validated['needed_date'],
                     'requested_date' => now()->toDateString(),
-                    'status' => 'pending',
+                    'status' => 'payment_pending',
                 ]);
                 $requestIds[] = $foodRequest->id;
                 $ordersBySupplier[$product->supplier_id]['request_ids'][] = $foodRequest->id;
@@ -210,7 +283,7 @@ class FoodRequestController extends Controller
             return view('customer.requests.success', compact('orderData', 'requests', 'paymentProofUploaded'));
         } else {
             // Show single invoice (normal view)
-            $request->load(['foodCategory', 'foodItem', 'customer', 'approvedBy']);
+            $request->load(['foodCategory', 'foodItem', 'customer']);
 
             // Prepare order data in same format as success page
             $orderData = [
@@ -348,15 +421,15 @@ class FoodRequestController extends Controller
                 'needed_date' => $request->validate(['needed_date' => 'required|date|after:today'])['needed_date'],
             ];
         } else {
-            $validated = $request->validate([
+        $validated = $request->validate([
                 'recipient_name' => 'required|string|max:255',
                 'recipient_phone' => 'required|string|max:20',
                 'delivery_address' => 'required|string',
                 'city' => 'required|string|max:100',
                 'postal_code' => 'nullable|string|max:10',
                 'delivery_notes' => 'nullable|string',
-                'needed_date' => 'required|date|after:today',
-            ]);
+            'needed_date' => 'required|date|after:today',
+        ]);
         }
 
         $foodRequest->update($validated);
@@ -383,56 +456,133 @@ class FoodRequestController extends Controller
      */
     public function uploadPaymentProof(Request $request)
     {
-        $validated = $request->validate([
-            'request_ids' => 'required|array',
-            'request_ids.*' => 'required|exists:food_requests,id',
-            'payment_proof' => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120', // 5MB max
-            'payment_notes' => 'nullable|string|max:500',
+        \Log::info('Upload payment proof started', [
+            'user_id' => Auth::id(),
+            'has_file' => $request->hasFile('payment_proof'),
+            'request_ids' => $request->input('request_ids'),
+            'all_input' => $request->all()
         ]);
 
-        // Verify all requests belong to current user
-        /** @var User $user */
-        $user = Auth::user();
-        $requests = FoodRequest::whereIn('id', $validated['request_ids'])
-            ->where('customer_id', $user->id)
-            ->get();
+        try {
+            $validated = $request->validate([
+                'request_ids' => 'required|array',
+                'request_ids.*' => 'required|exists:food_requests,id',
+                'payment_proof' => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120', // 5MB max
+                'payment_notes' => 'nullable|string|max:500',
+            ]);
 
-        if ($requests->count() !== count($validated['request_ids'])) {
-            return redirect()->back()
-                ->with('status', ['type' => 'error', 'message' => 'Invalid request. Some requests were not found.']);
-        }
+            \Log::info('Validation passed', ['validated' => $validated]);
 
-        // Upload payment proof
-        if ($request->hasFile('payment_proof')) {
-            $file = $request->file('payment_proof');
-            $fileName = 'payment_proof_' . time() . '_' . $file->getClientOriginalName();
-            $path = $file->storeAs('payment_proofs', $fileName, 'public');
+            // Verify all requests belong to current user
+            /** @var User $user */
+            $user = Auth::user();
+            $requests = FoodRequest::whereIn('id', $validated['request_ids'])
+                ->where('customer_id', $user->id)
+                ->get();
 
-            // Update all requests with payment proof
-            foreach ($requests as $foodRequest) {
-                $updateData = [
-                    'payment_proof' => $path,
-                    'payment_proof_uploaded_at' => now(),
-                ];
+            \Log::info('Requests found', ['count' => $requests->count(), 'expected' => count($validated['request_ids'])]);
 
-                // Add payment notes if provided
-                if (!empty($validated['payment_notes'])) {
-                    $existingNotes = $foodRequest->notes ? $foodRequest->notes . "\n\n" : '';
-                    $updateData['notes'] = $existingNotes . 'Payment Notes: ' . $validated['payment_notes'];
-                }
-
-                $foodRequest->update($updateData);
+            if ($requests->isEmpty()) {
+                \Log::warning('No requests found for user', ['user_id' => $user->id, 'request_ids' => $validated['request_ids']]);
+                return redirect()->back()
+                    ->with('status', ['type' => 'error', 'message' => 'No requests found or you do not have permission to update these requests.']);
             }
 
-            // Clear order success session after successful upload
-            session()->forget('order_success');
+            if ($requests->count() !== count($validated['request_ids'])) {
+                \Log::warning('Request count mismatch', ['found' => $requests->count(), 'expected' => count($validated['request_ids'])]);
+                return redirect()->back()
+                    ->with('status', ['type' => 'error', 'message' => 'Invalid request. Some requests were not found.']);
+            }
 
-            return redirect()->route('customer.requests.index')
-                ->with('status', ['type' => 'success', 'message' => 'Payment proof uploaded successfully! Your order is being processed.']);
+            // Upload payment proof
+            if ($request->hasFile('payment_proof')) {
+                $file = $request->file('payment_proof');
+                
+                \Log::info('File received', [
+                    'name' => $file->getClientOriginalName(),
+                    'size' => $file->getSize(),
+                    'mime' => $file->getMimeType()
+                ]);
+                
+                // Generate unique file name
+                $fileName = 'payment_proof_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                $path = $file->storeAs('payment_proofs', $fileName, 'public');
+
+                \Log::info('File stored', ['path' => $path, 'exists' => \Storage::disk('public')->exists($path)]);
+
+                if (!$path) {
+                    \Log::error('File storage failed');
+                    return redirect()->back()
+                        ->with('status', ['type' => 'error', 'message' => 'Failed to save file. Please check storage permissions.']);
+                }
+
+                // Update all requests with payment proof and change status to paid
+                foreach ($requests as $foodRequest) {
+                    // Delete old payment proof if exists
+                    if ($foodRequest->payment_proof && \Storage::disk('public')->exists($foodRequest->payment_proof)) {
+                        \Storage::disk('public')->delete($foodRequest->payment_proof);
+                        \Log::info('Old payment proof deleted', ['old_path' => $foodRequest->payment_proof]);
+                    }
+
+                    $updateData = [
+                        'payment_proof' => $path,
+                        'payment_proof_uploaded_at' => now(),
+                        'status' => 'paid', // Change status to paid after payment proof uploaded
+                    ];
+
+                    // Add payment notes if provided
+                    if (!empty($validated['payment_notes'])) {
+                        $existingNotes = $foodRequest->notes ? $foodRequest->notes . "\n\n" : '';
+                        $updateData['notes'] = $existingNotes . 'Payment Notes: ' . $validated['payment_notes'];
+                    }
+
+                    $updated = $foodRequest->update($updateData);
+                    \Log::info('Request updated', [
+                        'request_id' => $foodRequest->id,
+                        'updated' => $updated,
+                        'payment_proof' => $path,
+                        'status' => 'paid'
+                    ]);
+
+                    // Verify update
+                    $foodRequest->refresh();
+                    \Log::info('Request refreshed', [
+                        'request_id' => $foodRequest->id,
+                        'payment_proof' => $foodRequest->payment_proof,
+                        'status' => $foodRequest->status
+                    ]);
+                }
+
+                // Clear order success session after successful upload
+                session()->forget('order_success');
+
+                \Log::info('Upload completed successfully');
+                return redirect()->route('customer.requests.index')
+                    ->with('status', ['type' => 'success', 'message' => 'Payment proof uploaded successfully! Your order is being processed.']);
+            }
+
+            \Log::warning('No file in request');
+            return redirect()->back()
+                ->with('status', ['type' => 'error', 'message' => 'No file was uploaded. Please select a file and try again.']);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            \Log::error('Validation failed', ['errors' => $e->errors()]);
+            return redirect()->back()
+                ->withErrors($e->errors())
+                ->with('status', ['type' => 'error', 'message' => 'Validation failed: ' . implode(', ', array_map(function($messages) {
+                    return implode(', ', $messages);
+                }, $e->errors()))]);
+        } catch (\Exception $e) {
+            \Log::error('Payment proof upload error: ' . $e->getMessage(), [
+                'user_id' => Auth::id(),
+                'request_ids' => $request->input('request_ids'),
+                'trace' => $e->getTraceAsString(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ]);
+
+            return redirect()->back()
+                ->with('status', ['type' => 'error', 'message' => 'An error occurred while uploading payment proof: ' . $e->getMessage()]);
         }
-
-        return redirect()->back()
-            ->with('status', ['type' => 'error', 'message' => 'Failed to upload payment proof. Please try again.']);
     }
 
 }

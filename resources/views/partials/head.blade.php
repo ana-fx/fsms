@@ -14,8 +14,8 @@
 
 @stack('styles')
 
-<!-- Tailwind CSS -->
-<script src="https://cdn.tailwindcss.com"></script>
+<!-- Vite -->
+@vite(['resources/css/app.css', 'resources/js/app.js'])
 
 <!-- Custom Styles -->
 <style>

@@ -38,9 +38,14 @@
             <!-- Main Section -->
             <div class="space-y-1">
                 <a href="{{ route('customer.dashboard') }}"
-                   class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('customer.dashboard') || request()->routeIs('customer.requests.index') ? 'bg-green-100 text-green-700 border-r-2 border-green-600' : 'text-gray-700 hover:bg-gray-100 hover:text-green-600' }}">
+                   class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('customer.dashboard') ? 'bg-green-100 text-green-700 border-r-2 border-green-600' : 'text-gray-700 hover:bg-gray-100 hover:text-green-600' }}">
                     <i class="fas fa-home mr-3 text-lg"></i>
                     Dashboard
+                </a>
+                <a href="{{ route('customer.requests.index') }}"
+                   class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('customer.requests.*') ? 'bg-green-100 text-green-700 border-r-2 border-green-600' : 'text-gray-700 hover:bg-gray-100 hover:text-green-600' }}">
+                    <i class="fas fa-list-alt mr-3 text-lg"></i>
+                    Requests
                 </a>
             </div>
 
@@ -66,19 +71,6 @@
                     @else
                         <span id="cart-badge" class="hidden ml-auto bg-green-600 text-white text-xs font-semibold px-2 py-1 rounded-full">0</span>
                     @endif
-                </a>
-            </div>
-
-
-            <!-- Programs Section -->
-            <div class="space-y-1">
-                <div class="px-4 py-2">
-                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Programs</p>
-                </div>
-                <a href="{{ route('customer.programs') }}"
-                   class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('customer.programs') ? 'bg-green-100 text-green-700 border-r-2 border-green-600' : 'text-gray-700 hover:bg-gray-100 hover:text-green-600' }}">
-                    <i class="fas fa-project-diagram mr-3 text-lg"></i>
-                    Manage Programs
                 </a>
             </div>
 

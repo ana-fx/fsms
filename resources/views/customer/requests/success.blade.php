@@ -41,11 +41,13 @@
                                         Status:
                                         @php
                                             $statusConfigs = [
-                                                'pending' => ['color' => 'bg-yellow-100 text-yellow-800', 'label' => 'Pending'],
-                                                'approved' => ['color' => 'bg-green-100 text-green-800', 'label' => 'Approved'],
-                                                'rejected' => ['color' => 'bg-red-100 text-red-800', 'label' => 'Rejected'],
-                                                'in_progress' => ['color' => 'bg-blue-100 text-blue-800', 'label' => 'In Progress'],
+                                                'pending' => ['color' => 'bg-gray-100 text-gray-800', 'label' => 'Pending'],
+                                                'payment_pending' => ['color' => 'bg-yellow-100 text-yellow-800', 'label' => 'Payment Pending'],
+                                                'paid' => ['color' => 'bg-green-100 text-green-800', 'label' => 'Paid'],
+                                                'shipping' => ['color' => 'bg-blue-100 text-blue-800', 'label' => 'Shipping'],
+                                                'delivered' => ['color' => 'bg-indigo-100 text-indigo-800', 'label' => 'Delivered'],
                                                 'completed' => ['color' => 'bg-purple-100 text-purple-800', 'label' => 'Completed'],
+                                                'rejected' => ['color' => 'bg-red-100 text-red-800', 'label' => 'Rejected'],
                                             ];
                                             $config = $statusConfigs[$request->status] ?? $statusConfigs['pending'];
                                         @endphp

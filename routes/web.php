@@ -107,13 +107,9 @@ Route::middleware(['auth', 'role:customer'])->group(function () {
     // Ingredients - Main page for customers
     Route::get('/customer/ingredients', [IngredientController::class, 'index'])->name('customer.ingredients');
 
-    // Dashboard - redirects to food requests (which is now the dashboard)
-    Route::get('/customer', [\App\Http\Controllers\Customer\FoodRequestController::class, 'index'])
+    // Dashboard
+    Route::get('/customer', [\App\Http\Controllers\Customer\FoodRequestController::class, 'dashboard'])
         ->name('customer.dashboard');
-
-    Route::get('/customer/programs', function () {
-        return view('customer.programs', ['title' => 'Manage Programs']);
-    })->name('customer.programs');
 
     // Cart Routes
     Route::get('/customer/cart', [CartController::class, 'index'])->name('customer.cart');

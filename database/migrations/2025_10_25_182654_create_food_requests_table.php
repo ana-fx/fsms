@@ -20,11 +20,14 @@ return new class extends Migration
             $table->decimal('quantity', 10, 2);
             $table->string('unit'); // kg, liter, pcs, etc
             $table->text('notes')->nullable();
-            $table->enum('status', ['pending', 'approved', 'rejected', 'in_progress', 'completed'])->default('pending');
+            $table->enum('status', ['pending', 'payment_pending', 'paid', 'shipping', 'delivered', 'completed', 'rejected'])->default('pending');
             $table->date('requested_date');
             $table->date('needed_date');
-            $table->foreignId('approved_by')->nullable()->constrained('users')->onDelete('set null');
-            $table->timestamp('approved_at')->nullable();
+            $table->foreignId('shipped_by')->nullable()->after('needed_date')->constrained('users')->onDelete('set null')->comment('Supplier yang melakukan pengiriman');
+            $table->timestamp('shipped_at')->nullable();
+            $table->string('delivery_photo')->nullable()->comment('Foto bukti barang sudah diterima');
+            $table->timestamp('delivery_photo_uploaded_at')->nullable();
+            $table->timestamp('delivered_at')->nullable();
             $table->text('admin_notes')->nullable();
             $table->timestamps();
         });

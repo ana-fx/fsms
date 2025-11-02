@@ -4,7 +4,6 @@
         // Customer routes
         'customer.ingredients',
         'customer.dashboard',
-        'customer.programs',
         'customer.cart',
         'customer.requests.index',
         'customer.requests.checkout',
@@ -118,6 +117,10 @@
                                         <i class="fas fa-home mr-3 text-green-600"></i>
                                         Dashboard
                                     </a>
+                                    <a href="{{ route('customer.requests.index') }}" class="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md transition-colors">
+                                        <i class="fas fa-list-alt mr-3 text-green-600"></i>
+                                        Requests
+                                    </a>
                                     <a href="{{ route('customer.ingredients') }}" class="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md transition-colors">
                                         <i class="fas fa-box mr-3 text-green-600"></i>
                                         Ingredients
@@ -131,10 +134,6 @@
                                         @if($cartCount > 0)
                                             <span class="ml-auto bg-green-600 text-white text-xs font-semibold px-2 py-0.5 rounded-full">{{ $cartCount }}</span>
                                         @endif
-                                    </a>
-                                    <a href="{{ route('customer.programs') }}" class="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md transition-colors">
-                                        <i class="fas fa-project-diagram mr-3 text-green-600"></i>
-                                        Manage Programs
                                     </a>
                                     <div class="border-t border-gray-100 my-2"></div>
                                     <a href="{{ route('customer.settings.account') }}" class="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md transition-colors">

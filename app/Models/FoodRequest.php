@@ -32,8 +32,11 @@ class FoodRequest extends Model
         'status',
         'requested_date',
         'needed_date',
-        'approved_by',
-        'approved_at',
+        'shipped_by',
+        'shipped_at',
+        'delivery_photo',
+        'delivery_photo_uploaded_at',
+        'delivered_at',
         'admin_notes',
     ];
 
@@ -41,7 +44,9 @@ class FoodRequest extends Model
         'quantity' => 'decimal:2',
         'requested_date' => 'date',
         'needed_date' => 'date',
-        'approved_at' => 'datetime',
+        'shipped_at' => 'datetime',
+        'delivery_photo_uploaded_at' => 'datetime',
+        'delivered_at' => 'datetime',
         'payment_proof_uploaded_at' => 'datetime',
     ];
 
@@ -70,11 +75,11 @@ class FoodRequest extends Model
     }
 
     /**
-     * Get the admin who approved this request.
+     * Get the supplier who shipped this request.
      */
-    public function approvedBy(): BelongsTo
+    public function shippedBy(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'approved_by');
+        return $this->belongsTo(User::class, 'shipped_by');
     }
 
     /**
@@ -102,11 +107,19 @@ class FoodRequest extends Model
     }
 
     /**
-     * Scope a query to only include approved requests.
+     * Scope a query to only include paid requests (payment completed).
      */
-    public function scopeApproved($query)
+    public function scopePaid($query)
     {
-        return $query->where('status', 'approved');
+        return $query->where('status', 'paid');
+    }
+
+    /**
+     * Scope a query to only include payment pending requests.
+     */
+    public function scopePaymentPending($query)
+    {
+        return $query->where('status', 'payment_pending');
     }
 
     /**

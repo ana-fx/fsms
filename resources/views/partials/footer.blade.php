@@ -4,7 +4,6 @@
         // Customer routes
         'customer.ingredients',
         'customer.dashboard',
-        'customer.programs',
         'customer.cart',
         'customer.requests.index',
         'customer.requests.checkout',
@@ -99,11 +98,6 @@
                             <li>
                                 <a href="{{ route('customer.dashboard') }}" class="text-gray-300 hover:text-green-400 transition-colors text-sm">
                                     <i class="fas fa-tachometer-alt mr-2"></i>Customer Panel
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{{ route('customer.programs') }}" class="text-gray-300 hover:text-green-400 transition-colors text-sm">
-                                    <i class="fas fa-project-diagram mr-2"></i>Manage Programs
                                 </a>
                             </li>
                         @endif

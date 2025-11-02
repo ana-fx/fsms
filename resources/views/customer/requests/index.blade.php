@@ -1,6 +1,7 @@
+
 @extends('layouts.app')
 
-@section('title', 'Dashboard - FSMS')
+@section('title', 'Requests - FSMS')
 
 @section('content')
 <div class="flex bg-gray-100 min-h-screen w-full overflow-x-hidden">
@@ -12,158 +13,202 @@
     </button>
 
     <!-- Main Content -->
-    <div class="w-full lg:ml-64 transition-all duration-300">
-        <div class="flex-1 bg-gray-100">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <!-- Header -->
-        <div class="mb-8">
-                <div>
-                <h1 class="text-3xl font-bold text-gray-900">Dashboard</h1>
-                <p class="mt-2 text-gray-600">Manage your ingredient requests and track order status</p>
-            </div>
-        </div>
-
-        <!-- Stats Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <div class="bg-white rounded-lg shadow p-6">
-                <div class="flex items-center">
-                    <div class="p-3 bg-yellow-100 rounded-lg">
-                        <i class="fas fa-clock text-yellow-600 text-xl"></i>
-                    </div>
-                    <div class="ml-4">
-                        <p class="text-sm font-medium text-gray-600">Menunggu</p>
-                        <p class="text-2xl font-bold text-gray-900">{{ $requests->where('status', 'pending')->count() }}</p>
+    <div class="w-full lg:ml-64 transition-all duration-300 overflow-x-hidden">
+        <div class="flex-1 bg-gray-100 min-h-screen">
+            <div class="w-full py-8">
+                <!-- Header -->
+                <div class="mb-8 px-4 sm:px-6 lg:px-8">
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-900">Requests</h1>
+                        <p class="mt-2 text-gray-600">Manage all your ingredient requests and track order status</p>
                     </div>
                 </div>
-            </div>
 
-            <div class="bg-white rounded-lg shadow p-6">
-                <div class="flex items-center">
-                    <div class="p-3 bg-green-100 rounded-lg">
-                        <i class="fas fa-check text-green-600 text-xl"></i>
+                <!-- Requests List -->
+                <div class="bg-white rounded-lg shadow mx-4 sm:mx-6 lg:mx-8">
+                    <div class="px-4 sm:px-6 py-4 border-b border-gray-200">
+                        <h3 class="text-lg font-medium text-gray-900">Food Requests</h3>
                     </div>
-                    <div class="ml-4">
-                        <p class="text-sm font-medium text-gray-600">Disetujui</p>
-                        <p class="text-2xl font-bold text-gray-900">{{ $requests->where('status', 'approved')->count() }}</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-white rounded-lg shadow p-6">
-                <div class="flex items-center">
-                    <div class="p-3 bg-blue-100 rounded-lg">
-                        <i class="fas fa-truck text-blue-600 text-xl"></i>
-                    </div>
-                    <div class="ml-4">
-                        <p class="text-sm font-medium text-gray-600">Dalam Proses</p>
-                        <p class="text-2xl font-bold text-gray-900">{{ $requests->where('status', 'in_progress')->count() }}</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-white rounded-lg shadow p-6">
-                <div class="flex items-center">
-                    <div class="p-3 bg-purple-100 rounded-lg">
-                        <i class="fas fa-check-circle text-purple-600 text-xl"></i>
-                    </div>
-                    <div class="ml-4">
-                        <p class="text-sm font-medium text-gray-600">Selesai</p>
-                        <p class="text-2xl font-bold text-gray-900">{{ $requests->where('status', 'completed')->count() }}</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Requests Table -->
-        <div class="bg-white rounded-lg shadow overflow-hidden">
-            <div class="px-6 py-4 border-b border-gray-200">
-                <h3 class="text-lg font-medium text-gray-900">Food Requests</h3>
-            </div>
 
             @if($requests->count() > 0)
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
+                @php
+                    $statusColors = [
+                        'pending' => 'bg-gray-100 text-gray-800',
+                        'payment_pending' => 'bg-yellow-100 text-yellow-800',
+                        'paid' => 'bg-green-100 text-green-800',
+                        'shipping' => 'bg-blue-100 text-blue-800',
+                        'delivered' => 'bg-indigo-100 text-indigo-800',
+                        'completed' => 'bg-purple-100 text-purple-800',
+                        'rejected' => 'bg-red-100 text-red-800',
+                    ];
+                    $statusLabels = [
+                        'pending' => 'Pending',
+                        'payment_pending' => 'Payment Pending',
+                        'paid' => 'Paid',
+                        'shipping' => 'Shipping',
+                        'delivered' => 'Delivered',
+                        'completed' => 'Completed',
+                        'rejected' => 'Rejected',
+                    ];
+                @endphp
+
+                <!-- Mobile Card View -->
+                <div class="block md:hidden divide-y divide-gray-200">
+                    @foreach($requests as $request)
+                        <div class="p-4 hover:bg-gray-50 transition-colors">
+                            <div class="flex items-start justify-between mb-3">
+                                <div class="flex items-start space-x-3 flex-1 min-w-0">
+                                    <div class="p-2 rounded-lg flex-shrink-0" style="background-color: {{ $request->foodCategory->color }}20">
+                                        <i class="{{ $request->foodCategory->icon }} text-sm" style="color: {{ $request->foodCategory->color }}"></i>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="text-sm font-semibold text-gray-900 truncate">{{ $request->order_number ?? 'N/A' }}</div>
+                                        <div class="text-xs text-gray-500 truncate">{{ $request->foodCategory->name }}</div>
+                                        <div class="text-xs text-gray-600 mt-1">{{ number_format($request->quantity, 2) }} {{ $request->unit }}</div>
+                                    </div>
+                                </div>
+                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full {{ $statusColors[$request->status] }} flex-shrink-0">
+                                    {{ $statusLabels[$request->status] }}
+                                </span>
+                            </div>
+
+                            <div class="mb-3">
+                                <div class="text-sm font-medium text-gray-900 truncate">{{ $request->title }}</div>
+                                <div class="text-xs text-gray-500 mt-1">
+                                    <i class="fas fa-calendar-alt mr-1"></i>{{ $request->needed_date->format('d M Y') }}
+                                </div>
+                            </div>
+
+                            <!-- Payment Proof Section Mobile -->
+                            @if($request->payment_proof && $request->payment_proof !== '' && $request->payment_proof !== null)
+                                <div class="mb-3">
+                                    <button onclick="openPaymentProofModal({{ json_encode(asset('storage/' . $request->payment_proof)) }}, {{ json_encode($request->payment_proof) }})"
+                                            class="inline-flex items-center px-3 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-sm font-medium w-full justify-center">
+                                        <i class="fas fa-eye mr-2"></i>View Payment Proof
+                                    </button>
+                                </div>
+                            @elseif($request->status === 'payment_pending')
+                                <div class="mb-3">
+                                    <form method="POST" action="{{ route('customer.requests.upload-payment-proof') }}" enctype="multipart/form-data" class="space-y-2" id="uploadForm{{ $request->id }}">
+                                        @csrf
+                                        <input type="hidden" name="request_ids[]" value="{{ $request->id }}">
+                                        <input type="file"
+                                               id="payment_proof_{{ $request->id }}"
+                                               name="payment_proof"
+                                               accept="image/*,.pdf"
+                                               class="block w-full text-xs file:mr-2 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-green-600 file:text-white hover:file:bg-green-700 file:cursor-pointer text-transparent">
+                                    </form>
+                                </div>
+                            @endif
+
+                            <!-- Actions Mobile -->
+                            <div class="flex items-center justify-between pt-2 border-t border-gray-100">
+                                <div class="flex flex-wrap gap-2">
+                                    <a href="{{ route('customer.requests.show', $request) }}" class="inline-flex items-center px-3 py-1.5 bg-green-50 text-green-700 rounded-md hover:bg-green-100 text-sm font-medium transition-colors">
+                                        <i class="fas fa-eye mr-1.5 text-xs"></i>Detail
+                                    </a>
+                                    @if(in_array($request->status, ['pending', 'payment_pending']))
+                                        <a href="{{ route('customer.requests.edit', $request) }}" class="inline-flex items-center px-3 py-1.5 bg-blue-50 text-blue-700 rounded-md hover:bg-blue-100 text-sm font-medium transition-colors">
+                                            <i class="fas fa-edit mr-1.5 text-xs"></i>Edit
+                                        </a>
+                                        <button onclick="confirmDeleteRequest({{ $request->id }}, '{{ $request->title }}')" class="inline-flex items-center px-3 py-1.5 bg-red-50 text-red-700 rounded-md hover:bg-red-100 text-sm font-medium transition-colors">
+                                            <i class="fas fa-trash mr-1.5 text-xs"></i>Hapus
+                                        </button>
+                                    @else
+                                        <span class="inline-flex items-center px-3 py-1.5 bg-gray-100 text-gray-400 rounded-md cursor-not-allowed text-sm font-medium" title="Edit (Not available for {{ $statusLabels[$request->status] }})">
+                                            <i class="fas fa-edit mr-1.5 text-xs"></i>Edit
+                                        </span>
+                                        <span class="inline-flex items-center px-3 py-1.5 bg-gray-100 text-gray-400 rounded-md cursor-not-allowed text-sm font-medium" title="Delete (Not available for {{ $statusLabels[$request->status] }})">
+                                            <i class="fas fa-trash mr-1.5 text-xs"></i>Hapus
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+
+                <!-- Desktop Table View -->
+                <div class="hidden md:block overflow-x-auto">
+                    <table class="w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Order Number
-                                </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Item
-                                </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Jumlah
-                                </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Status
-                                </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Dibutuhkan
-                                </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Aksi
-                                </th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Order</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Item</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Quantity</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Status</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Needed Date</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Payment</th>
+                                <th class="px-4 py-3 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
                             @foreach($requests as $request)
-                                <tr class="hover:bg-gray-50">
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="flex items-center">
-                                            <div class="p-2 rounded-lg" style="background-color: {{ $request->foodCategory->color }}20">
+                                <tr class="hover:bg-gray-50 transition-colors">
+                                    <td class="px-4 py-4 whitespace-nowrap">
+                                        <div class="flex items-center space-x-3">
+                                            <div class="flex-shrink-0 p-2 rounded-lg" style="background-color: {{ $request->foodCategory->color }}20">
                                                 <i class="{{ $request->foodCategory->icon }} text-sm" style="color: {{ $request->foodCategory->color }}"></i>
                                             </div>
-                                            <div class="ml-3">
-                                                <div class="text-sm font-medium text-gray-900">{{ $request->order_number ?? 'N/A' }}</div>
-                                                <div class="text-xs text-gray-500">{{ $request->foodCategory->name }}</div>
+                                            <div>
+                                                <div class="text-sm font-semibold text-gray-900">{{ $request->order_number ?? 'N/A' }}</div>
+                                                <div class="text-xs text-gray-500 mt-0.5">{{ $request->foodCategory->name }}</div>
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="px-6 py-4">
-                                        <div class="text-sm font-medium text-gray-900">{{ $request->title }}</div>
-                                        @if($request->description)
-                                            <div class="text-sm text-gray-500">{{ Str::limit($request->description, 50) }}</div>
-                                        @endif
+                                    <td class="px-4 py-4">
+                                        <div class="text-sm font-medium text-gray-900 max-w-xs truncate" title="{{ $request->title }}">{{ $request->title }}</div>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">{{ number_format($request->quantity, 2) }} {{ $request->unit }}</div>
+                                    <td class="px-4 py-4 whitespace-nowrap">
+                                        <div class="text-sm font-medium text-gray-900">{{ number_format($request->quantity, 2) }} {{ $request->unit }}</div>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        @php
-                                            $statusColors = [
-                                                'pending' => 'bg-yellow-100 text-yellow-800',
-                                                'approved' => 'bg-green-100 text-green-800',
-                                                'rejected' => 'bg-red-100 text-red-800',
-                                                'in_progress' => 'bg-blue-100 text-blue-800',
-                                                'completed' => 'bg-purple-100 text-purple-800',
-                                            ];
-                                            $statusLabels = [
-                                                'pending' => 'Menunggu',
-                                                'approved' => 'Disetujui',
-                                                'rejected' => 'Ditolak',
-                                                'in_progress' => 'Dalam Proses',
-                                                'completed' => 'Selesai',
-                                            ];
-                                        @endphp
-                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full {{ $statusColors[$request->status] }}">
+                                    <td class="px-4 py-4 whitespace-nowrap">
+                                        <span class="inline-flex items-center px-2.5 py-1 text-xs font-semibold rounded-full {{ $statusColors[$request->status] }}">
                                             {{ $statusLabels[$request->status] }}
                                         </span>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        {{ $request->needed_date->format('d M Y') }}
+                                    <td class="px-4 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-600">{{ $request->needed_date->format('d M Y') }}</div>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                        <div class="flex space-x-2">
-                                            <a href="{{ route('customer.requests.show', $request) }}" class="text-green-600 hover:text-green-900">
-                                                <i class="fas fa-eye"></i>
+                                    <td class="px-4 py-4">
+                                        @if($request->payment_proof && $request->payment_proof !== '' && $request->payment_proof !== null)
+                                            <button onclick="openPaymentProofModal({{ json_encode(asset('storage/' . $request->payment_proof)) }}, {{ json_encode($request->payment_proof) }})"
+                                                    class="inline-flex items-center px-3 py-1.5 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-xs font-medium">
+                                                <i class="fas fa-eye mr-1.5"></i>View Proof
+                                            </button>
+                                        @elseif($request->status === 'payment_pending')
+                                            <form method="POST" action="{{ route('customer.requests.upload-payment-proof') }}" enctype="multipart/form-data" class="space-y-2" id="uploadForm{{ $request->id }}">
+                                                @csrf
+                                                <input type="hidden" name="request_ids[]" value="{{ $request->id }}">
+                                                <input type="file"
+                                                       id="payment_proof_{{ $request->id }}"
+                                                       name="payment_proof"
+                                                       accept="image/*,.pdf"
+                                                       class="block w-full text-xs file:mr-2 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-green-600 file:text-white hover:file:bg-green-700 file:cursor-pointer text-transparent">
+                                            </form>
+                                        @else
+                                            <span class="text-xs text-gray-400 italic">N/A</span>
+                                        @endif
+                                    </td>
+                                    <td class="px-4 py-4 whitespace-nowrap">
+                                        <div class="flex items-center justify-center space-x-1.5">
+                                            <a href="{{ route('customer.requests.show', $request) }}" class="inline-flex items-center justify-center w-9 h-9 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition-colors" title="View Details">
+                                                <i class="fas fa-eye text-sm"></i>
                                             </a>
-                                            @if($request->status === 'pending')
-                                                <a href="{{ route('customer.requests.edit', $request) }}" class="text-blue-600 hover:text-blue-900">
-                                                    <i class="fas fa-edit"></i>
+                                            @if(in_array($request->status, ['pending', 'payment_pending']))
+                                                <a href="{{ route('customer.requests.edit', $request) }}" class="inline-flex items-center justify-center w-9 h-9 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors" title="Edit">
+                                                    <i class="fas fa-edit text-sm"></i>
                                                 </a>
-                                                <button onclick="confirmDeleteRequest({{ $request->id }}, '{{ $request->title }}')" class="text-red-600 hover:text-red-900">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
+                                                <button onclick="confirmDeleteRequest({{ $request->id }}, '{{ $request->title }}')" class="inline-flex items-center justify-center w-9 h-9 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition-colors" title="Delete">
+                                                    <i class="fas fa-trash text-sm"></i>
+                                                </button>
+                                            @else
+                                                <span class="inline-flex items-center justify-center w-9 h-9 bg-gray-100 text-gray-400 rounded-lg cursor-not-allowed" title="Edit (Not available for {{ $statusLabels[$request->status] }})">
+                                                    <i class="fas fa-edit text-sm"></i>
+                                                </span>
+                                                <span class="inline-flex items-center justify-center w-9 h-9 bg-gray-100 text-gray-400 rounded-lg cursor-not-allowed" title="Delete (Not available for {{ $statusLabels[$request->status] }})">
+                                                    <i class="fas fa-trash text-sm"></i>
+                                                </span>
                                             @endif
                                         </div>
                                     </td>
@@ -173,23 +218,23 @@
                     </table>
                 </div>
 
-                <!-- Pagination -->
-                <div class="px-6 py-4 border-t border-gray-200">
-                    {{ $requests->links() }}
+                    <!-- Pagination -->
+                    <div class="px-4 sm:px-6 py-4 border-t border-gray-200">
+                        {{ $requests->links() }}
+                    </div>
+                @else
+                    <div class="text-center py-12">
+                        <i class="fas fa-inbox text-4xl text-gray-400 mb-4"></i>
+                        <h3 class="text-lg font-medium text-gray-900 mb-2">No requests yet</h3>
+                        <p class="text-gray-500 mb-6">Start by adding items to your cart and proceed to checkout</p>
+                        <a href="{{ route('customer.ingredients') }}" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold">
+                            <i class="fas fa-shopping-cart mr-2"></i>
+                            Browse Ingredients
+                        </a>
+                    </div>
+                @endif
                 </div>
-            @else
-                <div class="text-center py-12">
-                    <i class="fas fa-inbox text-4xl text-gray-400 mb-4"></i>
-                    <h3 class="text-lg font-medium text-gray-900 mb-2">No requests yet</h3>
-                    <p class="text-gray-500 mb-6">Start by adding items to your cart and proceed to checkout</p>
-                    <a href="{{ route('customer.ingredients') }}" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold">
-                        <i class="fas fa-shopping-cart mr-2"></i>
-                        Browse Ingredients
-                    </a>
-                </div>
-            @endif
-        </div>
-        </div>
+            </div>
         </div>
     </div>
 </div>
@@ -221,8 +266,128 @@
     </div>
 </div>
 
+<!-- Payment Proof Modal -->
+<div id="paymentProofModal" class="fixed inset-0 z-[100] hidden" style="display: none;">
+    <!-- Background overlay - transparent -->
+    <div class="fixed inset-0 bg-transparent transition-opacity" onclick="closePaymentProofModal()"></div>
+
+    <!-- Modal panel - centered in content area (accounting for sidebar) -->
+    <div class="fixed inset-0 flex items-center justify-center p-2 sm:p-4 pointer-events-none" style="left: 0; right: 0; top: 0; bottom: 0;">
+        <div class="relative w-full max-w-4xl max-h-[90vh] transform overflow-hidden rounded-lg bg-white shadow-2xl transition-all pointer-events-auto" onclick="event.stopPropagation()" style="margin: 0 auto;">
+            <!-- Header -->
+            <div class="flex items-center justify-between border-b border-gray-200 px-4 py-3 sm:px-6 sm:py-4">
+                <h3 class="text-base sm:text-lg font-semibold text-gray-900">Payment Proof</h3>
+                <button onclick="closePaymentProofModal()" class="text-gray-400 hover:text-gray-500 transition-colors p-1" type="button">
+                    <i class="fas fa-times text-lg sm:text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Content - scrollable -->
+            <div class="px-4 py-3 sm:px-6 sm:py-4 overflow-y-auto" id="paymentProofContent" style="max-height: calc(90vh - 140px);">
+                <div class="flex items-center justify-center py-8">
+                    <div class="text-gray-500">
+                        <i class="fas fa-spinner fa-spin text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="flex justify-end border-t border-gray-200 px-4 py-3 sm:px-6 sm:py-4">
+                <button onclick="closePaymentProofModal()" class="px-3 py-1.5 sm:px-4 sm:py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors text-sm font-medium">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @push('scripts')
 <script>
+function openPaymentProofModal(url, fileName) {
+    // Disable body scroll
+    document.body.style.overflow = 'hidden';
+
+    const modal = document.getElementById('paymentProofModal');
+    const content = document.getElementById('paymentProofContent');
+
+    // Calculate center position considering sidebar on desktop
+    const isDesktop = window.innerWidth >= 1024; // lg breakpoint
+    const sidebarWidth = isDesktop ? 256 : 0; // 64 * 4 = 256px (lg:ml-64)
+
+    // Get viewport dimensions
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+
+    // Calculate available width (viewport minus sidebar)
+    const availableWidth = viewportWidth - sidebarWidth;
+
+    // Center modal in available content area
+    const modalContainer = modal.querySelector('.fixed.inset-0.flex');
+    if (modalContainer) {
+        modalContainer.style.left = sidebarWidth + 'px';
+        modalContainer.style.width = availableWidth + 'px';
+    }
+
+    // Check if file is PDF or image
+    const isPDF = fileName.toLowerCase().endsWith('.pdf');
+
+    // Ensure URL is properly encoded
+    const imageUrl = url.replace(/ /g, '%20');
+
+    console.log('Payment proof modal opened:', { url, fileName, isPDF, imageUrl });
+
+    if (isPDF) {
+        // Show PDF in iframe
+        content.innerHTML = `
+            <div class="w-full" style="height: 60vh; min-height: 300px;">
+                <iframe src="${imageUrl}" class="w-full h-full border border-gray-300 rounded-md" frameborder="0"></iframe>
+            </div>
+            <div class="mt-3 text-center">
+                <a href="${imageUrl}" download class="inline-flex items-center px-3 py-1.5 sm:px-4 sm:py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-xs sm:text-sm font-medium">
+                    <i class="fas fa-download mr-2"></i>Download PDF
+                </a>
+            </div>
+        `;
+    } else {
+        // Show image - use innerHTML for immediate rendering
+        content.innerHTML = `
+            <div class="flex flex-col items-center justify-center min-h-[200px]">
+                <div class="mb-3 sm:mb-4 w-full flex justify-center">
+                    <img src="${imageUrl}"
+                         alt="Payment Proof"
+                         class="max-w-full h-auto rounded-md shadow-lg border border-gray-200 w-full object-contain"
+                         style="max-height: 50vh;"
+                         onload="console.log('Image loaded:', '${imageUrl}')"
+                         onerror="console.error('Image error:', '${imageUrl}'); this.onerror=null; this.style.display='none'; this.parentElement.innerHTML='<div class=\\'text-red-600 text-center py-6 sm:py-8\\'><i class=\\'fas fa-exclamation-triangle text-2xl sm:text-3xl mb-3\\'></i><p class=\\'font-medium mb-2 text-sm sm:text-base\\'>Gambar tidak dapat dimuat</p><p class=\\'text-xs text-gray-600 mb-4 break-all px-2\\'>${imageUrl}</p><a href=\\'${imageUrl}\\' target=\\'_blank\\' class=\\'inline-flex items-center px-3 py-1.5 sm:px-4 sm:py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-xs sm:text-sm font-medium\\'><i class=\\'fas fa-external-link-alt mr-2\\'></i>Buka di Tab Baru</a></div>'">
+                </div>
+                <div class="mt-2 sm:mt-3">
+                    <a href="${imageUrl}" download class="inline-flex items-center px-3 py-1.5 sm:px-4 sm:py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-xs sm:text-sm font-medium">
+                        <i class="fas fa-download mr-2"></i>Download Image
+                    </a>
+                </div>
+            </div>
+        `;
+    }
+
+    console.log('Payment proof modal opened:', { url, fileName, isPDF, imageUrl });
+
+    // Show modal
+    modal.classList.remove('hidden');
+    modal.style.display = 'block';
+}
+
+function closePaymentProofModal() {
+    // Enable body scroll
+    document.body.style.overflow = '';
+
+    const modal = document.getElementById('paymentProofModal');
+    modal.classList.add('hidden');
+    modal.style.display = 'none';
+
+    // Clear content when closing
+    document.getElementById('paymentProofContent').innerHTML = '<div class="flex items-center justify-center py-8"><div class="text-gray-500"><i class="fas fa-spinner fa-spin text-2xl"></i></div></div>';
+}
+
 function confirmDeleteRequest(id, title) {
     const modal = document.getElementById('confirmModal');
     document.getElementById('confirmMessage').textContent = `Are you sure you want to delete "${title}"? This action cannot be undone.`;
@@ -238,12 +403,256 @@ function closeConfirmModal() {
     document.getElementById('deleteForm').action = '';
 }
 
-// Close modal when clicking outside
-document.getElementById('confirmModal').addEventListener('click', function(e) {
+// Initialize file upload handlers after page load
+document.addEventListener('DOMContentLoaded', function() {
+    // Find all file inputs for payment proof
+    const fileInputs = document.querySelectorAll('input[id^="payment_proof_"]');
+
+    fileInputs.forEach(function(input) {
+        input.addEventListener('change', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const inputId = this.id;
+            const requestId = inputId.replace('payment_proof_', '');
+            const form = document.getElementById('uploadForm' + requestId);
+            const file = this.files[0];
+
+            if (!file || !form) {
+                console.error('File or form not found', {file: file, form: form});
+                return;
+            }
+
+            console.log('File selected:', {
+                requestId: requestId,
+                fileName: file.name,
+                fileSize: file.size,
+                fileType: file.type
+            });
+
+            // Validate file size (5MB max)
+            const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+            if (file.size > maxSize) {
+                alert('File size exceeds 5MB limit. Please choose a smaller file.');
+                this.value = '';
+                return;
+            }
+
+            // Validate file type
+            const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'];
+            if (!allowedTypes.includes(file.type)) {
+                alert('Invalid file type. Please upload JPG, PNG, or PDF files only.');
+                this.value = '';
+                return;
+            }
+
+            // Show loading indicator
+            this.disabled = true;
+            this.style.opacity = '0.5';
+            this.style.cursor = 'not-allowed';
+
+            // Create or update loading message
+            let loadingDiv = document.getElementById('uploadLoading' + requestId);
+            if (!loadingDiv) {
+                loadingDiv = document.createElement('div');
+                loadingDiv.id = 'uploadLoading' + requestId;
+                loadingDiv.className = 'text-xs text-green-600 mt-1 flex items-center';
+                form.appendChild(loadingDiv);
+            }
+            loadingDiv.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Uploading...';
+
+            // Get CSRF token from form
+            const csrfToken = form.querySelector('input[name="_token"]')?.value;
+            if (!csrfToken) {
+                console.error('CSRF token not found');
+                alert('Error: Security token not found. Please refresh the page and try again.');
+                this.disabled = false;
+                this.style.opacity = '1';
+                this.style.cursor = 'pointer';
+                if (loadingDiv) loadingDiv.remove();
+                return;
+            }
+
+            // Get request IDs from form
+            const requestIdsInput = form.querySelector('input[name="request_ids[]"]');
+            if (!requestIdsInput) {
+                console.error('Request ID not found in form');
+                alert('Error: Request ID not found. Please refresh the page and try again.');
+                this.disabled = false;
+                this.style.opacity = '1';
+                this.style.cursor = 'pointer';
+                if (loadingDiv) loadingDiv.remove();
+                return;
+            }
+
+            // Build FormData explicitly
+            const formData = new FormData();
+            formData.append('_token', csrfToken);
+            formData.append('request_ids[]', requestIdsInput.value);
+            formData.append('payment_proof', file);
+
+            console.log('FormData created:', {
+                hasToken: formData.has('_token'),
+                hasRequestIds: formData.has('request_ids[]'),
+                hasFile: formData.has('payment_proof'),
+                fileSize: file.size
+            });
+
+            // Submit using fetch API
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                }
+            })
+            .then(response => {
+                console.log('Response received:', response.status, response.statusText);
+                if (response.redirected) {
+                    window.location.href = response.url;
+                    return;
+                }
+                return response.json().catch(() => response.text());
+            })
+            .then(data => {
+                console.log('Response data:', data);
+                if (data && data.message) {
+                    window.location.href = form.action.replace('/upload-payment-proof', '/requests');
+                } else {
+                    window.location.reload();
+                }
+            })
+            .catch(error => {
+                console.error('Upload error:', error);
+                alert('Error uploading file: ' + error.message);
+                this.disabled = false;
+                this.style.opacity = '1';
+                this.style.cursor = 'pointer';
+                if (loadingDiv) loadingDiv.remove();
+            });
+        });
+    });
+});
+
+// Close modals when clicking outside
+document.getElementById('confirmModal')?.addEventListener('click', function(e) {
     if (e.target === this) {
         closeConfirmModal();
     }
 });
+
+document.getElementById('paymentProofModal')?.addEventListener('click', function(e) {
+    if (e.target === this) {
+        closePaymentProofModal();
+    }
+});
+
+// Close modal on ESC key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closePaymentProofModal();
+        closeConfirmModal();
+    }
+});
+
+// Handle window resize to keep modal centered
+let resizeTimeout;
+window.addEventListener('resize', function() {
+    const modal = document.getElementById('paymentProofModal');
+    if (modal && !modal.classList.contains('hidden')) {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(function() {
+            // Recalculate modal position on resize
+            const isDesktop = window.innerWidth >= 1024;
+            const sidebarWidth = isDesktop ? 256 : 0;
+            const viewportWidth = window.innerWidth;
+            const availableWidth = viewportWidth - sidebarWidth;
+
+            const modalContainer = modal.querySelector('.fixed.inset-0.flex');
+            if (modalContainer) {
+                modalContainer.style.left = sidebarWidth + 'px';
+                modalContainer.style.width = availableWidth + 'px';
+            }
+        }, 100);
+    }
+});
+
+@if(session('status'))
+    document.addEventListener('DOMContentLoaded', function() {
+        const status = @json(session('status'));
+        if (status && status.message) {
+            const alertType = status.type === 'error' ? 'error' : 'success';
+            const alertColor = alertType === 'error' ? 'red' : 'green';
+
+            // Create alert element
+            const alert = document.createElement('div');
+            alert.className = `fixed top-4 right-4 bg-${alertColor}-100 border-l-4 border-${alertColor}-500 text-${alertColor}-700 p-4 rounded-lg shadow-lg z-50 max-w-md`;
+            alert.innerHTML = `
+                <div class="flex items-start">
+                    <i class="fas fa-${alertType === 'error' ? 'exclamation-circle' : 'check-circle'} mr-3 mt-0.5"></i>
+                    <div class="flex-1">
+                        <p class="font-semibold mb-1">${alertType === 'error' ? 'Error' : 'Success'}</p>
+                        <p class="text-sm">${status.message}</p>
+                    </div>
+                    <button onclick="this.parentElement.parentElement.remove()" class="ml-4 text-${alertColor}-600 hover:text-${alertColor}-800">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(alert);
+
+            // Remove after 5 seconds
+            setTimeout(() => {
+                if (alert && alert.parentElement) {
+                    alert.style.transition = 'opacity 0.3s ease-out';
+                    alert.style.opacity = '0';
+                    setTimeout(() => {
+                        if (alert && alert.parentElement) {
+                            alert.remove();
+                        }
+                    }, 300);
+                }
+            }, 5000);
+        }
+    });
+@endif
+
+@if($errors->any())
+    document.addEventListener('DOMContentLoaded', function() {
+        const errorMessages = @json($errors->all());
+        if (errorMessages && errorMessages.length > 0) {
+            const alert = document.createElement('div');
+            alert.className = 'fixed top-4 right-4 bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg shadow-lg z-50 max-w-md';
+            alert.innerHTML = `
+                <div class="flex items-start">
+                    <i class="fas fa-exclamation-circle mr-3 mt-0.5"></i>
+                    <div class="flex-1">
+                        <p class="font-semibold mb-1">Validation Error</p>
+                        <ul class="text-sm list-disc list-inside space-y-1">
+                            ${errorMessages.map(msg => `<li>${msg}</li>`).join('')}
+                        </ul>
+                    </div>
+                    <button onclick="this.parentElement.parentElement.remove()" class="ml-4 text-red-600 hover:text-red-800">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(alert);
+
+            setTimeout(() => {
+                if (alert && alert.parentElement) {
+                    alert.style.transition = 'opacity 0.3s ease-out';
+                    alert.style.opacity = '0';
+                    setTimeout(() => {
+                        if (alert && alert.parentElement) {
+                            alert.remove();
+                        }
+                    }, 300);
+                }
+            }, 7000);
+        }
+    });
+@endif
 </script>
 @endpush
 @endsection

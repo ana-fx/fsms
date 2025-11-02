@@ -41,7 +41,7 @@ class FoodRequestPolicy
     public function update(User $user, FoodRequest $foodRequest): bool
     {
         return $user->isCustomer() && $foodRequest->customer_id === $user->id
-            && $foodRequest->status === 'pending';
+            && in_array($foodRequest->status, ['pending', 'payment_pending']);
     }
 
     /**
@@ -50,15 +50,23 @@ class FoodRequestPolicy
     public function delete(User $user, FoodRequest $foodRequest): bool
     {
         return $user->isCustomer() && $foodRequest->customer_id === $user->id
-            && $foodRequest->status === 'pending';
+            && in_array($foodRequest->status, ['pending', 'payment_pending']);
     }
 
     /**
-     * Determine whether the user can approve the model.
+     * Determine whether the user can ship the order (supplier).
      */
-    public function approve(User $user, FoodRequest $foodRequest): bool
+    public function ship(User $user, FoodRequest $foodRequest): bool
     {
-        return $user->isSuperAdmin() && $foodRequest->status === 'pending';
+        return $user->isSupplier() && $foodRequest->status === 'paid';
+    }
+
+    /**
+     * Determine whether the user can mark as delivered (supplier).
+     */
+    public function markDelivered(User $user, FoodRequest $foodRequest): bool
+    {
+        return $user->isSupplier() && $foodRequest->status === 'shipping';
     }
 
     /**
@@ -66,6 +74,6 @@ class FoodRequestPolicy
      */
     public function reject(User $user, FoodRequest $foodRequest): bool
     {
-        return $user->isSuperAdmin() && in_array($foodRequest->status, ['pending', 'approved']);
+        return $user->isSuperAdmin() && in_array($foodRequest->status, ['pending', 'payment_pending', 'paid']);
     }
 }
