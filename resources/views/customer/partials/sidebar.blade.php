@@ -46,6 +46,16 @@
                    class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('customer.requests.*') ? 'bg-green-100 text-green-700 border-r-2 border-green-600' : 'text-gray-700 hover:bg-gray-100 hover:text-green-600' }}">
                     <i class="fas fa-list-alt mr-3 text-lg"></i>
                     Requests
+                    @php
+                        $pendingPaymentCount = \App\Models\FoodRequest::where('customer_id', auth()->id())
+                            ->where('status', 'payment_pending')
+                            ->count();
+                    @endphp
+                    @if($pendingPaymentCount > 0)
+                        <span class="ml-auto bg-orange-500 text-white text-xs font-semibold px-2 py-1 rounded-full animate-pulse" title="{{ $pendingPaymentCount }} payment(s) pending">
+                            <i class="fas fa-exclamation-circle mr-1"></i>{{ $pendingPaymentCount }}
+                        </span>
+                    @endif
                 </a>
             </div>
 

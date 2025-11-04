@@ -36,19 +36,28 @@
     <nav class="mt-6 flex-1 overflow-y-auto">
         <div class="px-4 space-y-2">
             <!-- Dashboard -->
-            @php
-                // Get pending orders count for this supplier
-                $ingredientIds = \App\Models\FoodItem::where('supplier_id', auth()->id())->pluck('id');
-                $pendingOrdersCount = \App\Models\FoodRequest::whereIn('food_item_id', $ingredientIds)
-                    ->where('status', 'pending')
-                    ->count();
-            @endphp
             <a href="{{ route('supplier.dashboard') }}"
                class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('supplier.dashboard') ? 'bg-green-100 text-green-700 border-r-2 border-green-600' : 'text-gray-700 hover:bg-gray-100 hover:text-green-600' }}">
                 <i class="fas fa-tachometer-alt mr-3 text-lg"></i>
                 Dashboard
-                @if($pendingOrdersCount > 0)
-                    <span class="ml-auto bg-yellow-500 text-white text-xs font-semibold px-2 py-1 rounded-full">{{ $pendingOrdersCount }}</span>
+            </a>
+
+            <!-- Orders -->
+            @php
+                // Get paid orders count for this supplier (orders that need action)
+                $ingredientIds = \App\Models\FoodItem::where('supplier_id', auth()->id())->pluck('id');
+                $paidOrdersCount = \App\Models\FoodRequest::whereIn('food_item_id', $ingredientIds)
+                    ->where('status', 'paid')
+                    ->count();
+            @endphp
+            <a href="{{ route('supplier.orders.index') }}"
+               class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('supplier.orders.*') ? 'bg-green-100 text-green-700 border-r-2 border-green-600' : 'text-gray-700 hover:bg-gray-100 hover:text-green-600' }}">
+                <i class="fas fa-shopping-bag mr-3 text-lg"></i>
+                Orders
+                @if($paidOrdersCount > 0)
+                    <span class="ml-auto bg-orange-500 text-white text-xs font-semibold px-2 py-1 rounded-full animate-pulse" title="{{ $paidOrdersCount }} paid order(s) waiting to ship">
+                        <i class="fas fa-exclamation-circle mr-1"></i>{{ $paidOrdersCount }}
+                    </span>
                 @endif
             </a>
 
@@ -81,7 +90,7 @@
                 <button class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-green-600 rounded-lg transition-colors"
                         onclick="toggleSubmenu('settings')">
                     <div class="flex items-center">
-                        <i class="fas fa-cog mr-3 text-lg"></i>
+                <i class="fas fa-cog mr-3 text-lg"></i>
                         Settings
                     </div>
                     <i class="fas fa-chevron-down text-xs transition-transform" id="settings-arrow"></i>

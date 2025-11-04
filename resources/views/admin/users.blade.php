@@ -130,7 +130,7 @@
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
                     @foreach(\App\Models\User::with('roles')->get() as $user)
-                    <tr data-user-id="{{ $user->id }}" class="hover:bg-gray-50">
+                    <tr data-user-id="{{ $user->id }}" data-user-name="{{ $user->name }}" data-user-email="{{ $user->email }}" data-user-phone="{{ $user->phone ?? '' }}" data-user-role="{{ $user->roles->first()->name ?? '' }}" class="hover:bg-gray-50">
                         <td class="px-3 lg:px-6 py-3 md:py-4 whitespace-nowrap text-sm font-medium text-gray-900">#{{ $user->id }}</td>
                         <td class="px-3 lg:px-6 py-3 md:py-4 whitespace-nowrap text-sm text-gray-900">{{ $user->name }}</td>
                         <td class="px-3 lg:px-6 py-3 md:py-4 whitespace-nowrap text-sm text-gray-500 hidden lg:table-cell">{{ $user->email }}</td>
@@ -223,6 +223,13 @@
                         @error('email') <span class="text-red-600 text-sm">{{ $message }}</span> @enderror
                     </div>
                     <div class="mb-4">
+                        <label for="addPhone" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-phone mr-2 text-green-600"></i>Phone Number
+                        </label>
+                        <input type="tel" id="addPhone" name="phone" value="{{ old('phone') }}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="Enter phone number (e.g., 081234567890)" required>
+                        @error('phone') <span class="text-red-600 text-sm">{{ $message }}</span> @enderror
+                    </div>
+                    <div class="mb-4">
                         <label for="addPassword" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
                         <input type="password" id="addPassword" name="password" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" required>
                         @error('password') <span class="text-red-600 text-sm">{{ $message }}</span> @enderror
@@ -252,31 +259,45 @@
 </div>
 
 <!-- Modal untuk Edit User -->
-<div id="editUserModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden">
+<div id="editUserModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
     <div class="flex items-center justify-center p-4">
         <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
             <div class="p-6">
                 <h3 class="text-lg font-semibold text-gray-900 mb-4">Edit User</h3>
-                <form>
+                <form method="POST" id="editUserForm">
+                    @csrf
+                    @method('PUT')
+                    <input type="hidden" id="editUserId" name="id">
+
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Nama</label>
-                        <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <label for="editName" class="block text-sm font-medium text-gray-700 mb-2">Nama</label>
+                        <input type="text" id="editName" name="name" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" required>
+                        @error('name') <span class="text-red-600 text-sm">{{ $message }}</span> @enderror
                     </div>
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                        <input type="email" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <label for="editEmail" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                        <input type="email" id="editEmail" name="email" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" required>
+                        @error('email') <span class="text-red-600 text-sm">{{ $message }}</span> @enderror
+                    </div>
+                    <div class="mb-4">
+                        <label for="editPhone" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-phone mr-2 text-green-600"></i>Phone Number
+                        </label>
+                        <input type="tel" id="editPhone" name="phone" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="Enter phone number (e.g., 081234567890)" required>
+                        @error('phone') <span class="text-red-600 text-sm">{{ $message }}</span> @enderror
                     </div>
                     <div class="mb-6">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Role</label>
-                        <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <option>Super Admin</option>
-                            <option>Supplier</option>
-                            <option>Customer</option>
+                        <label for="editRole" class="block text-sm font-medium text-gray-700 mb-2">Role</label>
+                        <select id="editRole" name="role" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" disabled>
+                            <option value="super_admin">Super Admin</option>
+                            <option value="supplier">Supplier</option>
+                            <option value="customer">Customer</option>
                         </select>
+                        <p class="mt-1 text-xs text-gray-500">Note: Role cannot be changed here. Use the role change button instead.</p>
                     </div>
                     <div class="flex justify-end space-x-3">
-                        <button type="button" onclick="closeModal()" class="px-4 py-2 text-gray-700 bg-gray-200 rounded hover:bg-gray-300">Batal</button>
-                        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Simpan</button>
+                        <button type="button" onclick="closeEditUserModal()" class="px-4 py-2 text-gray-700 bg-gray-200 rounded hover:bg-gray-300">Batal</button>
+                        <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Simpan</button>
                     </div>
                 </form>
             </div>
@@ -367,8 +388,34 @@ function closeAddUserModal() {
 }
 
 function editUser(userId) {
+    const row = document.querySelector(`tr[data-user-id="${userId}"]`);
+    if (!row) return;
+
+    const userData = {
+        id: row.getAttribute('data-user-id'),
+        name: row.getAttribute('data-user-name'),
+        email: row.getAttribute('data-user-email'),
+        phone: row.getAttribute('data-user-phone') || '',
+        role: row.getAttribute('data-user-role')
+    };
+
+    // Populate form
+    document.getElementById('editUserId').value = userData.id;
+    document.getElementById('editName').value = userData.name;
+    document.getElementById('editEmail').value = userData.email;
+    document.getElementById('editPhone').value = userData.phone;
+    document.getElementById('editRole').value = userData.role;
+
+    // Set form action
+    document.getElementById('editUserForm').action = `/admin/users/${userData.id}`;
+
+    // Show modal
     document.getElementById('editUserModal').classList.remove('hidden');
-    // Implement edit user logic
+}
+
+function closeEditUserModal() {
+    document.getElementById('editUserModal').classList.add('hidden');
+    document.getElementById('editUserForm').reset();
 }
 
 function changePassword(userId) {
@@ -397,9 +444,9 @@ function showNotification(message, type = 'success') {
         warning: { bg: 'bg-yellow-50', border: 'border-yellow-200', text: 'text-yellow-800', icon: 'fa-exclamation-triangle', iconColor: 'text-yellow-600' },
         info: { bg: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-800', icon: 'fa-info-circle', iconColor: 'text-blue-600' }
     };
-    
+
     const color = colors[type] || colors.success;
-    
+
     const notification = document.createElement('div');
     notification.className = `fixed top-4 right-4 ${color.bg} ${color.border} border rounded-lg shadow-lg z-50 flex items-center space-x-3 p-4 animate-slide-in`;
     notification.style.minWidth = '300px';
@@ -414,9 +461,9 @@ function showNotification(message, type = 'success') {
             <i class="fas fa-times"></i>
         </button>
     `;
-    
+
     document.body.appendChild(notification);
-    
+
     setTimeout(() => {
         notification.style.animation = 'slide-out 0.3s ease-out';
         setTimeout(() => notification.remove(), 300);
@@ -451,7 +498,7 @@ function executeConfirmAction() {
 }
 
 function closeModal() {
-    document.getElementById('editUserModal').classList.add('hidden');
+    closeEditUserModal();
 }
 
 function closePasswordModal() {

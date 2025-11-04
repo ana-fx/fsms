@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\MaxPriceController;
 use App\Http\Controllers\Customer\IngredientController;
 use App\Http\Controllers\Supplier\IngredientController as SupplierIngredientController;
+use App\Http\Controllers\Supplier\OrderController as SupplierOrderController;
 use App\Http\Controllers\Supplier\AccountSettingsController as SupplierAccountSettingsController;
 use App\Http\Controllers\Customer\CartController;
 use App\Http\Controllers\Customer\AccountSettingsController;
@@ -83,6 +84,11 @@ Route::middleware(['auth', 'role:supplier'])->group(function () {
         return view('supplier.dashboard', ['title' => 'Supplier Dashboard']);
     })->name('supplier.dashboard');
 
+    // Supplier Orders Routes
+    Route::get('/supplier/orders', [SupplierOrderController::class, 'index'])->name('supplier.orders.index');
+    Route::post('/supplier/orders/{order}/upload-delivery-proof', [SupplierOrderController::class, 'uploadDeliveryProof'])->name('supplier.orders.upload-delivery-proof');
+    Route::get('/supplier/orders/{order}', [SupplierOrderController::class, 'show'])->name('supplier.orders.show');
+
     Route::get('/supplier/ingredients', function () {
         return view('supplier.ingredients', ['title' => 'Manage Ingredients']);
     })->name('supplier.ingredients');
@@ -122,10 +128,14 @@ Route::middleware(['auth', 'role:customer'])->group(function () {
     // Checkout Route (must be before resource routes to avoid route conflict)
     Route::get('customer/requests/checkout', [\App\Http\Controllers\Customer\FoodRequestController::class, 'checkout'])
         ->name('customer.requests.checkout');
-    
+
     // Upload Payment Proof Route (must be before resource routes to avoid route conflict)
     Route::post('customer/requests/upload-payment-proof', [\App\Http\Controllers\Customer\FoodRequestController::class, 'uploadPaymentProof'])
         ->name('customer.requests.upload-payment-proof');
+
+    // Upload Delivery Proof Route (must be before resource routes to avoid route conflict)
+    Route::post('customer/requests/{requestId}/upload-delivery-proof', [\App\Http\Controllers\Customer\FoodRequestController::class, 'uploadDeliveryProof'])
+        ->name('customer.requests.upload-delivery-proof');
 
     // Food Requests Routes
     Route::resource('customer/requests', \App\Http\Controllers\Customer\FoodRequestController::class)

@@ -15,15 +15,15 @@
     <div class="w-full lg:ml-64 transition-all duration-300">
         <div class="flex-1 bg-gray-100">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                <!-- Header -->
-                <div class="mb-8">
+    <!-- Header -->
+    <div class="mb-8">
                     <div>
                         <h1 class="text-3xl font-bold text-gray-900">Dashboard</h1>
                         <p class="mt-2 text-gray-600">Welcome back! Here's your overview and quick access to all features</p>
                     </div>
-                </div>
+    </div>
 
-                <!-- Stats Cards -->
+    <!-- Stats Cards -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6 mb-8">
                     <div class="bg-white rounded-lg shadow p-6">
                         <div class="flex items-center">
@@ -50,53 +50,53 @@
                     </div>
 
                     <div class="bg-white rounded-lg shadow p-6">
-                        <div class="flex items-center">
+            <div class="flex items-center">
                             <div class="p-3 bg-green-100 rounded-lg">
                                 <i class="fas fa-check-circle text-green-600 text-xl"></i>
-                            </div>
-                            <div class="ml-4">
+                </div>
+                <div class="ml-4">
                                 <p class="text-sm font-medium text-gray-600">Paid</p>
                                 <p class="text-2xl font-bold text-gray-900">{{ $stats['paid'] }}</p>
-                            </div>
-                        </div>
-                    </div>
+                </div>
+            </div>
+        </div>
 
                     <div class="bg-white rounded-lg shadow p-6">
-                        <div class="flex items-center">
+            <div class="flex items-center">
                             <div class="p-3 bg-blue-100 rounded-lg">
                                 <i class="fas fa-truck text-blue-600 text-xl"></i>
-                            </div>
-                            <div class="ml-4">
+                </div>
+                <div class="ml-4">
                                 <p class="text-sm font-medium text-gray-600">Shipping</p>
                                 <p class="text-2xl font-bold text-gray-900">{{ $stats['shipping'] }}</p>
-                            </div>
-                        </div>
-                    </div>
+                </div>
+            </div>
+        </div>
 
                     <div class="bg-white rounded-lg shadow p-6">
-                        <div class="flex items-center">
+            <div class="flex items-center">
                             <div class="p-3 bg-indigo-100 rounded-lg">
                                 <i class="fas fa-box-check text-indigo-600 text-xl"></i>
-                            </div>
-                            <div class="ml-4">
+                </div>
+                <div class="ml-4">
                                 <p class="text-sm font-medium text-gray-600">Delivered</p>
                                 <p class="text-2xl font-bold text-gray-900">{{ $stats['delivered'] }}</p>
-                            </div>
-                        </div>
-                    </div>
+                </div>
+            </div>
+        </div>
 
                     <div class="bg-white rounded-lg shadow p-6">
-                        <div class="flex items-center">
+            <div class="flex items-center">
                             <div class="p-3 bg-purple-100 rounded-lg">
                                 <i class="fas fa-check-circle text-purple-600 text-xl"></i>
-                            </div>
-                            <div class="ml-4">
+                </div>
+                <div class="ml-4">
                                 <p class="text-sm font-medium text-gray-600">Completed</p>
                                 <p class="text-2xl font-bold text-gray-900">{{ $stats['completed'] }}</p>
-                            </div>
-                        </div>
-                    </div>
                 </div>
+            </div>
+        </div>
+    </div>
 
                 <!-- Charts Section -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
@@ -139,7 +139,7 @@
                     <a href="{{ route('customer.cart') }}" class="group relative bg-white rounded-2xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100">
                         <!-- Background Pattern -->
                         <div class="absolute inset-0 bg-gradient-to-br from-purple-50 via-purple-50/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                        
+
                         <div class="relative p-6">
                             <div class="flex items-start justify-between mb-4">
                                 <div class="p-4 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl shadow-lg group-hover:scale-110 transition-transform duration-300">
@@ -170,7 +170,7 @@
                     <a href="{{ route('customer.ingredients') }}" class="group relative bg-white rounded-2xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100">
                         <!-- Background Pattern -->
                         <div class="absolute inset-0 bg-gradient-to-br from-green-50 via-green-50/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                        
+
                         <div class="relative p-6">
                             <div class="flex items-start justify-between mb-4">
                                 <div class="p-4 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl shadow-lg group-hover:scale-110 transition-transform duration-300">
@@ -195,7 +195,7 @@
                     <a href="{{ route('customer.settings.delivery-addresses') }}" class="group relative bg-white rounded-2xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100">
                         <!-- Background Pattern -->
                         <div class="absolute inset-0 bg-gradient-to-br from-blue-50 via-blue-50/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                        
+
                         <div class="relative p-6">
                             <div class="flex items-start justify-between mb-4">
                                 <div class="p-4 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl shadow-lg group-hover:scale-110 transition-transform duration-300">
@@ -229,7 +229,7 @@
                         <a href="{{ route('customer.requests.index') }}?status=payment_pending" class="group relative bg-white rounded-2xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden border border-orange-200">
                             <!-- Background Pattern -->
                             <div class="absolute inset-0 bg-gradient-to-br from-orange-50 via-red-50/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                            
+
                             <div class="relative p-6">
                                 <div class="flex items-start justify-between mb-4">
                                     <div class="p-4 bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl shadow-lg group-hover:scale-110 transition-transform duration-300">
@@ -253,7 +253,7 @@
                         <div class="relative bg-white rounded-2xl shadow-md overflow-hidden border border-gray-100">
                             <!-- Background Pattern -->
                             <div class="absolute inset-0 bg-gradient-to-br from-gray-50 to-transparent"></div>
-                            
+
                             <div class="relative p-6">
                                 <div class="flex items-start justify-between mb-4">
                                     <div class="p-4 bg-gradient-to-br from-gray-400 to-gray-500 rounded-2xl shadow-lg">
@@ -273,7 +273,7 @@
                             </div>
                         </div>
                     @endif
-                </div>
+        </div>
 
                 <!-- Quick Actions -->
                 <div class="bg-white rounded-2xl shadow-md p-6 mb-8">
@@ -310,9 +310,9 @@
                                 <p class="text-sm text-gray-500">Account & preferences</p>
                             </div>
                             <i class="fas fa-chevron-right text-gray-400 group-hover:text-purple-600 group-hover:translate-x-1 transition-all"></i>
-                        </a>
-                    </div>
-                </div>
+            </a>
+        </div>
+    </div>
             </div>
         </div>
     </div>
@@ -369,21 +369,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 maintainAspectRatio: false,
                 plugins: {
                     legend: {
-                        position: 'bottom',
-                        labels: {
-                            padding: 18,
-                            font: {
-                                size: 12,
-                                weight: '600',
-                                family: 'Inter'
-                            },
-                            usePointStyle: true,
-                            pointStyle: 'circle',
-                            boxWidth: 12,
-                            boxHeight: 12
-                        }
+                        display: false
                     },
                     tooltip: {
+                        enabled: true,
                         backgroundColor: 'rgba(0, 0, 0, 0.85)',
                         padding: 14,
                         titleFont: {
@@ -424,14 +413,14 @@ document.addEventListener('DOMContentLoaded', function() {
     const trendCtx = document.getElementById('dailyTrendChart');
     if (trendCtx) {
         const dailyData = @json($dailyTrend);
-        
+
         // Create gradient for bars
         const ctx = trendCtx.getContext('2d');
         const gradient = ctx.createLinearGradient(0, 0, 0, 400);
         gradient.addColorStop(0, 'rgba(59, 130, 246, 0.8)');
         gradient.addColorStop(0.5, 'rgba(34, 197, 94, 0.6)');
         gradient.addColorStop(1, 'rgba(168, 85, 247, 0.4)');
-        
+
         const trendChart = new Chart(trendCtx, {
             type: 'bar',
             data: {

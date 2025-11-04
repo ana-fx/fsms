@@ -61,6 +61,26 @@
                     @enderror
                 </div>
 
+                <!-- Phone Field -->
+                <div>
+                    <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-phone mr-2"></i>Phone Number
+                    </label>
+                    <input
+                        id="phone"
+                        type="tel"
+                        name="phone"
+                        value="{{ old('phone') }}"
+                        required
+                        autocomplete="tel"
+                        class="w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent {{ $errors->has('phone') ? 'border-red-500' : 'border-gray-300' }} border"
+                        placeholder="Enter your phone number (e.g., 081234567890)"
+                    >
+                    @error('phone')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
                 <!-- Password Field -->
                 <div>
                     <label for="password" class="block text-sm font-medium text-gray-700 mb-2">

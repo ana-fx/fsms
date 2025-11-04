@@ -10,6 +10,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class FoodRequestController extends Controller
 {
@@ -21,7 +23,7 @@ class FoodRequestController extends Controller
     {
         /** @var User $user */
         $user = Auth::user();
-        
+
         $requests = FoodRequest::with(['foodCategory'])
             ->byCustomer(Auth::id())
             ->get();
@@ -456,7 +458,7 @@ class FoodRequestController extends Controller
      */
     public function uploadPaymentProof(Request $request)
     {
-        \Log::info('Upload payment proof started', [
+        Log::info('Upload payment proof started', [
             'user_id' => Auth::id(),
             'has_file' => $request->hasFile('payment_proof'),
             'request_ids' => $request->input('request_ids'),
@@ -471,7 +473,7 @@ class FoodRequestController extends Controller
                 'payment_notes' => 'nullable|string|max:500',
             ]);
 
-            \Log::info('Validation passed', ['validated' => $validated]);
+            Log::info('Validation passed', ['validated' => $validated]);
 
             // Verify all requests belong to current user
             /** @var User $user */
@@ -480,16 +482,16 @@ class FoodRequestController extends Controller
                 ->where('customer_id', $user->id)
                 ->get();
 
-            \Log::info('Requests found', ['count' => $requests->count(), 'expected' => count($validated['request_ids'])]);
+            Log::info('Requests found', ['count' => $requests->count(), 'expected' => count($validated['request_ids'])]);
 
             if ($requests->isEmpty()) {
-                \Log::warning('No requests found for user', ['user_id' => $user->id, 'request_ids' => $validated['request_ids']]);
+                Log::warning('No requests found for user', ['user_id' => $user->id, 'request_ids' => $validated['request_ids']]);
                 return redirect()->back()
                     ->with('status', ['type' => 'error', 'message' => 'No requests found or you do not have permission to update these requests.']);
             }
 
             if ($requests->count() !== count($validated['request_ids'])) {
-                \Log::warning('Request count mismatch', ['found' => $requests->count(), 'expected' => count($validated['request_ids'])]);
+                Log::warning('Request count mismatch', ['found' => $requests->count(), 'expected' => count($validated['request_ids'])]);
                 return redirect()->back()
                     ->with('status', ['type' => 'error', 'message' => 'Invalid request. Some requests were not found.']);
             }
@@ -497,21 +499,21 @@ class FoodRequestController extends Controller
             // Upload payment proof
             if ($request->hasFile('payment_proof')) {
                 $file = $request->file('payment_proof');
-                
-                \Log::info('File received', [
+
+                Log::info('File received', [
                     'name' => $file->getClientOriginalName(),
                     'size' => $file->getSize(),
                     'mime' => $file->getMimeType()
                 ]);
-                
+
                 // Generate unique file name
                 $fileName = 'payment_proof_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
                 $path = $file->storeAs('payment_proofs', $fileName, 'public');
 
-                \Log::info('File stored', ['path' => $path, 'exists' => \Storage::disk('public')->exists($path)]);
+                Log::info('File stored', ['path' => $path, 'exists' => Storage::disk('public')->exists($path)]);
 
                 if (!$path) {
-                    \Log::error('File storage failed');
+                    Log::error('File storage failed');
                     return redirect()->back()
                         ->with('status', ['type' => 'error', 'message' => 'Failed to save file. Please check storage permissions.']);
                 }
@@ -519,9 +521,9 @@ class FoodRequestController extends Controller
                 // Update all requests with payment proof and change status to paid
                 foreach ($requests as $foodRequest) {
                     // Delete old payment proof if exists
-                    if ($foodRequest->payment_proof && \Storage::disk('public')->exists($foodRequest->payment_proof)) {
-                        \Storage::disk('public')->delete($foodRequest->payment_proof);
-                        \Log::info('Old payment proof deleted', ['old_path' => $foodRequest->payment_proof]);
+                    if ($foodRequest->payment_proof && Storage::disk('public')->exists($foodRequest->payment_proof)) {
+                        Storage::disk('public')->delete($foodRequest->payment_proof);
+                        Log::info('Old payment proof deleted', ['old_path' => $foodRequest->payment_proof]);
                     }
 
                     $updateData = [
@@ -537,7 +539,7 @@ class FoodRequestController extends Controller
                     }
 
                     $updated = $foodRequest->update($updateData);
-                    \Log::info('Request updated', [
+                    Log::info('Request updated', [
                         'request_id' => $foodRequest->id,
                         'updated' => $updated,
                         'payment_proof' => $path,
@@ -546,7 +548,7 @@ class FoodRequestController extends Controller
 
                     // Verify update
                     $foodRequest->refresh();
-                    \Log::info('Request refreshed', [
+                    Log::info('Request refreshed', [
                         'request_id' => $foodRequest->id,
                         'payment_proof' => $foodRequest->payment_proof,
                         'status' => $foodRequest->status
@@ -556,23 +558,23 @@ class FoodRequestController extends Controller
                 // Clear order success session after successful upload
                 session()->forget('order_success');
 
-                \Log::info('Upload completed successfully');
+                Log::info('Upload completed successfully');
                 return redirect()->route('customer.requests.index')
                     ->with('status', ['type' => 'success', 'message' => 'Payment proof uploaded successfully! Your order is being processed.']);
             }
 
-            \Log::warning('No file in request');
+            Log::warning('No file in request');
             return redirect()->back()
                 ->with('status', ['type' => 'error', 'message' => 'No file was uploaded. Please select a file and try again.']);
         } catch (\Illuminate\Validation\ValidationException $e) {
-            \Log::error('Validation failed', ['errors' => $e->errors()]);
+            Log::error('Validation failed', ['errors' => $e->errors()]);
             return redirect()->back()
                 ->withErrors($e->errors())
                 ->with('status', ['type' => 'error', 'message' => 'Validation failed: ' . implode(', ', array_map(function($messages) {
                     return implode(', ', $messages);
                 }, $e->errors()))]);
         } catch (\Exception $e) {
-            \Log::error('Payment proof upload error: ' . $e->getMessage(), [
+            Log::error('Payment proof upload error: ' . $e->getMessage(), [
                 'user_id' => Auth::id(),
                 'request_ids' => $request->input('request_ids'),
                 'trace' => $e->getTraceAsString(),
@@ -582,6 +584,102 @@ class FoodRequestController extends Controller
 
             return redirect()->back()
                 ->with('status', ['type' => 'error', 'message' => 'An error occurred while uploading payment proof: ' . $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Upload delivery proof for order request.
+     */
+    public function uploadDeliveryProof(Request $request, $requestId)
+    {
+        /** @var User $user */
+        $user = Auth::user();
+
+        // Verify user is customer
+        if (!$user || !$user->isCustomer()) {
+            abort(403, 'Only customers can upload received items proof.');
+        }
+
+        // Find the food request
+        $foodRequest = FoodRequest::findOrFail($requestId);
+
+        // Verify this request belongs to current user
+        if ($foodRequest->customer_id !== $user->id) {
+            Log::warning('Unauthorized upload attempt', [
+                'user_id' => $user->id,
+                'user_email' => $user->email,
+                'request_id' => $foodRequest->id,
+                'request_customer_id' => $foodRequest->customer_id,
+                'request_order_number' => $foodRequest->order_number,
+                'user_is_customer' => $user->isCustomer(),
+            ]);
+            abort(403, 'You do not have permission to upload received items proof for this order.');
+        }
+
+        // Only allow upload for paid status
+        if ($foodRequest->status !== 'paid') {
+            return redirect()->back()
+                ->with('status', ['type' => 'error', 'message' => 'Received items information can only be uploaded for orders that are paid.']);
+        }
+
+        try {
+            $validated = $request->validate([
+                'received_proof' => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120', // 5MB max
+                'delivery_notes' => 'nullable|string|max:500',
+            ]);
+
+            if ($request->hasFile('received_proof')) {
+                $file = $request->file('received_proof');
+
+                // Generate unique file name
+                $fileName = 'received_proof_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                $path = $file->storeAs('received_proofs', $fileName, 'public');
+
+                if (!$path) {
+                    return redirect()->back()
+                        ->with('status', ['type' => 'error', 'message' => 'Failed to save file. Please check storage permissions.']);
+                }
+
+                // Delete old received proof if exists
+                if ($foodRequest->received_proof && Storage::disk('public')->exists($foodRequest->received_proof)) {
+                    Storage::disk('public')->delete($foodRequest->received_proof);
+                }
+
+                // Update order with received proof
+                $updateData = [
+                    'received_proof' => $path,
+                    'received_proof_uploaded_at' => now(),
+                ];
+
+                // Add delivery notes if provided
+                if (!empty($validated['delivery_notes'])) {
+                    $existingNotes = $foodRequest->notes ? $foodRequest->notes . "\n\n" : '';
+                    $updateData['notes'] = $existingNotes . 'Delivery Notes: ' . $validated['delivery_notes'];
+                }
+
+                $foodRequest->update($updateData);
+
+                return redirect()->back()
+                    ->with('status', ['type' => 'success', 'message' => 'Delivery proof uploaded successfully!']);
+            }
+
+            return redirect()->back()
+                ->with('status', ['type' => 'error', 'message' => 'No file was uploaded. Please select a file and try again.']);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return redirect()->back()
+                ->withErrors($e->errors())
+                ->with('status', ['type' => 'error', 'message' => 'Validation failed: ' . implode(', ', array_map(function($messages) {
+                    return implode(', ', $messages);
+                }, $e->errors()))]);
+        } catch (\Exception $e) {
+            Log::error('Delivery proof upload error: ' . $e->getMessage(), [
+                'user_id' => Auth::id(),
+                'request_id' => $foodRequest->id,
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return redirect()->back()
+                ->with('status', ['type' => 'error', 'message' => 'An error occurred while uploading delivery proof: ' . $e->getMessage()]);
         }
     }
 

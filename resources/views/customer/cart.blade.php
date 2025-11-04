@@ -42,24 +42,24 @@
                                                 <p class="text-xs text-blue-600 mb-2">
                                                     <i class="fas fa-info-circle mr-1"></i>Min. Purchase: {{ $item['product']->min_purchase }} {{ $item['product']->unit }}
                                                 </p>
-                                                
+
                                                 <div class="flex items-center justify-between">
                                                     <!-- Quantity Control -->
                                                     <div class="flex items-center space-x-3">
-                                                        <button onclick="decrementQuantity({{ $item['product']->id }}, {{ $item['quantity'] }}, {{ $item['product']->min_purchase }})" 
+                                                        <button onclick="decrementQuantity({{ $item['product']->id }}, {{ $item['quantity'] }}, {{ $item['product']->min_purchase }})"
                                                                 class="w-8 h-8 flex items-center justify-center border border-gray-300 rounded hover:bg-gray-100 transition-colors {{ $item['quantity'] <= $item['product']->min_purchase ? 'opacity-50 cursor-not-allowed' : '' }}"
                                                                 {{ $item['quantity'] <= $item['product']->min_purchase ? 'disabled' : '' }}>
                                                             <i class="fas fa-minus text-xs"></i>
                                                         </button>
-                                                        <input type="number" 
+                                                        <input type="number"
                                                                id="quantity-{{ $item['product']->id }}"
-                                                               value="{{ $item['quantity'] }}" 
-                                                               min="{{ $item['product']->min_purchase }}" 
+                                                               value="{{ $item['quantity'] }}"
+                                                               min="{{ $item['product']->min_purchase }}"
                                                                step="0.01"
                                                                onchange="updateQuantity({{ $item['product']->id }}, this.value, {{ $item['product']->min_purchase }})"
                                                                onblur="validateQuantity({{ $item['product']->id }}, this.value, {{ $item['product']->min_purchase }})"
                                                                class="w-20 text-center border border-gray-300 rounded py-1 text-sm">
-                                                        <button onclick="incrementQuantity({{ $item['product']->id }}, {{ $item['quantity'] }}, {{ $item['product']->min_purchase }})" 
+                                                        <button onclick="incrementQuantity({{ $item['product']->id }}, {{ $item['quantity'] }}, {{ $item['product']->min_purchase }})"
                                                                 class="w-8 h-8 flex items-center justify-center border border-gray-300 rounded hover:bg-gray-100 transition-colors">
                                                             <i class="fas fa-plus text-xs"></i>
                                                         </button>
@@ -75,7 +75,7 @@
                                             </div>
 
                                             <!-- Remove Button -->
-                                            <button onclick="removeItem({{ $item['product']->id }})" 
+                                            <button onclick="removeItem({{ $item['product']->id }})"
                                                     class="ml-4 text-red-600 hover:text-red-800 transition-colors">
                                                 <i class="fas fa-trash"></i>
                                             </button>
@@ -96,7 +96,7 @@
                         <div class="lg:col-span-1">
                             <div class="bg-white rounded-lg shadow-md p-6 sticky top-8">
                                 <h2 class="text-xl font-bold text-gray-900 mb-4">Ringkasan</h2>
-                                
+
                                 <div class="space-y-3 mb-6">
                                     <div class="flex justify-between text-sm">
                                         <span class="text-gray-600">Total Item:</span>
@@ -142,22 +142,22 @@
 </div>
 
 <!-- Confirmation Modal -->
-<div id="confirmModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-50 hidden items-center justify-center" style="display: none;">
-    <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
-        <div class="p-6">
-            <div class="flex items-center mb-4">
-                <div class="flex items-center justify-center w-12 h-12 rounded-full bg-yellow-100 mr-4">
-                    <i class="fas fa-exclamation-triangle text-yellow-600 text-xl"></i>
+<div id="confirmModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 backdrop-blur-sm z-[9999] hidden items-center justify-center" style="display: none;">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4">
+        <div class="p-8">
+            <div class="flex items-center mb-6">
+                <div class="flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-yellow-400 to-yellow-500 mr-4 shadow-lg">
+                    <i class="fas fa-exclamation-triangle text-white text-2xl"></i>
                 </div>
-                <h3 class="text-lg font-semibold text-gray-900">Confirm Action</h3>
+                <h3 class="text-xl font-bold text-gray-900">Confirm Action</h3>
             </div>
-            <p id="confirmMessage" class="text-gray-600 mb-6"></p>
-            <div class="flex justify-end space-x-3">
-                <button onclick="closeConfirmModal()" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium">
+            <p id="confirmMessage" class="text-gray-600 mb-8 text-sm leading-relaxed"></p>
+            <div class="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-4 border-t border-gray-200">
+                <button onclick="closeConfirmModal()" class="w-full sm:w-auto px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 hover:border-gray-400 transition-all font-semibold">
                     Cancel
                 </button>
-                <button id="confirmButton" onclick="executeConfirmAction()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium">
-                    Confirm
+                <button id="confirmButton" onclick="executeConfirmAction()" class="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-xl hover:from-red-700 hover:to-red-800 transition-all font-semibold shadow-lg hover:shadow-xl">
+                    <i class="fas fa-trash mr-2"></i>Confirm
                 </button>
             </div>
         </div>
@@ -175,9 +175,9 @@ function showNotification(message, type = 'success') {
         warning: { bg: 'bg-yellow-50', border: 'border-yellow-200', text: 'text-yellow-800', icon: 'fa-exclamation-triangle', iconColor: 'text-yellow-600' },
         info: { bg: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-800', icon: 'fa-info-circle', iconColor: 'text-blue-600' }
     };
-    
+
     const color = colors[type] || colors.success;
-    
+
     const notification = document.createElement('div');
     notification.className = `fixed top-4 right-4 ${color.bg} ${color.border} border rounded-lg shadow-lg z-50 flex items-center space-x-3 p-4 animate-slide-in`;
     notification.style.minWidth = '300px';
@@ -192,9 +192,9 @@ function showNotification(message, type = 'success') {
             <i class="fas fa-times"></i>
         </button>
     `;
-    
+
     document.body.appendChild(notification);
-    
+
     // Auto remove after 5 seconds
     setTimeout(() => {
         notification.style.animation = 'slide-out 0.3s ease-out';
@@ -203,14 +203,22 @@ function showNotification(message, type = 'success') {
 }
 
 function showConfirmModal(message, callback) {
+    // Disable body scroll
+    document.body.style.overflow = 'hidden';
+
     const modal = document.getElementById('confirmModal');
     document.getElementById('confirmMessage').textContent = message;
     confirmCallback = callback;
+
+    // Show modal
     modal.classList.remove('hidden');
     modal.style.display = 'flex';
 }
 
 function closeConfirmModal() {
+    // Enable body scroll
+    document.body.style.overflow = '';
+
     const modal = document.getElementById('confirmModal');
     modal.classList.add('hidden');
     modal.style.display = 'none';
@@ -225,9 +233,38 @@ function executeConfirmAction() {
 }
 
 // Close modal when clicking outside
-document.getElementById('confirmModal').addEventListener('click', function(e) {
+document.getElementById('confirmModal')?.addEventListener('click', function(e) {
     if (e.target === this) {
         closeConfirmModal();
+    }
+});
+
+// Close modal on ESC key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeConfirmModal();
+    }
+});
+
+// Handle window resize to keep modal centered
+let resizeTimeout;
+window.addEventListener('resize', function() {
+    const modal = document.getElementById('confirmModal');
+    if (modal && !modal.classList.contains('hidden')) {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(function() {
+            // Recalculate modal position on resize
+            const isDesktop = window.innerWidth >= 1024;
+            const sidebarWidth = isDesktop ? 256 : 0;
+            const viewportWidth = window.innerWidth;
+            const availableWidth = viewportWidth - sidebarWidth;
+
+            const modalContainer = modal.querySelector('.fixed.inset-0.flex');
+            if (modalContainer) {
+                modalContainer.style.left = sidebarWidth + 'px';
+                modalContainer.style.width = availableWidth + 'px';
+            }
+        }, 100);
     }
 });
 </script>
@@ -282,7 +319,7 @@ function validateQuantity(productId, quantity, minPurchase) {
 
 function updateQuantity(productId, quantity, minPurchase = 1) {
     const qty = parseFloat(quantity) || 0;
-    
+
     // Ensure quantity is at least min_purchase
     if (qty > 0 && qty < minPurchase) {
         showNotification(`Minimum purchase is ${minPurchase}. Please enter at least ${minPurchase}.`, 'warning');
@@ -347,7 +384,7 @@ function removeItem(productId, showConfirm = true) {
             showNotification('Item removed from cart', 'success');
             document.getElementById(`cart-item-${productId}`).remove();
             updateCartCount();
-            
+
             // Reload if cart is empty
             setTimeout(() => {
                 if (document.querySelectorAll('[id^="cart-item-"]').length === 0) {

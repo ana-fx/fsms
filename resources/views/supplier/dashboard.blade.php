@@ -7,20 +7,49 @@
     $ingredients = \App\Models\FoodItem::where('supplier_id', auth()->id())->with('foodCategory')->latest()->get();
     $totalIngredients = $ingredients->count();
     $activeIngredients = $ingredients->where('is_active', true)->count();
-    
+
     // Get orders for this supplier's ingredients
     $ingredientIds = $ingredients->pluck('id');
-    $orders = \App\Models\FoodRequest::whereIn('food_item_id', $ingredientIds)
-        ->with(['foodItem.foodCategory', 'customer'])
-        ->orderBy('created_at', 'desc')
-        ->get();
-    
+    $orders = \App\Models\FoodRequest::whereIn('food_item_id', $ingredientIds)->get();
+
     $pendingOrders = $orders->where('status', 'pending')->count();
     $paymentPendingOrders = $orders->where('status', 'payment_pending')->count();
     $paidOrders = $orders->where('status', 'paid')->count();
     $shippingOrders = $orders->where('status', 'shipping')->count();
     $deliveredOrders = $orders->where('status', 'delivered')->count();
-    $recentOrders = $orders->take(5);
+    $completedOrders = $orders->where('status', 'completed')->count();
+    $rejectedOrders = $orders->where('status', 'rejected')->count();
+
+    // Status distribution for chart
+    $statusDistribution = [
+        'pending' => $pendingOrders,
+        'payment_pending' => $paymentPendingOrders,
+        'paid' => $paidOrders,
+        'shipping' => $shippingOrders,
+        'delivered' => $deliveredOrders,
+        'completed' => $completedOrders,
+        'rejected' => $rejectedOrders,
+    ];
+
+    // Daily trend data (last 30 days)
+    $dailyTrend = [];
+    for ($i = 29; $i >= 0; $i--) {
+        $date = now()->subDays($i);
+        $count = \App\Models\FoodRequest::whereIn('food_item_id', $ingredientIds)
+            ->whereDate('created_at', $date->format('Y-m-d'))
+            ->count();
+        $dailyTrend[] = [
+            'date' => $date->format('d M'),
+            'count' => $count,
+        ];
+    }
+
+    // Calculate total revenue (sum of paid, shipping, delivered, completed orders)
+    $totalRevenue = $orders->filter(function($order) {
+        return in_array($order->status, ['paid', 'shipping', 'delivered', 'completed']);
+    })->sum(function($order) {
+        return $order->foodItem ? $order->foodItem->price * $order->quantity : 0;
+    });
 @endphp
 <div class="flex bg-gray-100 min-h-screen w-full overflow-x-hidden">
     @include('supplier.partials.sidebar')
@@ -41,243 +70,335 @@
     </div>
 
     <!-- Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-6 mb-8">
-        <div class="bg-white rounded-lg shadow-md p-6 card-hover">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <!-- Total Ingredients - Clickable -->
+        <a href="{{ route('supplier.ingredients') }}" class="bg-white rounded-lg shadow p-6 card-hover hover:shadow-lg transition-shadow">
             <div class="flex items-center">
-                <div class="p-3 rounded-full bg-blue-100 text-blue-600">
-                    <i class="fas fa-box text-xl"></i>
+                <div class="p-3 bg-blue-100 rounded-lg">
+                    <i class="fas fa-box text-blue-600 text-xl"></i>
                 </div>
                 <div class="ml-4">
                     <p class="text-sm font-medium text-gray-600">Total Ingredients</p>
-                    <p class="text-2xl font-semibold text-gray-900">{{ $totalIngredients }}</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ $totalIngredients }}</p>
                 </div>
             </div>
-        </div>
+        </a>
 
-        <div class="bg-white rounded-lg shadow-md p-6 card-hover">
+        <!-- Active Ingredients - Clickable -->
+        <a href="{{ route('supplier.ingredients') }}" class="bg-white rounded-lg shadow p-6 card-hover hover:shadow-lg transition-shadow">
             <div class="flex items-center">
-                <div class="p-3 rounded-full bg-green-100 text-green-600">
-                    <i class="fas fa-check-circle text-xl"></i>
+                <div class="p-3 bg-green-100 rounded-lg">
+                    <i class="fas fa-check-circle text-green-600 text-xl"></i>
                 </div>
                 <div class="ml-4">
                     <p class="text-sm font-medium text-gray-600">Active Ingredients</p>
-                    <p class="text-2xl font-semibold text-gray-900">{{ $activeIngredients }}</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ $activeIngredients }}</p>
                 </div>
             </div>
-        </div>
+        </a>
 
-        <div class="bg-white rounded-lg shadow-md p-6 card-hover">
+        <!-- Payment Pending Orders - Clickable -->
+        <a href="{{ route('supplier.orders.index', ['status' => 'payment_pending']) }}" class="bg-white rounded-lg shadow p-6 card-hover hover:shadow-lg transition-shadow">
             <div class="flex items-center">
-                <div class="p-3 rounded-full bg-yellow-100 text-yellow-600">
-                    <i class="fas fa-clock text-xl"></i>
+                <div class="p-3 bg-yellow-100 rounded-lg">
+                    <i class="fas fa-clock text-yellow-600 text-xl"></i>
                 </div>
                 <div class="ml-4">
                     <p class="text-sm font-medium text-gray-600">Payment Pending</p>
-                    <p class="text-2xl font-semibold text-gray-900">{{ $paymentPendingOrders }}</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ $paymentPendingOrders }}</p>
                 </div>
             </div>
-        </div>
+        </a>
 
-        <div class="bg-white rounded-lg shadow-md p-6 card-hover">
+        <!-- Paid Orders - Clickable -->
+        <a href="{{ route('supplier.orders.index', ['status' => 'paid']) }}" class="bg-white rounded-lg shadow p-6 card-hover hover:shadow-lg transition-shadow">
             <div class="flex items-center">
-                <div class="p-3 rounded-full bg-green-100 text-green-600">
-                    <i class="fas fa-money-bill text-xl"></i>
+                <div class="p-3 bg-green-100 rounded-lg">
+                    <i class="fas fa-money-bill text-green-600 text-xl"></i>
                 </div>
                 <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-600">Paid</p>
-                    <p class="text-2xl font-semibold text-gray-900">{{ $paidOrders }}</p>
+                    <p class="text-sm font-medium text-gray-600">Paid Orders</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ $paidOrders }}</p>
                 </div>
             </div>
-        </div>
+        </a>
 
-        <div class="bg-white rounded-lg shadow-md p-6 card-hover">
+        <!-- Shipping Orders - Clickable -->
+        <a href="{{ route('supplier.orders.index', ['status' => 'shipping']) }}" class="bg-white rounded-lg shadow p-6 card-hover hover:shadow-lg transition-shadow">
             <div class="flex items-center">
-                <div class="p-3 rounded-full bg-blue-100 text-blue-600">
-                    <i class="fas fa-truck text-xl"></i>
+                <div class="p-3 bg-blue-100 rounded-lg">
+                    <i class="fas fa-truck text-blue-600 text-xl"></i>
                 </div>
                 <div class="ml-4">
                     <p class="text-sm font-medium text-gray-600">Shipping</p>
-                    <p class="text-2xl font-semibold text-gray-900">{{ $shippingOrders }}</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ $shippingOrders }}</p>
                 </div>
             </div>
-        </div>
+        </a>
 
-        <div class="bg-white rounded-lg shadow-md p-6 card-hover">
+        <!-- Delivered Orders - Clickable -->
+        <a href="{{ route('supplier.orders.index', ['status' => 'delivered']) }}" class="bg-white rounded-lg shadow p-6 card-hover hover:shadow-lg transition-shadow">
             <div class="flex items-center">
-                <div class="p-3 rounded-full bg-indigo-100 text-indigo-600">
-                    <i class="fas fa-box-check text-xl"></i>
+                <div class="p-3 bg-indigo-100 rounded-lg">
+                    <i class="fas fa-box-check text-indigo-600 text-xl"></i>
                 </div>
                 <div class="ml-4">
                     <p class="text-sm font-medium text-gray-600">Delivered</p>
-                    <p class="text-2xl font-semibold text-gray-900">{{ $deliveredOrders }}</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ $deliveredOrders }}</p>
+                </div>
+            </div>
+        </a>
+
+        <!-- Completed Orders - Clickable -->
+        <a href="{{ route('supplier.orders.index', ['status' => 'completed']) }}" class="bg-white rounded-lg shadow p-6 card-hover hover:shadow-lg transition-shadow">
+            <div class="flex items-center">
+                <div class="p-3 bg-purple-100 rounded-lg">
+                    <i class="fas fa-check-circle text-purple-600 text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Completed</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ $completedOrders }}</p>
+                </div>
+            </div>
+        </a>
+
+        <!-- Total Revenue - Info Only -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center">
+                <div class="p-3 bg-green-100 rounded-lg">
+                    <i class="fas fa-dollar-sign text-green-600 text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Total Revenue</p>
+                    <p class="text-2xl font-bold text-gray-900">Rp {{ number_format($totalRevenue, 0, ',', '.') }}</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Recent Orders -->
-    <div class="bg-white rounded-lg shadow-md p-6 mb-8">
-        <div class="flex justify-between items-center mb-6">
-            <h2 class="text-xl font-semibold text-gray-900">Recent Orders</h2>
-        </div>
-
-        @if($recentOrders->count() > 0)
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order #</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        @foreach($recentOrders as $order)
-                        <tr class="hover:bg-gray-50">
-                            <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">
-                                {{ $order->order_number ?? 'N/A' }}
-                            </td>
-                            <td class="px-4 py-3">
-                                <div class="flex items-center">
-                                    @if($order->foodItem)
-                                        <div class="p-2 rounded-lg" style="background-color: {{ $order->foodItem->foodCategory->color }}20">
-                                            <i class="{{ $order->foodItem->foodCategory->icon }} text-sm" style="color: {{ $order->foodItem->foodCategory->color }}"></i>
-                                        </div>
-                                        <div class="ml-3">
-                                            <div class="text-sm font-medium text-gray-900">{{ $order->foodItem->name }}</div>
-                                            <div class="text-xs text-gray-500">Rp {{ number_format($order->foodItem->price, 0, ',', '.') }}/{{ $order->foodItem->unit }}</div>
-                                        </div>
-                                    @else
-                                        <div class="text-sm font-medium text-gray-900">{{ $order->title }}</div>
-                                    @endif
-                                </div>
-                            </td>
-                            <td class="px-4 py-3 text-sm">
-                                <div class="text-gray-900">{{ $order->customer->name }}</div>
-                                <div class="text-gray-500 text-xs">{{ $order->customer->email }}</div>
-                            </td>
-                            <td class="px-4 py-3 text-sm text-gray-900">
-                                {{ number_format($order->quantity, 2) }} {{ $order->unit }}
-                            </td>
-                            <td class="px-4 py-3 whitespace-nowrap text-sm">
-                                @php
-                                    $statusColors = [
-                                        'pending' => 'bg-gray-100 text-gray-800',
-                                        'payment_pending' => 'bg-yellow-100 text-yellow-800',
-                                        'paid' => 'bg-green-100 text-green-800',
-                                        'shipping' => 'bg-blue-100 text-blue-800',
-                                        'delivered' => 'bg-indigo-100 text-indigo-800',
-                                        'completed' => 'bg-purple-100 text-purple-800',
-                                        'rejected' => 'bg-red-100 text-red-800',
-                                    ];
-                                    $statusLabels = [
-                                        'pending' => 'Pending',
-                                        'payment_pending' => 'Payment Pending',
-                                        'paid' => 'Paid',
-                                        'shipping' => 'Shipping',
-                                        'delivered' => 'Delivered',
-                                        'completed' => 'Completed',
-                                        'rejected' => 'Rejected',
-                                    ];
-                                @endphp
-                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full {{ $statusColors[$order->status] }}">
-                                    {{ $statusLabels[$order->status] }}
-                                </span>
-                            </td>
-                            <td class="px-4 py-3 text-sm text-gray-500 whitespace-nowrap">
-                                {{ $order->created_at->format('d M Y') }}
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+    <!-- Charts Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <!-- Status Distribution Donut Chart -->
+        <div class="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-lg p-6 border border-gray-100">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h3 class="text-lg font-bold text-gray-900">Order Status Distribution</h3>
+                    <p class="text-sm text-gray-500 mt-1">Overview of order statuses</p>
+                </div>
+                <div class="p-2 bg-green-100 rounded-lg">
+                    <i class="fas fa-chart-pie text-green-600"></i>
+                </div>
             </div>
-        @else
-            <div class="text-center py-12">
-                <i class="fas fa-inbox text-4xl text-gray-400 mb-4"></i>
-                <h3 class="text-lg font-medium text-gray-900 mb-2">No orders yet</h3>
-                <p class="text-gray-500">Start by adding active ingredients to receive orders</p>
-            </div>
-        @endif
-    </div>
-
-    <!-- Ingredients Management -->
-    <div class="bg-white rounded-lg shadow-md p-6">
-        <div class="flex justify-between items-center mb-6">
-            <h2 class="text-xl font-semibold text-gray-900">Manage Ingredients</h2>
-            <div class="flex space-x-2">
-                <a href="{{ route('supplier.ingredients.create') }}" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition text-sm font-medium inline-flex items-center">
-                    <i class="fas fa-plus mr-2"></i>Add Ingredient
-                </a>
-                <a href="{{ route('supplier.ingredients') }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition text-sm font-medium inline-flex items-center">
-                    <i class="fas fa-list mr-2"></i>View All
-                </a>
+            <div class="relative" style="height: 320px;">
+                <canvas id="statusPieChart"></canvas>
             </div>
         </div>
 
-        @if($ingredients->count() > 0)
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price/Unit</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Min Purchase</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                            <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        @foreach($ingredients->take(5) as $ingredient)
-                        <tr>
-                            <td class="px-4 py-3">
-                                <div class="font-medium text-gray-900">{{ $ingredient->name }}</div>
-                                <div class="text-sm text-gray-500">{{ Str::limit($ingredient->description, 40) }}</div>
-                            </td>
-                            <td class="px-4 py-3 text-sm">
-                                <span class="inline-block px-2 py-1 text-xs font-semibold rounded" style="background: {{ $ingredient->foodCategory->color }}20; color: {{ $ingredient->foodCategory->color }}">{{ $ingredient->foodCategory->name }}</span>
-                            </td>
-                            <td class="px-4 py-3 text-sm text-gray-900">Rp {{ number_format($ingredient->price, 0, ',', '.') }}<span class="text-xs text-gray-500">/{{ $ingredient->unit }}</span></td>
-                            <td class="px-4 py-3 text-sm text-gray-900">{{ $ingredient->min_purchase }} {{ $ingredient->unit }}</td>
-                            <td class="px-4 py-3 text-sm">
-                                @if($ingredient->is_active)
-                                    <span class="px-2 py-1 text-xs font-semibold rounded bg-green-100 text-green-700">Active</span>
-                                @else
-                                    <span class="px-2 py-1 text-xs font-semibold rounded bg-gray-100 text-gray-600">Inactive</span>
-                                @endif
-                            </td>
-                            <td class="px-4 py-3 text-right">
-                                <a href="{{ route('supplier.ingredients.edit', $ingredient) }}" class="text-blue-600 hover:text-blue-800 text-sm font-medium">Edit</a>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-                @if($ingredients->count() > 5)
-                    <div class="mt-4 text-center">
-                        <a href="{{ route('supplier.ingredients') }}" class="text-green-600 hover:text-green-800 text-sm font-medium">
-                            View all {{ $ingredients->count() }} ingredients <i class="fas fa-arrow-right ml-1"></i>
-                        </a>
-                    </div>
-                @endif
+        <!-- Daily Trend Bar Chart -->
+        <div class="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-lg p-6 border border-gray-100">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h3 class="text-lg font-bold text-gray-900">Daily Order Trend</h3>
+                    <p class="text-sm text-gray-500 mt-1">Last 30 days activity</p>
+                </div>
+                <div class="p-2 bg-blue-100 rounded-lg">
+                    <i class="fas fa-chart-bar text-blue-600"></i>
+                </div>
             </div>
-        @else
-            <div class="text-center py-12">
-                <i class="fas fa-box text-4xl text-gray-400 mb-4"></i>
-                <h3 class="text-lg font-medium text-gray-900 mb-2">No ingredients yet</h3>
-                <p class="text-gray-500 mb-6">Start by adding your first ingredient</p>
-                <a href="{{ route('supplier.ingredients.create') }}" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold inline-block">
-                    <i class="fas fa-plus mr-2"></i>Add Ingredient
-                </a>
+            <div class="relative" style="height: 320px;">
+                <canvas id="dailyTrendChart"></canvas>
             </div>
-        @endif
+        </div>
     </div>
             </div>
         </div>
     </div>
 </div>
+
+@push('scripts')
+<!-- Chart.js Library -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Status Distribution Pie Chart
+    const statusCtx = document.getElementById('statusPieChart');
+    if (statusCtx) {
+        const statusChart = new Chart(statusCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Pending', 'Payment Pending', 'Paid', 'Shipping', 'Delivered', 'Completed', 'Rejected'],
+                datasets: [{
+                    label: 'Jumlah Order',
+                    data: [
+                        {{ $statusDistribution['pending'] }},
+                        {{ $statusDistribution['payment_pending'] }},
+                        {{ $statusDistribution['paid'] }},
+                        {{ $statusDistribution['shipping'] }},
+                        {{ $statusDistribution['delivered'] }},
+                        {{ $statusDistribution['completed'] }},
+                        {{ $statusDistribution['rejected'] }}
+                    ],
+                    backgroundColor: [
+                        'rgba(107, 114, 128, 0.8)', // gray - pending
+                        'rgba(251, 191, 36, 0.8)',  // yellow - payment_pending
+                        'rgba(34, 197, 94, 0.8)',  // green - paid
+                        'rgba(59, 130, 246, 0.8)', // blue - shipping
+                        'rgba(99, 102, 241, 0.8)', // indigo - delivered
+                        'rgba(168, 85, 247, 0.8)', // purple - completed
+                        'rgba(239, 68, 68, 0.8)'   // red - rejected
+                    ],
+                    borderColor: [
+                        '#6b7280',
+                        '#fbbf24',
+                        '#22c55e',
+                        '#3b82f6',
+                        '#6366f1',
+                        '#a855f7',
+                        '#ef4444'
+                    ],
+                    borderWidth: 2,
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        enabled: true,
+                        backgroundColor: 'rgba(0, 0, 0, 0.85)',
+                        padding: 14,
+                        titleFont: {
+                            size: 14,
+                            weight: 'bold',
+                            family: 'Inter'
+                        },
+                        bodyFont: {
+                            size: 13,
+                            family: 'Inter'
+                        },
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.parsed || 0;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                                return `${label}: ${value} orders (${percentage}%)`;
+                            }
+                        },
+                        displayColors: true,
+                        cornerRadius: 8,
+                        caretSize: 6
+                    }
+                },
+                cutout: '65%',
+                animation: {
+                    animateRotate: true,
+                    animateScale: true,
+                    duration: 1500,
+                    easing: 'easeInOutQuart'
+                }
+            }
+        });
+    }
+
+    // Daily Trend Bar Chart
+    const trendCtx = document.getElementById('dailyTrendChart');
+    if (trendCtx) {
+        const dailyData = @json($dailyTrend);
+
+        // Create gradient for bars
+        const ctx = trendCtx.getContext('2d');
+        const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+        gradient.addColorStop(0, 'rgba(59, 130, 246, 0.8)');
+        gradient.addColorStop(0.5, 'rgba(34, 197, 94, 0.6)');
+        gradient.addColorStop(1, 'rgba(168, 85, 247, 0.4)');
+
+        const trendChart = new Chart(trendCtx, {
+            type: 'bar',
+            data: {
+                labels: dailyData.map(item => item.date),
+                datasets: [{
+                    label: 'Total Orders',
+                    data: dailyData.map(item => item.count),
+                    backgroundColor: gradient,
+                    borderColor: 'rgba(34, 197, 94, 1)',
+                    borderWidth: 2,
+                    borderRadius: 8,
+                    borderSkipped: false,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.85)',
+                        padding: 12,
+                        titleFont: {
+                            size: 13,
+                            weight: 'bold'
+                        },
+                        bodyFont: {
+                            size: 12
+                        },
+                        callbacks: {
+                            label: function(context) {
+                                return `Orders: ${context.parsed.y}`;
+                            }
+                        },
+                        cornerRadius: 8
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1,
+                            font: {
+                                size: 11,
+                                weight: '500'
+                            },
+                            color: '#6b7280',
+                            padding: 8
+                        },
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.06)',
+                            drawBorder: false
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            maxRotation: 45,
+                            minRotation: 45,
+                            font: {
+                                size: 9,
+                                weight: '500'
+                            },
+                            color: '#6b7280',
+                            maxTicksLimit: 15
+                        },
+                        grid: {
+                            display: false,
+                            drawBorder: false
+                        }
+                    }
+                },
+                animation: {
+                    duration: 1500,
+                    easing: 'easeInOutQuart'
+                }
+            }
+        });
+    }
+});
+</script>
+@endpush
 @endsection

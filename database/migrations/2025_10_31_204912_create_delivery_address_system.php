@@ -23,6 +23,8 @@ return new class extends Migration
             $table->text('delivery_notes')->nullable()->after('postal_code');
             $table->string('payment_proof')->nullable()->after('delivery_notes');
             $table->timestamp('payment_proof_uploaded_at')->nullable()->after('payment_proof');
+            $table->string('received_proof')->nullable()->after('payment_proof_uploaded_at')->comment('Bukti penerimaan ingredient oleh customer');
+            $table->timestamp('received_proof_uploaded_at')->nullable()->after('received_proof');
         });
 
         // Create user_delivery_addresses table
@@ -59,6 +61,8 @@ return new class extends Migration
                 'delivery_notes',
                 'payment_proof',
                 'payment_proof_uploaded_at',
+                'received_proof',
+                'received_proof_uploaded_at',
             ]);
         });
 

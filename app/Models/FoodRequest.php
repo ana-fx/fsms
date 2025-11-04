@@ -29,6 +29,8 @@ class FoodRequest extends Model
         'delivery_notes',
         'payment_proof',
         'payment_proof_uploaded_at',
+        'received_proof',
+        'received_proof_uploaded_at',
         'status',
         'requested_date',
         'needed_date',
@@ -48,6 +50,7 @@ class FoodRequest extends Model
         'delivery_photo_uploaded_at' => 'datetime',
         'delivered_at' => 'datetime',
         'payment_proof_uploaded_at' => 'datetime',
+        'received_proof_uploaded_at' => 'datetime',
     ];
 
     /**
@@ -142,7 +145,7 @@ class FoodRequest extends Model
     protected static function generateOrderNumber(): string
     {
         $prefix = 'FSMS-' . now()->format('Ymd') . '-';
-        
+
         // Get last order number with same prefix today
         $lastOrder = static::where('order_number', 'like', $prefix . '%')
             ->orderBy('id', 'desc')
