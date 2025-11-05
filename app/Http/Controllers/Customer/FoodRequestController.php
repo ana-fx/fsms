@@ -103,6 +103,21 @@ class FoodRequestController extends Controller
     }
 
     /**
+     * Show the form for creating a custom request.
+     */
+    public function create()
+    {
+        Gate::authorize('create', FoodRequest::class);
+
+        $categories = FoodCategory::active()->ordered()->get();
+        /** @var User $user */
+        $user = Auth::user();
+        $addresses = $user->deliveryAddresses()->orderBy('is_default', 'desc')->get();
+
+        return view('customer.requests.create', compact('categories', 'addresses', 'user'));
+    }
+
+    /**
      * Show the checkout page with cart items and delivery address form.
      */
     public function checkout()
@@ -263,6 +278,86 @@ class FoodRequestController extends Controller
     }
 
     /**
+     * Store a custom request (manual input, no food_item_id).
+     */
+    public function storeCustom(Request $request)
+    {
+        Gate::authorize('create', FoodRequest::class);
+
+        // Check if using saved address
+        $selectedAddressId = $request->input('selected_address_id');
+        $addressOption = $request->input('address_option', 'new');
+
+        if ($addressOption === 'saved' && $selectedAddressId) {
+            /** @var User $user */
+            $user = Auth::user();
+            $savedAddress = $user->deliveryAddresses()->find($selectedAddressId);
+
+            if (!$savedAddress) {
+                return redirect()->back()
+                    ->withInput()
+                    ->with('status', ['type' => 'error', 'message' => 'Selected address not found.']);
+            }
+
+            $validated = [
+                'food_category_id' => $request->validate(['food_category_id' => 'required|exists:food_categories,id'])['food_category_id'],
+                'title' => $request->validate(['title' => 'required|string|max:255'])['title'],
+                'description' => $request->input('description'),
+                'quantity' => $request->validate(['quantity' => 'required|numeric|min:0.01'])['quantity'],
+                'unit' => $request->validate(['unit' => 'required|string|max:20'])['unit'],
+                'notes' => $request->input('notes'),
+                'needed_date' => $request->validate(['needed_date' => 'required|date|after:today'])['needed_date'],
+                'recipient_name' => $savedAddress->recipient_name,
+                'recipient_phone' => $savedAddress->recipient_phone,
+                'delivery_address' => $savedAddress->delivery_address,
+                'city' => $savedAddress->city,
+                'postal_code' => $savedAddress->postal_code,
+                'delivery_notes' => $request->input('delivery_notes'),
+            ];
+        } else {
+            $validated = $request->validate([
+                'food_category_id' => 'required|exists:food_categories,id',
+                'title' => 'required|string|max:255',
+                'description' => 'nullable|string',
+                'quantity' => 'required|numeric|min:0.01',
+                'unit' => 'required|string|max:20',
+                'notes' => 'nullable|string',
+                'needed_date' => 'required|date|after:today',
+                'recipient_name' => 'required|string|max:255',
+                'recipient_phone' => 'required|string|max:20',
+                'delivery_address' => 'required|string',
+                'city' => 'required|string|max:100',
+                'postal_code' => 'nullable|string|max:10',
+                'delivery_notes' => 'nullable|string',
+            ]);
+        }
+
+        // Create custom FoodRequest (no food_item_id)
+        $foodRequest = FoodRequest::create([
+            'customer_id' => Auth::id(),
+            'food_category_id' => $validated['food_category_id'],
+            'food_item_id' => null, // Custom request has no food_item_id
+            'title' => $validated['title'],
+            'description' => $validated['description'] ?? null,
+            'quantity' => $validated['quantity'],
+            'unit' => $validated['unit'],
+            'notes' => $validated['notes'] ?? null,
+            'recipient_name' => $validated['recipient_name'],
+            'recipient_phone' => $validated['recipient_phone'],
+            'delivery_address' => $validated['delivery_address'],
+            'city' => $validated['city'],
+            'postal_code' => $validated['postal_code'] ?? null,
+            'delivery_notes' => $validated['delivery_notes'] ?? null,
+            'needed_date' => $validated['needed_date'],
+            'requested_date' => now()->toDateString(),
+            'status' => 'pending', // Custom requests start as pending (not payment_pending)
+        ]);
+
+        return redirect()->route('customer.requests.show', $foodRequest)
+            ->with('status', ['type' => 'success', 'message' => 'Custom request created successfully!']);
+    }
+
+    /**
      * Display the invoice for a specific request.
      */
     public function show(FoodRequest $request)
@@ -304,6 +399,7 @@ class FoodRequestController extends Controller
 
             // Build item structure for invoice
             if ($request->foodItem) {
+                // Regular order from food item
                 $subtotal = $request->foodItem->price * $request->quantity;
                 $orderData['items'][] = [
                     'product' => $request->foodItem,
@@ -311,8 +407,23 @@ class FoodRequestController extends Controller
                     'subtotal' => $subtotal,
                 ];
                 $orderData['total'] = $subtotal;
+            } elseif ($request->price) {
+                // Custom request with price set by admin
+                $subtotal = $request->price * $request->quantity;
+                $orderData['items'][] = [
+                    'product' => (object) [
+                        'name' => $request->title,
+                        'description' => $request->description,
+                        'price' => $request->price,
+                        'unit' => $request->unit,
+                        'foodCategory' => $request->foodCategory,
+                    ],
+                    'quantity' => $request->quantity,
+                    'subtotal' => $subtotal,
+                ];
+                $orderData['total'] = $subtotal;
             } else {
-                // Fallback if no food_item
+                // Fallback if no food_item and no price (pending custom request)
                 $orderData['items'][] = [
                     'product' => (object) [
                         'name' => $request->title,
@@ -344,6 +455,12 @@ class FoodRequestController extends Controller
         if ($request->status !== 'pending') {
             return redirect()->route('customer.requests.show', $request)
                 ->with('status', ['type' => 'error', 'message' => 'Cannot edit request. Only pending requests can be edited.']);
+        }
+
+        // Custom requests cannot be edited through checkout (they must go through admin approval)
+        if ($request->food_item_id === null) {
+            return redirect()->route('customer.requests.show', $request)
+                ->with('status', ['type' => 'error', 'message' => 'Custom requests cannot be edited. Please contact admin if you need to make changes.']);
         }
 
         // Load relations

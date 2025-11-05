@@ -20,9 +20,14 @@ class OrderController extends Controller
         // Get supplier's ingredient IDs
         $ingredientIds = FoodItem::where('supplier_id', Auth::id())->pluck('id');
 
-        // Base query for orders
-        $query = FoodRequest::whereIn('food_item_id', $ingredientIds)
-            ->with(['foodItem.foodCategory', 'customer'])
+        // Base query for orders - includes both regular orders (by food_item_id) and custom requests (by assigned_supplier_id)
+        $query = FoodRequest::where(function($q) use ($ingredientIds) {
+                // Regular orders from supplier's ingredients
+                $q->whereIn('food_item_id', $ingredientIds)
+                  // OR custom requests assigned to this supplier
+                  ->orWhere('assigned_supplier_id', Auth::id());
+            })
+            ->with(['foodItem.foodCategory', 'customer', 'foodCategory'])
             ->orderBy('created_at', 'desc');
 
         // Filter by status if provided
@@ -44,8 +49,11 @@ class OrderController extends Controller
 
         $orders = $query->paginate(15);
 
-        // Get stats for all orders
-        $allOrders = FoodRequest::whereIn('food_item_id', $ingredientIds)->get();
+        // Get stats for all orders (regular + custom assigned)
+        $allOrders = FoodRequest::where(function($q) use ($ingredientIds) {
+            $q->whereIn('food_item_id', $ingredientIds)
+              ->orWhere('assigned_supplier_id', Auth::id());
+        })->get();
         $stats = [
             'all' => $allOrders->count(),
             'payment_pending' => $allOrders->where('status', 'payment_pending')->count(),
@@ -64,14 +72,16 @@ class OrderController extends Controller
      */
     public function show(FoodRequest $order)
     {
-        // Verify this order belongs to supplier's ingredients
+        // Verify this order belongs to supplier (either regular order or assigned custom request)
         $ingredientIds = FoodItem::where('supplier_id', Auth::id())->pluck('id');
+        $isRegularOrder = $order->food_item_id && in_array($order->food_item_id, $ingredientIds->toArray());
+        $isAssignedCustomRequest = $order->assigned_supplier_id === Auth::id();
 
-        if (!in_array($order->food_item_id, $ingredientIds->toArray())) {
+        if (!$isRegularOrder && !$isAssignedCustomRequest) {
             abort(403, 'You do not have permission to view this order.');
         }
 
-        $order->load(['foodItem.foodCategory', 'customer', 'shippedBy']);
+        $order->load(['foodItem.foodCategory', 'customer', 'shippedBy', 'foodCategory']);
 
         return view('supplier.orders.show', compact('order'));
     }
@@ -81,10 +91,12 @@ class OrderController extends Controller
      */
     public function uploadDeliveryProof(Request $request, FoodRequest $order)
     {
-        // Verify this order belongs to supplier's ingredients
+        // Verify this order belongs to supplier (either regular order or assigned custom request)
         $ingredientIds = FoodItem::where('supplier_id', Auth::id())->pluck('id');
+        $isRegularOrder = $order->food_item_id && in_array($order->food_item_id, $ingredientIds->toArray());
+        $isAssignedCustomRequest = $order->assigned_supplier_id === Auth::id();
 
-        if (!in_array($order->food_item_id, $ingredientIds->toArray())) {
+        if (!$isRegularOrder && !$isAssignedCustomRequest) {
             abort(403, 'You do not have permission to upload delivery proof for this order.');
         }
 

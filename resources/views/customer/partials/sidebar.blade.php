@@ -37,13 +37,13 @@
         <div class="px-4 space-y-4">
             <!-- Main Section -->
             <div class="space-y-1">
-                <a href="{{ route('customer.dashboard') }}"
-                   class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('customer.dashboard') ? 'bg-green-100 text-green-700 border-r-2 border-green-600' : 'text-gray-700 hover:bg-gray-100 hover:text-green-600' }}">
+            <a href="{{ route('customer.dashboard') }}"
+               class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('customer.dashboard') ? 'bg-green-100 text-green-700 border-r-2 border-green-600' : 'text-gray-700 hover:bg-gray-100 hover:text-green-600' }}">
                     <i class="fas fa-home mr-3 text-lg"></i>
-                    Dashboard
-                </a>
+                Dashboard
+            </a>
                 <a href="{{ route('customer.requests.index') }}"
-                   class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('customer.requests.*') ? 'bg-green-100 text-green-700 border-r-2 border-green-600' : 'text-gray-700 hover:bg-gray-100 hover:text-green-600' }}">
+                   class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('customer.requests.index') || request()->routeIs('customer.requests.show') || request()->routeIs('customer.requests.edit') ? 'bg-green-100 text-green-700 border-r-2 border-green-600' : 'text-gray-700 hover:bg-gray-100 hover:text-green-600' }}">
                     <i class="fas fa-list-alt mr-3 text-lg"></i>
                     Requests
                     @php
@@ -56,6 +56,11 @@
                             <i class="fas fa-exclamation-circle mr-1"></i>{{ $pendingPaymentCount }}
                         </span>
                     @endif
+                </a>
+                <a href="{{ route('customer.requests.custom.create') }}"
+                   class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('customer.requests.custom.*') ? 'bg-green-100 text-green-700 border-r-2 border-green-600' : 'text-gray-700 hover:bg-gray-100 hover:text-green-600' }}">
+                    <i class="fas fa-plus-circle mr-3 text-lg"></i>
+                    Custom Request
                 </a>
             </div>
 
@@ -95,7 +100,7 @@
                 <div class="space-y-1">
                     <button class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ $isSettingsActive ? 'bg-green-100 text-green-700 border-r-2 border-green-600' : 'text-gray-700 hover:bg-gray-100 hover:text-green-600' }}"
                             onclick="toggleSubmenu('settings')">
-                        <div class="flex items-center">
+                    <div class="flex items-center">
                             <i class="fas fa-cog mr-3 text-lg"></i>
                             Settings
                         </div>

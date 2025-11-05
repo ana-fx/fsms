@@ -25,6 +25,8 @@ return new class extends Migration
             $table->timestamp('payment_proof_uploaded_at')->nullable()->after('payment_proof');
             $table->string('received_proof')->nullable()->after('payment_proof_uploaded_at')->comment('Bukti penerimaan ingredient oleh customer');
             $table->timestamp('received_proof_uploaded_at')->nullable()->after('received_proof');
+            $table->foreignId('assigned_supplier_id')->nullable()->after('food_item_id')->constrained('users')->onDelete('set null')->comment('Supplier yang di-assign untuk custom request');
+            $table->decimal('price', 12, 2)->nullable()->after('assigned_supplier_id')->comment('Harga per unit untuk custom request (di-set oleh admin saat approve)');
         });
 
         // Create user_delivery_addresses table
@@ -50,6 +52,7 @@ return new class extends Migration
         // Drop delivery address columns from food_requests
         Schema::table('food_requests', function (Blueprint $table) {
             $table->dropForeign(['food_item_id']);
+            $table->dropForeign(['assigned_supplier_id']);
             $table->dropColumn([
                 'food_item_id',
                 'order_number',
@@ -63,6 +66,8 @@ return new class extends Migration
                 'payment_proof_uploaded_at',
                 'received_proof',
                 'received_proof_uploaded_at',
+                'assigned_supplier_id',
+                'price',
             ]);
         });
 

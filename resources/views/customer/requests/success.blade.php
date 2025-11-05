@@ -131,13 +131,54 @@
                         <div class="bg-white border-2 border-gray-200 rounded-lg shadow-sm mb-8 print:hidden">
                             <div class="p-6">
                                 <h3 class="text-xl font-bold text-gray-900 mb-4">Payment Proof</h3>
-                                <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                                    <a href="{{ asset('storage/' . $request->payment_proof) }}" target="_blank" class="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold">
-                                        <i class="fas fa-eye mr-2"></i>View Payment Proof
-                                    </a>
+                                <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 mb-4">
+                                    <div class="flex items-center justify-between mb-3">
+                                        <a href="{{ asset('storage/' . $request->payment_proof) }}" target="_blank" class="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold">
+                                            <i class="fas fa-eye mr-2"></i>View Payment Proof
+                                        </a>
+                                        @if($request->customer_id === auth()->id())
+                                            <button onclick="togglePaymentProofEdit({{ $request->id }})" class="inline-flex items-center px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors font-semibold">
+                                                <i class="fas fa-edit mr-2"></i>Change
+                                            </button>
+                                        @endif
+                                    </div>
                                     @if($request->payment_proof_uploaded_at)
                                         <p class="text-xs text-gray-500 mt-2">Uploaded: {{ $request->payment_proof_uploaded_at->format('d M Y H:i') }}</p>
                                     @endif
+                                </div>
+
+                                <!-- Edit Payment Proof Form (Hidden by default) -->
+                                <div id="editPaymentProofForm{{ $request->id }}" class="hidden">
+                                    <form method="POST" action="{{ route('customer.requests.upload-payment-proof') }}" enctype="multipart/form-data" class="space-y-4">
+                                        @csrf
+                                        <input type="hidden" name="request_ids[]" value="{{ $request->id }}">
+
+                                        <div>
+                                            <label for="payment_proof_edit_{{ $request->id }}" class="block text-sm font-medium text-gray-700 mb-2">
+                                                Upload New Payment Proof <span class="text-red-500">*</span>
+                                            </label>
+                                            <input type="file" id="payment_proof_edit_{{ $request->id }}" name="payment_proof" accept="image/*,.pdf"
+                                                   class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-600 file:text-white hover:file:bg-green-700" required>
+                                        </div>
+
+                                        <div>
+                                            <label for="payment_notes_edit_{{ $request->id }}" class="block text-sm font-medium text-gray-700 mb-2">
+                                                Payment Notes (Optional)
+                                            </label>
+                                            <textarea name="payment_notes" id="payment_notes_edit_{{ $request->id }}" rows="2"
+                                                      class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                                                      placeholder="Add any additional notes about your payment..."></textarea>
+                                        </div>
+
+                                        <div class="flex gap-3">
+                                            <button type="submit" class="flex-1 bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold">
+                                                <i class="fas fa-upload mr-2"></i>Update Payment Proof
+                                            </button>
+                                            <button type="button" onclick="togglePaymentProofEdit({{ $request->id }})" class="px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors font-semibold">
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -186,9 +227,16 @@
                             <h3 class="text-xl font-bold text-gray-900 mb-4">Received Items Information</h3>
                             @if($request->received_proof)
                                 <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 mb-4">
-                                    <a href="{{ asset('storage/' . $request->received_proof) }}" target="_blank" class="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold">
-                                        <i class="fas fa-eye mr-2"></i>View Received Items Proof
-                                    </a>
+                                    <div class="flex items-center justify-between mb-3">
+                                        <a href="{{ asset('storage/' . $request->received_proof) }}" target="_blank" class="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold">
+                                            <i class="fas fa-eye mr-2"></i>View Received Items Proof
+                                        </a>
+                                        @if($request->customer_id === auth()->id())
+                                            <button onclick="toggleReceivedProofEdit({{ $request->id }})" class="inline-flex items-center px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors font-semibold">
+                                                <i class="fas fa-edit mr-2"></i>Change
+                                            </button>
+                                        @endif
+                                    </div>
                                     @if($request->received_proof_uploaded_at)
                                         <p class="text-xs text-gray-500 mt-2">Uploaded: {{ $request->received_proof_uploaded_at->format('d M Y H:i') }}</p>
                                     @endif
@@ -196,40 +244,85 @@
                             @endif
 
                             @if($request->status === 'paid' && $request->customer_id === auth()->id())
-                                <form method="POST" action="{{ route('customer.requests.upload-delivery-proof', $request->id) }}" enctype="multipart/form-data" class="space-y-4">
-                                    @csrf
-                                    <div>
-                                        <label for="received_proof" class="block text-sm font-medium text-gray-700 mb-2">
-                                            Upload Received Items Proof <span class="text-red-500">*</span>
-                                        </label>
-                                        <input type="file"
-                                               id="received_proof"
-                                               name="received_proof"
-                                               accept="image/*,.pdf"
-                                               class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-600 file:text-white hover:file:bg-green-700 file:cursor-pointer"
-                                               required>
-                                        <p class="text-xs text-gray-500 mt-1">Accepted formats: JPG, PNG, PDF (Max 5MB)</p>
-                                        @error('received_proof')
-                                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                        @enderror
-                                    </div>
-                                    <div>
-                                        <label for="delivery_notes" class="block text-sm font-medium text-gray-700 mb-2">
-                                            Notes (Optional)
-                                        </label>
-                                        <textarea name="delivery_notes"
-                                                  id="delivery_notes"
-                                                  rows="3"
-                                                  class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                                                  placeholder="Add any additional notes about receiving the items..."></textarea>
-                                        @error('delivery_notes')
-                                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                        @enderror
-                                    </div>
-                                    <button type="submit" class="w-full bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold">
-                                        <i class="fas fa-upload mr-2"></i>Upload Received Items Proof
-                                    </button>
-                                </form>
+                                <div id="uploadReceivedProofForm{{ $request->id }}" class="{{ $request->received_proof ? 'hidden' : '' }}">
+                                    <form method="POST" action="{{ route('customer.requests.upload-delivery-proof', $request->id) }}" enctype="multipart/form-data" class="space-y-4">
+                                        @csrf
+                                        <div>
+                                            <label for="received_proof" class="block text-sm font-medium text-gray-700 mb-2">
+                                                Upload Received Items Proof <span class="text-red-500">*</span>
+                                            </label>
+                                            <input type="file"
+                                                   id="received_proof"
+                                                   name="received_proof"
+                                                   accept="image/*,.pdf"
+                                                   class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-600 file:text-white hover:file:bg-green-700 file:cursor-pointer"
+                                                   required>
+                                            <p class="text-xs text-gray-500 mt-1">Accepted formats: JPG, PNG, PDF (Max 5MB)</p>
+                                            @error('received_proof')
+                                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+                                        <div>
+                                            <label for="delivery_notes" class="block text-sm font-medium text-gray-700 mb-2">
+                                                Notes (Optional)
+                                            </label>
+                                            <textarea name="delivery_notes"
+                                                      id="delivery_notes"
+                                                      rows="3"
+                                                      class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                                                      placeholder="Add any additional notes about receiving the items..."></textarea>
+                                            @error('delivery_notes')
+                                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+                                        <button type="submit" class="w-full bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold">
+                                            <i class="fas fa-upload mr-2"></i>Upload Received Items Proof
+                                        </button>
+                                    </form>
+                                </div>
+
+                                <!-- Edit Received Proof Form (Hidden by default if proof exists) -->
+                                <div id="editReceivedProofForm{{ $request->id }}" class="{{ $request->received_proof ? 'hidden' : '' }}">
+                                    <form method="POST" action="{{ route('customer.requests.upload-delivery-proof', $request->id) }}" enctype="multipart/form-data" class="space-y-4">
+                                        @csrf
+                                        <div>
+                                            <label for="received_proof_edit_{{ $request->id }}" class="block text-sm font-medium text-gray-700 mb-2">
+                                                Upload New Received Items Proof <span class="text-red-500">*</span>
+                                            </label>
+                                            <input type="file"
+                                                   id="received_proof_edit_{{ $request->id }}"
+                                                   name="received_proof"
+                                                   accept="image/*,.pdf"
+                                                   class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-600 file:text-white hover:file:bg-green-700 file:cursor-pointer"
+                                                   required>
+                                            <p class="text-xs text-gray-500 mt-1">Accepted formats: JPG, PNG, PDF (Max 5MB)</p>
+                                            @error('received_proof')
+                                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+                                        <div>
+                                            <label for="delivery_notes_edit_{{ $request->id }}" class="block text-sm font-medium text-gray-700 mb-2">
+                                                Notes (Optional)
+                                            </label>
+                                            <textarea name="delivery_notes"
+                                                      id="delivery_notes_edit_{{ $request->id }}"
+                                                      rows="3"
+                                                      class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                                                      placeholder="Add any additional notes about receiving the items..."></textarea>
+                                            @error('delivery_notes')
+                                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+                                        <div class="flex gap-3">
+                                            <button type="submit" class="flex-1 bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold">
+                                                <i class="fas fa-upload mr-2"></i>Update Received Items Proof
+                                            </button>
+                                            <button type="button" onclick="toggleReceivedProofEdit({{ $request->id }})" class="px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors font-semibold">
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
                             @else
                                 <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
                                         <p class="text-sm text-gray-600">
@@ -389,11 +482,66 @@
                             </div>
                             @else
                             <div class="invoice-upload-section bg-green-50 border-2 border-green-300 rounded-lg p-6 mb-8 print:hidden">
-                                <h3 class="text-lg font-bold text-gray-900 mb-2 flex items-center">
-                                    <i class="fas fa-check-circle text-green-600 mr-2"></i>
-                                    Payment Proof Uploaded for {{ $supplierData['supplier']->name }}
-                                </h3>
-                                <p class="text-gray-700">Your payment has been received. Order is being processed.</p>
+                                <div class="flex items-center justify-between mb-3">
+                                    <div>
+                                        <h3 class="text-lg font-bold text-gray-900 mb-2 flex items-center">
+                                            <i class="fas fa-check-circle text-green-600 mr-2"></i>
+                                            Payment Proof Uploaded for {{ $supplierData['supplier']->name }}
+                                        </h3>
+                                        <p class="text-gray-700">Your payment has been received. Order is being processed.</p>
+                                    </div>
+                                    <button onclick="togglePaymentProofEditMulti({{ $supplierId }})" class="inline-flex items-center px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors font-semibold">
+                                        <i class="fas fa-edit mr-2"></i>Change
+                                    </button>
+                                </div>
+
+                                <!-- View Payment Proofs -->
+                                <div class="mt-4 space-y-2">
+                                    @foreach($supplierRequests->whereNotNull('payment_proof') as $req)
+                                        <div class="flex items-center justify-between bg-white rounded-lg p-3 border border-gray-200">
+                                            <span class="text-sm text-gray-600">Order #{{ $req->order_number }}</span>
+                                            <a href="{{ asset('storage/' . $req->payment_proof) }}" target="_blank" class="inline-flex items-center px-3 py-1.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-xs font-semibold">
+                                                <i class="fas fa-eye mr-1"></i>View
+                                            </a>
+                                        </div>
+                                    @endforeach
+                                </div>
+
+                                <!-- Edit Payment Proof Form (Hidden by default) -->
+                                <div id="editPaymentProofFormMulti{{ $supplierId }}" class="hidden mt-4">
+                                    <form method="POST" action="{{ route('customer.requests.upload-payment-proof') }}" enctype="multipart/form-data" class="space-y-4 bg-white rounded-lg p-4 border border-gray-200">
+                                        @csrf
+                                        @foreach($supplierData['request_ids'] as $requestId)
+                                            <input type="hidden" name="request_ids[]" value="{{ $requestId }}">
+                                        @endforeach
+
+                                        <div>
+                                            <label for="payment_proof_edit_multi_{{ $supplierId }}" class="block text-sm font-medium text-gray-700 mb-2">
+                                                Upload New Payment Proof <span class="text-red-500">*</span>
+                                            </label>
+                                            <input type="file" id="payment_proof_edit_multi_{{ $supplierId }}" name="payment_proof" accept="image/*,.pdf"
+                                                   class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-600 file:text-white hover:file:bg-green-700" required>
+                                        </div>
+
+                                        <div>
+                                            <label for="payment_notes_edit_multi_{{ $supplierId }}" class="block text-sm font-medium text-gray-700 mb-2">
+                                                Payment Notes (Optional)
+                                            </label>
+                                            <textarea name="payment_notes" id="payment_notes_edit_multi_{{ $supplierId }}" rows="2"
+                                                      class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                                                      placeholder="Add any additional notes about your payment..."></textarea>
+                                        </div>
+
+                                        <div class="flex gap-3">
+                                            <button type="submit" class="flex-1 bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold">
+                                                <i class="fas fa-upload mr-2"></i>Update Payment Proof
+                                            </button>
+                                            <button type="button" onclick="togglePaymentProofEditMulti({{ $supplierId }})" class="px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors font-semibold">
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
                             @endif
 
@@ -409,10 +557,15 @@
 
                                 @if($hasDeliveryProof)
                                     <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 mb-4">
-                                        <p class="text-sm text-gray-700 mb-2">Received items proof uploaded for orders:</p>
+                                        <div class="flex items-center justify-between mb-3">
+                                            <p class="text-sm text-gray-700 font-semibold">Received items proof uploaded for orders:</p>
+                                            <button onclick="toggleReceivedProofEditMulti({{ $supplierId }})" class="inline-flex items-center px-3 py-1.5 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors text-xs font-semibold">
+                                                <i class="fas fa-edit mr-1"></i>Change
+                                            </button>
+                                        </div>
                                         <div class="space-y-2">
                                             @foreach($supplierRequests->whereNotNull('received_proof') as $req)
-                                                <div class="flex items-center justify-between">
+                                                <div class="flex items-center justify-between bg-white rounded-lg p-2 border border-gray-200">
                                                     <span class="text-sm text-gray-600">Order #{{ $req->order_number }}</span>
                                                     <a href="{{ asset('storage/' . $req->received_proof) }}" target="_blank" class="inline-flex items-center px-3 py-1.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-xs font-semibold">
                                                         <i class="fas fa-eye mr-1"></i>View
@@ -431,40 +584,86 @@
                                             ->first();
                                     @endphp
                                     @if($firstPaidRequest)
-                                    <form method="POST" action="{{ route('customer.requests.upload-delivery-proof', $firstPaidRequest->id) }}" enctype="multipart/form-data" class="space-y-4">
-                                        @csrf
-                                        <div>
-                                            <label for="received_proof_{{ $supplierId }}" class="block text-sm font-medium text-gray-700 mb-2">
-                                                Upload Received Items Proof <span class="text-red-500">*</span>
-                                            </label>
-                                            <input type="file"
-                                                   id="received_proof_{{ $supplierId }}"
-                                                   name="received_proof"
-                                                   accept="image/*,.pdf"
-                                                   class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-600 file:text-white hover:file:bg-green-700 file:cursor-pointer"
-                                                   required>
-                                            <p class="text-xs text-gray-500 mt-1">Accepted formats: JPG, PNG, PDF (Max 5MB)</p>
-                                            @error('received_proof')
-                                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                            @enderror
-                                        </div>
-                                        <div>
-                                            <label for="delivery_notes_{{ $supplierId }}" class="block text-sm font-medium text-gray-700 mb-2">
-                                                Notes (Optional)
-                                            </label>
-                                            <textarea name="delivery_notes"
-                                                      id="delivery_notes_{{ $supplierId }}"
-                                                      rows="3"
-                                                      class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                                                      placeholder="Add any additional notes about receiving the items..."></textarea>
-                                            @error('delivery_notes')
-                                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                            @enderror
-                                        </div>
-                                        <button type="submit" class="w-full bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold">
-                                            <i class="fas fa-upload mr-2"></i>Upload Received Items Proof for {{ $supplierData['supplier']->name }}
-                                        </button>
-                                    </form>
+                                    <!-- Upload Form (Hidden if proof exists) -->
+                                    <div id="uploadReceivedProofFormMulti{{ $supplierId }}" class="{{ $hasDeliveryProof ? 'hidden' : '' }}">
+                                        <form method="POST" action="{{ route('customer.requests.upload-delivery-proof', $firstPaidRequest->id) }}" enctype="multipart/form-data" class="space-y-4">
+                                            @csrf
+                                            <div>
+                                                <label for="received_proof_{{ $supplierId }}" class="block text-sm font-medium text-gray-700 mb-2">
+                                                    Upload Received Items Proof <span class="text-red-500">*</span>
+                                                </label>
+                                                <input type="file"
+                                                       id="received_proof_{{ $supplierId }}"
+                                                       name="received_proof"
+                                                       accept="image/*,.pdf"
+                                                       class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-600 file:text-white hover:file:bg-green-700 file:cursor-pointer"
+                                                       required>
+                                                <p class="text-xs text-gray-500 mt-1">Accepted formats: JPG, PNG, PDF (Max 5MB)</p>
+                                                @error('received_proof')
+                                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                                @enderror
+                                            </div>
+                                            <div>
+                                                <label for="delivery_notes_{{ $supplierId }}" class="block text-sm font-medium text-gray-700 mb-2">
+                                                    Notes (Optional)
+                                                </label>
+                                                <textarea name="delivery_notes"
+                                                          id="delivery_notes_{{ $supplierId }}"
+                                                          rows="3"
+                                                          class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                                                          placeholder="Add any additional notes about receiving the items..."></textarea>
+                                                @error('delivery_notes')
+                                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                                @enderror
+                                            </div>
+                                            <button type="submit" class="w-full bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold">
+                                                <i class="fas fa-upload mr-2"></i>Upload Received Items Proof for {{ $supplierData['supplier']->name }}
+                                            </button>
+                                        </form>
+                                    </div>
+
+                                    <!-- Edit Form (Hidden by default if proof exists) -->
+                                    <div id="editReceivedProofFormMulti{{ $supplierId }}" class="{{ $hasDeliveryProof ? 'hidden' : '' }}">
+                                        <form method="POST" action="{{ route('customer.requests.upload-delivery-proof', $firstPaidRequest->id) }}" enctype="multipart/form-data" class="space-y-4">
+                                            @csrf
+                                            <div>
+                                                <label for="received_proof_edit_multi_{{ $supplierId }}" class="block text-sm font-medium text-gray-700 mb-2">
+                                                    Upload New Received Items Proof <span class="text-red-500">*</span>
+                                                </label>
+                                                <input type="file"
+                                                       id="received_proof_edit_multi_{{ $supplierId }}"
+                                                       name="received_proof"
+                                                       accept="image/*,.pdf"
+                                                       class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-600 file:text-white hover:file:bg-green-700 file:cursor-pointer"
+                                                       required>
+                                                <p class="text-xs text-gray-500 mt-1">Accepted formats: JPG, PNG, PDF (Max 5MB)</p>
+                                                @error('received_proof')
+                                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                                @enderror
+                                            </div>
+                                            <div>
+                                                <label for="delivery_notes_edit_multi_{{ $supplierId }}" class="block text-sm font-medium text-gray-700 mb-2">
+                                                    Notes (Optional)
+                                                </label>
+                                                <textarea name="delivery_notes"
+                                                          id="delivery_notes_edit_multi_{{ $supplierId }}"
+                                                          rows="3"
+                                                          class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                                                          placeholder="Add any additional notes about receiving the items..."></textarea>
+                                                @error('delivery_notes')
+                                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                                @enderror
+                                            </div>
+                                            <div class="flex gap-3">
+                                                <button type="submit" class="flex-1 bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold">
+                                                    <i class="fas fa-upload mr-2"></i>Update Received Items Proof
+                                                </button>
+                                                <button type="button" onclick="toggleReceivedProofEditMulti({{ $supplierId }})" class="px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors font-semibold">
+                                                    Cancel
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
                                     @endif
                                 @else
                                     <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
@@ -563,6 +762,56 @@ function printInvoice(invoiceId) {
             invoiceElement.classList.remove('invoice-to-print');
         }
     }, 100);
+}
+
+function togglePaymentProofEdit(requestId) {
+    const form = document.getElementById('editPaymentProofForm' + requestId);
+    if (form) {
+        form.classList.toggle('hidden');
+    }
+}
+
+function toggleReceivedProofEdit(requestId) {
+    const uploadForm = document.getElementById('uploadReceivedProofForm' + requestId);
+    const editForm = document.getElementById('editReceivedProofForm' + requestId);
+
+    if (editForm) {
+        editForm.classList.toggle('hidden');
+    }
+
+    // Hide upload form when showing edit form
+    if (uploadForm) {
+        if (!editForm.classList.contains('hidden')) {
+            uploadForm.classList.add('hidden');
+        } else {
+            uploadForm.classList.remove('hidden');
+        }
+    }
+}
+
+function togglePaymentProofEditMulti(supplierId) {
+    const form = document.getElementById('editPaymentProofFormMulti' + supplierId);
+    if (form) {
+        form.classList.toggle('hidden');
+    }
+}
+
+function toggleReceivedProofEditMulti(supplierId) {
+    const uploadForm = document.getElementById('uploadReceivedProofFormMulti' + supplierId);
+    const editForm = document.getElementById('editReceivedProofFormMulti' + supplierId);
+
+    if (editForm) {
+        editForm.classList.toggle('hidden');
+    }
+
+    // Hide upload form when showing edit form
+    if (uploadForm) {
+        if (!editForm.classList.contains('hidden')) {
+            uploadForm.classList.add('hidden');
+        } else {
+            uploadForm.classList.remove('hidden');
+        }
+    }
 }
 </script>
 @endpush

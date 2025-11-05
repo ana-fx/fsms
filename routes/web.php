@@ -77,6 +77,16 @@ Route::middleware(['auth', 'role:super_admin'])->group(function () {
         ->name('admin.settings.account.update');
     Route::put('/admin/settings/account/password', [AdminAccountSettingsController::class, 'updatePassword'])
         ->name('admin.settings.account.password');
+
+    // Custom Requests Management
+    Route::get('/admin/custom-requests', [\App\Http\Controllers\Admin\CustomRequestController::class, 'index'])
+        ->name('admin.custom-requests.index');
+    Route::get('/admin/custom-requests/{customRequest}', [\App\Http\Controllers\Admin\CustomRequestController::class, 'show'])
+        ->name('admin.custom-requests.show');
+    Route::post('/admin/custom-requests/{customRequest}/approve', [\App\Http\Controllers\Admin\CustomRequestController::class, 'approve'])
+        ->name('admin.custom-requests.approve');
+    Route::post('/admin/custom-requests/{customRequest}/reject', [\App\Http\Controllers\Admin\CustomRequestController::class, 'reject'])
+        ->name('admin.custom-requests.reject');
 });
 
 Route::middleware(['auth', 'role:supplier'])->group(function () {
@@ -136,6 +146,12 @@ Route::middleware(['auth', 'role:customer'])->group(function () {
     // Upload Delivery Proof Route (must be before resource routes to avoid route conflict)
     Route::post('customer/requests/{requestId}/upload-delivery-proof', [\App\Http\Controllers\Customer\FoodRequestController::class, 'uploadDeliveryProof'])
         ->name('customer.requests.upload-delivery-proof');
+
+    // Custom Request Routes (must be before resource routes)
+    Route::get('customer/requests/custom/create', [\App\Http\Controllers\Customer\FoodRequestController::class, 'create'])
+        ->name('customer.requests.custom.create');
+    Route::post('customer/requests/custom/store', [\App\Http\Controllers\Customer\FoodRequestController::class, 'storeCustom'])
+        ->name('customer.requests.custom.store');
 
     // Food Requests Routes
     Route::resource('customer/requests', \App\Http\Controllers\Customer\FoodRequestController::class)

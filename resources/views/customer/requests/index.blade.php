@@ -18,9 +18,15 @@
             <div class="w-full py-8">
                 <!-- Header -->
                 <div class="mb-8 px-4 sm:px-6 lg:px-8">
-                    <div>
-                        <h1 class="text-3xl font-bold text-gray-900">Requests</h1>
-                        <p class="mt-2 text-gray-600">Manage all your ingredient requests and track order status</p>
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h1 class="text-3xl font-bold text-gray-900">Requests</h1>
+                            <p class="mt-2 text-gray-600">Manage all your ingredient requests and track order status</p>
+                        </div>
+                        <a href="{{ route('customer.requests.custom.create') }}" class="hidden sm:flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold">
+                            <i class="fas fa-plus-circle mr-2"></i>
+                            Custom Request
+                        </a>
                     </div>
                 </div>
 
@@ -43,7 +49,7 @@
                     ];
                     $statusLabels = [
                         'pending' => 'Pending',
-                        'payment_pending' => 'Payment Pending',
+                        'payment_pending' => 'Pending',
                         'paid' => 'Paid',
                         'shipping' => 'Shipping',
                         'delivered' => 'Delivered',
@@ -80,11 +86,15 @@
                             </div>
 
                             <!-- Payment Proof Section Mobile -->
-                            @if($request->payment_proof && $request->payment_proof !== '' && $request->payment_proof !== null)
+                            @php
+                                $hasPaymentProof = $request->payment_proof && $request->payment_proof !== '' && $request->payment_proof !== null;
+                                $hasReceivedProof = $request->received_proof && $request->received_proof !== '' && $request->received_proof !== null;
+                            @endphp
+                            @if($hasPaymentProof || $hasReceivedProof)
                                 <div class="mb-3">
-                                    <button onclick="openPaymentProofModal({{ json_encode(asset('storage/' . $request->payment_proof)) }}, {{ json_encode($request->payment_proof) }})"
+                                    <button onclick="openProofsModal({{ $hasPaymentProof ? json_encode(asset('storage/' . $request->payment_proof)) : 'null' }}, {{ $hasPaymentProof ? json_encode($request->payment_proof) : 'null' }}, {{ $hasReceivedProof ? json_encode(asset('storage/' . $request->received_proof)) : 'null' }}, {{ $hasReceivedProof ? json_encode($request->received_proof) : 'null' }}, {{ $request->id }})"
                                             class="inline-flex items-center px-3 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-sm font-medium w-full justify-center">
-                                        <i class="fas fa-eye mr-2"></i>View Payment Proof
+                                        <i class="fas fa-eye mr-2"></i>View
                                     </button>
                                 </div>
                             @elseif($request->status === 'payment_pending')
@@ -138,7 +148,7 @@
                                 <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Quantity</th>
                                 <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Status</th>
                                 <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Needed Date</th>
-                                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Payment</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Payment / Received</th>
                                 <th class="px-4 py-3 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
@@ -171,10 +181,14 @@
                                         <div class="text-sm text-gray-600">{{ $request->needed_date->format('d M Y') }}</div>
                                     </td>
                                     <td class="px-4 py-4">
-                                        @if($request->payment_proof && $request->payment_proof !== '' && $request->payment_proof !== null)
-                                            <button onclick="openPaymentProofModal({{ json_encode(asset('storage/' . $request->payment_proof)) }}, {{ json_encode($request->payment_proof) }})"
+                                        @php
+                                            $hasPaymentProof = $request->payment_proof && $request->payment_proof !== '' && $request->payment_proof !== null;
+                                            $hasReceivedProof = $request->received_proof && $request->received_proof !== '' && $request->received_proof !== null;
+                                        @endphp
+                                        @if($hasPaymentProof || $hasReceivedProof)
+                                            <button onclick="openProofsModal({{ $hasPaymentProof ? json_encode(asset('storage/' . $request->payment_proof)) : 'null' }}, {{ $hasPaymentProof ? json_encode($request->payment_proof) : 'null' }}, {{ $hasReceivedProof ? json_encode(asset('storage/' . $request->received_proof)) : 'null' }}, {{ $hasReceivedProof ? json_encode($request->received_proof) : 'null' }}, {{ $request->id }})"
                                                     class="inline-flex items-center px-3 py-1.5 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-xs font-medium">
-                                                <i class="fas fa-eye mr-1.5"></i>View Proof
+                                                <i class="fas fa-eye mr-1.5"></i>View
                                             </button>
                                         @elseif($request->status === 'payment_pending')
                                             <form method="POST" action="{{ route('customer.requests.upload-payment-proof') }}" enctype="multipart/form-data" class="space-y-2" id="uploadForm{{ $request->id }}">
@@ -196,9 +210,15 @@
                                                 <i class="fas fa-eye text-sm"></i>
                                             </a>
                                             @if(in_array($request->status, ['pending', 'payment_pending']))
-                                                <a href="{{ route('customer.requests.edit', $request) }}" class="inline-flex items-center justify-center w-9 h-9 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors" title="Edit">
-                                                    <i class="fas fa-edit text-sm"></i>
-                                                </a>
+                                                @if($request->food_item_id !== null)
+                                                    <a href="{{ route('customer.requests.edit', $request) }}" class="inline-flex items-center justify-center w-9 h-9 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors" title="Edit">
+                                                        <i class="fas fa-edit text-sm"></i>
+                                                    </a>
+                                                @else
+                                                    <span class="inline-flex items-center justify-center w-9 h-9 bg-gray-100 text-gray-400 rounded-lg cursor-not-allowed" title="Edit (Not available for custom requests)">
+                                                        <i class="fas fa-edit text-sm"></i>
+                                                    </span>
+                                                @endif
                                                 <button onclick="confirmDeleteRequest({{ $request->id }}, '{{ $request->title }}')" class="inline-flex items-center justify-center w-9 h-9 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition-colors" title="Delete">
                                                     <i class="fas fa-trash text-sm"></i>
                                                 </button>
@@ -226,11 +246,17 @@
                     <div class="text-center py-12">
                         <i class="fas fa-inbox text-4xl text-gray-400 mb-4"></i>
                         <h3 class="text-lg font-medium text-gray-900 mb-2">No requests yet</h3>
-                        <p class="text-gray-500 mb-6">Start by adding items to your cart and proceed to checkout</p>
-                        <a href="{{ route('customer.ingredients') }}" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold">
-                            <i class="fas fa-shopping-cart mr-2"></i>
-                            Browse Ingredients
-                        </a>
+                        <p class="text-gray-500 mb-6">Start by adding items to your cart and proceed to checkout, or create a custom request</p>
+                        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                            <a href="{{ route('customer.ingredients') }}" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold">
+                                <i class="fas fa-shopping-cart mr-2"></i>
+                                Browse Ingredients
+                            </a>
+                            <a href="{{ route('customer.requests.custom.create') }}" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-semibold">
+                                <i class="fas fa-plus-circle mr-2"></i>
+                                Create Custom Request
+                            </a>
+                        </div>
                     </div>
                 @endif
                 </div>
@@ -292,10 +318,10 @@
             </div>
 
             <!-- Footer -->
-            <div class="flex justify-end border-t border-gray-200 px-4 py-3 sm:px-6 sm:py-4">
-                <button onclick="closePaymentProofModal()" class="px-3 py-1.5 sm:px-4 sm:py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors text-sm font-medium">
-                    Close
-                </button>
+            <div class="flex justify-center border-t border-gray-200 px-4 py-3 sm:px-6 sm:py-4" id="paymentProofFooter">
+                <a href="#" id="viewInvoiceLink" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-sm font-medium inline-flex items-center">
+                    <i class="fas fa-file-invoice mr-2"></i>View Invoice
+                </a>
             </div>
         </div>
     </div>
@@ -303,12 +329,18 @@
 
 @push('scripts')
 <script>
-function openPaymentProofModal(url, fileName) {
+function openProofsModal(paymentUrl, paymentFileName, receivedUrl, receivedFileName, requestId) {
     // Disable body scroll
     document.body.style.overflow = 'hidden';
 
     const modal = document.getElementById('paymentProofModal');
     const content = document.getElementById('paymentProofContent');
+    const viewInvoiceLink = document.getElementById('viewInvoiceLink');
+
+    // Set invoice link
+    if (viewInvoiceLink && requestId) {
+        viewInvoiceLink.href = `/customer/requests/${requestId}`;
+    }
 
     // Calculate center position considering sidebar on desktop
     const isDesktop = window.innerWidth >= 1024; // lg breakpoint
@@ -328,52 +360,121 @@ function openPaymentProofModal(url, fileName) {
         modalContainer.style.width = availableWidth + 'px';
     }
 
-    // Check if file is PDF or image
-    const isPDF = fileName.toLowerCase().endsWith('.pdf');
+    // Build content HTML for both proofs
+    let contentHTML = '<div class="space-y-6">';
 
-    // Ensure URL is properly encoded
-    const imageUrl = url.replace(/ /g, '%20');
+    // Payment Proof Section
+    if (paymentUrl && paymentFileName) {
+        const paymentIsPDF = paymentFileName.toLowerCase().endsWith('.pdf');
+        const paymentImageUrl = paymentUrl.replace(/ /g, '%20');
 
-    console.log('Payment proof modal opened:', { url, fileName, isPDF, imageUrl });
-
-    if (isPDF) {
-        // Show PDF in iframe
-        content.innerHTML = `
-            <div class="w-full" style="height: 60vh; min-height: 300px;">
-                <iframe src="${imageUrl}" class="w-full h-full border border-gray-300 rounded-md" frameborder="0"></iframe>
-            </div>
-            <div class="mt-3 text-center">
-                <a href="${imageUrl}" download class="inline-flex items-center px-3 py-1.5 sm:px-4 sm:py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-xs sm:text-sm font-medium">
-                    <i class="fas fa-download mr-2"></i>Download PDF
-                </a>
-            </div>
+        contentHTML += `
+            <div class="border-b border-gray-200 pb-4">
+                <h3 class="text-lg font-semibold text-gray-900 mb-3 flex items-center">
+                    <i class="fas fa-money-bill-wave text-green-600 mr-2"></i>Payment Proof
+                </h3>
         `;
-    } else {
-        // Show image - use innerHTML for immediate rendering
-        content.innerHTML = `
-            <div class="flex flex-col items-center justify-center min-h-[200px]">
-                <div class="mb-3 sm:mb-4 w-full flex justify-center">
-                    <img src="${imageUrl}"
-                         alt="Payment Proof"
-                         class="max-w-full h-auto rounded-md shadow-lg border border-gray-200 w-full object-contain"
-                         style="max-height: 50vh;"
-                         onload="console.log('Image loaded:', '${imageUrl}')"
-                         onerror="console.error('Image error:', '${imageUrl}'); this.onerror=null; this.style.display='none'; this.parentElement.innerHTML='<div class=\\'text-red-600 text-center py-6 sm:py-8\\'><i class=\\'fas fa-exclamation-triangle text-2xl sm:text-3xl mb-3\\'></i><p class=\\'font-medium mb-2 text-sm sm:text-base\\'>Gambar tidak dapat dimuat</p><p class=\\'text-xs text-gray-600 mb-4 break-all px-2\\'>${imageUrl}</p><a href=\\'${imageUrl}\\' target=\\'_blank\\' class=\\'inline-flex items-center px-3 py-1.5 sm:px-4 sm:py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-xs sm:text-sm font-medium\\'><i class=\\'fas fa-external-link-alt mr-2\\'></i>Buka di Tab Baru</a></div>'">
+
+        if (paymentIsPDF) {
+            contentHTML += `
+                <div class="w-full" style="height: 60vh; min-height: 300px;">
+                    <iframe src="${paymentImageUrl}" class="w-full h-full border border-gray-300 rounded-md" frameborder="0"></iframe>
                 </div>
-                <div class="mt-2 sm:mt-3">
-                    <a href="${imageUrl}" download class="inline-flex items-center px-3 py-1.5 sm:px-4 sm:py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-xs sm:text-sm font-medium">
-                        <i class="fas fa-download mr-2"></i>Download Image
+                <div class="mt-3 text-center">
+                    <a href="${paymentImageUrl}" download class="inline-flex items-center px-3 py-1.5 sm:px-4 sm:py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-xs sm:text-sm font-medium">
+                        <i class="fas fa-download mr-2"></i>Download Payment PDF
                     </a>
                 </div>
+            `;
+        } else {
+            contentHTML += `
+                <div class="flex flex-col items-center justify-center min-h-[200px]">
+                    <div class="mb-3 sm:mb-4 w-full flex justify-center">
+                        <img src="${paymentImageUrl}"
+                             alt="Payment Proof"
+                             class="max-w-full h-auto rounded-md shadow-lg border border-gray-200 w-full object-contain"
+                             style="max-height: 50vh;"
+                             onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'text-red-600 text-center py-4\\'><i class=\\'fas fa-exclamation-triangle text-xl mb-2\\'></i><p class=\\'text-sm\\'>Gambar tidak dapat dimuat</p></div>'">
+                    </div>
+                    <div class="mt-2 sm:mt-3">
+                        <a href="${paymentImageUrl}" download class="inline-flex items-center px-3 py-1.5 sm:px-4 sm:py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-xs sm:text-sm font-medium">
+                            <i class="fas fa-download mr-2"></i>Download Payment Image
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        contentHTML += '</div>';
+    }
+
+    // Received Proof Section
+    if (receivedUrl && receivedFileName) {
+        const receivedIsPDF = receivedFileName.toLowerCase().endsWith('.pdf');
+        const receivedImageUrl = receivedUrl.replace(/ /g, '%20');
+
+        contentHTML += `
+            <div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-3 flex items-center">
+                    <i class="fas fa-box-check text-green-600 mr-2"></i>Received Items Proof
+                </h3>
+        `;
+
+        if (receivedIsPDF) {
+            contentHTML += `
+                <div class="w-full" style="height: 60vh; min-height: 300px;">
+                    <iframe src="${receivedImageUrl}" class="w-full h-full border border-gray-300 rounded-md" frameborder="0"></iframe>
+                </div>
+                <div class="mt-3 text-center">
+                    <a href="${receivedImageUrl}" download class="inline-flex items-center px-3 py-1.5 sm:px-4 sm:py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-xs sm:text-sm font-medium">
+                        <i class="fas fa-download mr-2"></i>Download Received PDF
+                    </a>
+                </div>
+            `;
+        } else {
+            contentHTML += `
+                <div class="flex flex-col items-center justify-center min-h-[200px]">
+                    <div class="mb-3 sm:mb-4 w-full flex justify-center">
+                        <img src="${receivedImageUrl}"
+                             alt="Received Items Proof"
+                             class="max-w-full h-auto rounded-md shadow-lg border border-gray-200 w-full object-contain"
+                             style="max-height: 50vh;"
+                             onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'text-red-600 text-center py-4\\'><i class=\\'fas fa-exclamation-triangle text-xl mb-2\\'></i><p class=\\'text-sm\\'>Gambar tidak dapat dimuat</p></div>'">
+                    </div>
+                    <div class="mt-2 sm:mt-3">
+                        <a href="${receivedImageUrl}" download class="inline-flex items-center px-3 py-1.5 sm:px-4 sm:py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-xs sm:text-sm font-medium">
+                            <i class="fas fa-download mr-2"></i>Download Received Image
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        contentHTML += '</div>';
+    }
+
+    // If no proofs available
+    if (!paymentUrl && !receivedUrl) {
+        contentHTML = `
+            <div class="text-center py-8">
+                <i class="fas fa-exclamation-circle text-gray-400 text-4xl mb-4"></i>
+                <p class="text-gray-600">No proofs available</p>
             </div>
         `;
     }
 
-    console.log('Payment proof modal opened:', { url, fileName, isPDF, imageUrl });
+    contentHTML += '</div>';
+
+    content.innerHTML = contentHTML;
 
     // Show modal
     modal.classList.remove('hidden');
     modal.style.display = 'block';
+}
+
+// Keep old function for backward compatibility
+function openPaymentProofModal(url, fileName) {
+    openProofsModal(url, fileName, null, null, null);
 }
 
 function closePaymentProofModal() {

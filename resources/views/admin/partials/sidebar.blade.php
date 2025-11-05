@@ -42,31 +42,22 @@
                 Dashboard
             </a>
 
-            <!-- Request Management -->
-            <div class="space-y-1">
-                <button class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-green-600 rounded-lg transition-colors"
-                        onclick="toggleSubmenu('requests')">
-                    <div class="flex items-center">
-                        <i class="fas fa-clipboard-list mr-3 text-lg"></i>
-                        Kelola Request
-                    </div>
-                    <i class="fas fa-chevron-down text-xs transition-transform" id="requests-arrow"></i>
-                </button>
-                <div id="requests-submenu" class="hidden ml-8 space-y-1">
-                    <a href="#" class="block px-4 py-2 text-sm text-gray-600 hover:text-green-600 hover:bg-gray-50 rounded transition-colors">
-                        <i class="fas fa-clock mr-2"></i>
-                        Request Pending
-                    </a>
-                    <a href="#" class="block px-4 py-2 text-sm text-gray-600 hover:text-green-600 hover:bg-gray-50 rounded transition-colors">
-                        <i class="fas fa-check-circle mr-2"></i>
-                        Request Disetujui
-                    </a>
-                    <a href="#" class="block px-4 py-2 text-sm text-gray-600 hover:text-green-600 hover:bg-gray-50 rounded transition-colors">
-                        <i class="fas fa-list mr-2"></i>
-                        Semua Request
-                    </a>
-                </div>
-            </div>
+            <!-- Custom Requests Management -->
+            <a href="{{ route('admin.custom-requests.index') }}"
+               class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.custom-requests.*') ? 'bg-green-100 text-green-700 border-r-2 border-green-600' : 'text-gray-700 hover:bg-gray-100 hover:text-green-600' }}">
+                <i class="fas fa-clipboard-list mr-3 text-lg"></i>
+                Custom Requests
+                @php
+                    $pendingCustomRequests = \App\Models\FoodRequest::whereNull('food_item_id')
+                        ->where('status', 'pending')
+                        ->count();
+                @endphp
+                @if($pendingCustomRequests > 0)
+                    <span class="ml-auto bg-orange-500 text-white text-xs font-semibold px-2 py-1 rounded-full animate-pulse" title="{{ $pendingCustomRequests }} pending">
+                        {{ $pendingCustomRequests }}
+                    </span>
+                @endif
+            </a>
 
             <!-- Supplier Management -->
             <div class="space-y-1">

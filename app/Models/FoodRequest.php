@@ -16,6 +16,8 @@ class FoodRequest extends Model
         'customer_id',
         'food_category_id',
         'food_item_id',
+        'assigned_supplier_id',
+        'price',
         'title',
         'description',
         'quantity',
@@ -43,6 +45,7 @@ class FoodRequest extends Model
     ];
 
     protected $casts = [
+        'price' => 'decimal:2',
         'quantity' => 'decimal:2',
         'requested_date' => 'date',
         'needed_date' => 'date',
@@ -83,6 +86,22 @@ class FoodRequest extends Model
     public function shippedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'shipped_by');
+    }
+
+    /**
+     * Get the supplier assigned to this custom request.
+     */
+    public function assignedSupplier(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'assigned_supplier_id');
+    }
+
+    /**
+     * Scope a query to only include custom requests (no food_item_id).
+     */
+    public function scopeCustomRequests($query)
+    {
+        return $query->whereNull('food_item_id');
     }
 
     /**
