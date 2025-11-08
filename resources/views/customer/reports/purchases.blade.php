@@ -25,9 +25,29 @@
                 </div>
 
                 <!-- Filters -->
+                @php
+                    $isFilterActive = filled($filters['search']) || ($filters['status'] ?? 'all') !== 'all' || filled($filters['date_from']) || filled($filters['date_to']);
+                @endphp
+
                 <div class="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
-                    <form method="GET" action="{{ route('customer.reports.purchases') }}" class="grid grid-cols-1 lg:grid-cols-5 gap-4">
+                    <div class="flex items-center justify-between gap-4 mb-4 lg:mb-6">
                         <div>
+                            <h2 class="text-lg font-semibold text-gray-900">Filters</h2>
+                            <p class="text-sm text-gray-500">Refine the report by status, date range, or keyword search.</p>
+                        </div>
+                        <button type="button"
+                                id="toggleFilters"
+                                class="inline-flex items-center px-3 py-2 border border-gray-200 text-sm font-medium rounded-lg text-gray-600 hover:text-gray-900 hover:border-gray-300 bg-gray-50 lg:hidden transition-colors">
+                            <i class="fas fa-sliders-h mr-2"></i>
+                            <span>{{ $isFilterActive ? 'Hide Filters' : 'Show Filters' }}</span>
+                        </button>
+                    </div>
+
+                    <form method="GET"
+                          action="{{ route('customer.reports.purchases') }}"
+                          id="filtersForm"
+                          class="grid grid-cols-1 gap-4 lg:grid-cols-5 {{ $isFilterActive ? '' : 'hidden lg:grid' }}">
+                        <div class="flex flex-col">
                             <label class="block text-sm font-medium text-gray-600 mb-1">
                                 <i class="fas fa-search mr-1 text-gray-400"></i> Search
                             </label>
@@ -35,7 +55,7 @@
                                    placeholder="Order number, product, category"
                                    class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
                         </div>
-                        <div>
+                        <div class="flex flex-col">
                             <label class="block text-sm font-medium text-gray-600 mb-1">
                                 <i class="fas fa-filter mr-1 text-gray-400"></i> Status
                             </label>
@@ -57,14 +77,14 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div>
+                        <div class="flex flex-col">
                             <label class="block text-sm font-medium text-gray-600 mb-1">
                                 <i class="fas fa-calendar-alt mr-1 text-gray-400"></i> From
                             </label>
                             <input type="date" name="date_from" value="{{ $filters['date_from'] }}"
                                    class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
                         </div>
-                        <div>
+                        <div class="flex flex-col">
                             <label class="block text-sm font-medium text-gray-600 mb-1">
                                 <i class="fas fa-calendar-check mr-1 text-gray-400"></i> To
                             </label>
@@ -83,7 +103,7 @@
                 </div>
 
                 <!-- Summary Cards -->
-                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+                <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 lg:gap-6">
                     <div class="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
                         <div class="flex items-center justify-between">
                             <div>
@@ -142,7 +162,7 @@
                                 <i class="fas fa-traffic-light text-green-600"></i>
                             </div>
                         </div>
-                        <div class="space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             @foreach($summary['status_breakdown'] as $status => $count)
                                 @php
                                     $statusLabels = [
@@ -156,7 +176,7 @@
                                     ];
                                     $percentage = $summary['total_orders'] > 0 ? round(($count / $summary['total_orders']) * 100) : 0;
                                 @endphp
-                                <div class="space-y-2">
+                                <div class="space-y-2 border border-gray-100 rounded-xl p-4 hover:border-green-200 transition-colors shadow-sm">
                                     <div class="flex items-center justify-between text-sm">
                                         <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold {{ $statusLabels[$status]['color'] }}">
                                             {{ $statusLabels[$status]['label'] }}
@@ -186,8 +206,8 @@
                         @else
                             <div class="space-y-4 max-h-80 overflow-y-auto pr-2">
                                 @foreach($summary['monthly_totals'] as $month)
-                                    <div class="border border-gray-100 rounded-xl p-4 hover:border-green-200 transition-colors">
-                                        <div class="flex items-center justify-between">
+                                    <div class="border border-gray-100 rounded-xl p-4 hover:border-green-200 transition-colors bg-white shadow-sm">
+                                        <div class="flex items-center justify-between gap-4">
                                             <div>
                                                 <p class="text-sm font-semibold text-gray-900">{{ $month['label'] }}</p>
                                                 <p class="text-xs text-gray-500 mt-1">{{ $month['orders'] }} orders</p>
@@ -218,7 +238,7 @@
                     </div>
 
                     <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-100">
+                        <table class="min-w-full divide-y divide-gray-100 hidden md:table">
                             <thead class="bg-gray-50">
                                 <tr>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order</th>
@@ -307,6 +327,85 @@
                                 @endforelse
                             </tbody>
                         </table>
+
+                        <div class="md:hidden divide-y divide-gray-100">
+                            @forelse($requests as $request)
+                                @php
+                                    $unitPrice = $request->price ?? optional($request->foodItem)->price;
+                                    $totalAmount = $unitPrice ? (float) $unitPrice * (float) $request->quantity : null;
+                                @endphp
+                                <div class="p-5 space-y-4">
+                                    <div class="flex items-start justify-between gap-3">
+                                        <div>
+                                            <p class="text-sm font-semibold text-gray-900">{{ $request->order_number }}</p>
+                                            <p class="text-xs text-gray-500">{{ optional($request->created_at)->format('d M Y') }}</p>
+                                        </div>
+                                        @php
+                                            $statusStyles = [
+                                                'pending' => 'bg-gray-100 text-gray-700',
+                                                'payment_pending' => 'bg-yellow-100 text-yellow-800',
+                                                'paid' => 'bg-green-100 text-green-800',
+                                                'shipping' => 'bg-blue-100 text-blue-800',
+                                                'delivered' => 'bg-indigo-100 text-indigo-800',
+                                                'completed' => 'bg-purple-100 text-purple-800',
+                                                'rejected' => 'bg-red-100 text-red-800',
+                                            ];
+                                        @endphp
+                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold {{ $statusStyles[$request->status] ?? 'bg-gray-100 text-gray-700' }}">
+                                            <i class="fas fa-circle text-[8px] mr-2"></i>
+                                            {{ ucfirst(str_replace('_', ' ', $request->status)) }}
+                                        </span>
+                                    </div>
+
+                                    <div class="space-y-2">
+                                        <p class="text-sm font-medium text-gray-900">
+                                            {{ $request->foodItem->name ?? $request->title }}
+                                        </p>
+                                        <p class="text-xs text-gray-500">
+                                            {{ $request->foodCategory->name ?? 'No category' }}
+                                            @if($request->assignedSupplier)
+                                                • Supplier: {{ $request->assignedSupplier->name }}
+                                            @elseif($request->foodItem && $request->foodItem->supplier)
+                                                • Supplier: {{ $request->foodItem->supplier->name }}
+                                            @endif
+                                        </p>
+                                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 text-sm text-gray-700">
+                                        <div>
+                                            <p class="text-xs text-gray-500 uppercase tracking-wide">Quantity</p>
+                                            <p class="font-semibold text-gray-900">
+                                                {{ number_format($request->quantity, 2, ',', '.') }} {{ $request->unit }}
+                                            </p>
+                                            @if($unitPrice)
+                                                <p class="text-xs text-gray-500">Rp {{ number_format($unitPrice, 0, ',', '.') }} / {{ $request->unit }}</p>
+                                            @endif
+                                        </div>
+                                        <div class="text-right">
+                                            <p class="text-xs text-gray-500 uppercase tracking-wide">Total</p>
+                                            <p class="font-semibold text-gray-900">
+                                                @if($totalAmount !== null)
+                                                    Rp {{ number_format($totalAmount, 0, ',', '.') }}
+                                                @else
+                                                    <span class="text-gray-400">Awaiting quotation</span>
+                                                @endif
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div class="pt-2">
+                                        <a href="{{ route('customer.requests.show', $request) }}"
+                                           class="inline-flex items-center px-3 py-2 text-sm text-green-600 border border-green-200 rounded-lg hover:bg-green-50 transition-colors">
+                                            <i class="fas fa-file-invoice mr-2"></i> View invoice
+                                        </a>
+                                    </div>
+                                </div>
+                            @empty
+                                <div class="p-6 text-center text-gray-500">
+                                    <p class="text-sm">No purchase records found.</p>
+                                </div>
+                            @endforelse
+                        </div>
                     </div>
 
                     @if($requests->hasPages())
@@ -320,3 +419,23 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const toggleButton = document.getElementById('toggleFilters');
+        const filtersForm = document.getElementById('filtersForm');
+
+        if (toggleButton && filtersForm) {
+            toggleButton.addEventListener('click', () => {
+                filtersForm.classList.toggle('hidden');
+                const label = toggleButton.querySelector('span');
+                if (label) {
+                    const isHidden = filtersForm.classList.contains('hidden');
+                    label.textContent = isHidden ? 'Show Filters' : 'Hide Filters';
+                }
+            });
+        }
+    });
+</script>
+@endpush
