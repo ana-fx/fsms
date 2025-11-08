@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\MaxPriceController;
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Customer\IngredientController;
 use App\Http\Controllers\Supplier\IngredientController as SupplierIngredientController;
 use App\Http\Controllers\Supplier\OrderController as SupplierOrderController;
@@ -54,16 +55,13 @@ Route::post('/logout', [LoginController::class, 'destroy'])->name('logout');
 
 // Role-based routes
 Route::middleware(['auth', 'role:super_admin'])->group(function () {
-    Route::get('/admin', function () {
-        return view('admin.dashboard', ['title' => 'Super Admin Dashboard']);
-    })->name('admin.dashboard');
+    Route::get('/admin', [DashboardController::class, 'index'])->name('admin.dashboard');
 
     Route::get('/admin/users', [UserController::class, 'index'])->name('admin.users');
     Route::post('/admin/users', [UserController::class, 'store'])->name('admin.users.store');
     Route::put('/admin/users/{id}', [UserController::class, 'update'])->name('admin.users.update');
-    Route::delete('/admin/users/{id}', [UserController::class, 'destroy'])->name('admin.users.destroy');
+    Route::post('/admin/users/{id}/toggle-status', [UserController::class, 'toggleStatus'])->name('admin.users.toggle-status');
     Route::post('/admin/users/{id}/change-password', [UserController::class, 'changePassword'])->name('admin.users.change-password');
-    Route::post('/admin/users/{id}/change-role', [UserController::class, 'changeRole'])->name('admin.users.change-role');
 
     // Max Price Management
     Route::get('/admin/max-price', [MaxPriceController::class, 'index'])->name('admin.max-price');
@@ -164,6 +162,10 @@ Route::middleware(['auth', 'role:customer'])->group(function () {
             'update' => 'customer.requests.update',
             'destroy' => 'customer.requests.destroy',
         ]);
+
+    // Purchase Report Route
+    Route::get('/customer/purchase-report', [\App\Http\Controllers\Customer\FoodRequestController::class, 'purchaseReport'])
+        ->name('customer.purchase-report');
 
     // Account Settings Routes
     Route::get('/customer/settings/account', [AccountSettingsController::class, 'index'])

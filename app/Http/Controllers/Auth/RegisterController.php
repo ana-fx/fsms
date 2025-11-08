@@ -35,6 +35,8 @@ class RegisterController extends Controller
             'email' => $request->email,
             'phone' => $request->phone,
             'password' => Hash::make($request->password),
+            'email_verified_at' => now(),
+            'is_active' => true,
         ]);
 
         // Assign role to user

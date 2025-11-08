@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Set Harga Maksimal - FSMS')
+@section('title', 'Set Maximum Price - FSMS')
 
 @section('content')
 @php
@@ -21,7 +21,7 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <!-- Header -->
         <div class="mb-8">
-            <h1 class="text-2xl lg:text-3xl font-bold text-gray-900">Set Harga Maksimal</h1>
+            <h1 class="text-2xl lg:text-3xl font-bold text-gray-900">Set Maximum Price</h1>
             <p class="text-sm lg:text-base text-gray-600 mt-2">Manage maximum price per food category</p>
         </div>
 
@@ -48,19 +48,19 @@
         <div class="bg-white rounded-lg shadow-md p-6">
             <div class="mb-6">
                 <h2 class="text-xl font-semibold text-gray-900">Price Categories</h2>
-                <p class="text-sm text-gray-600 mt-1">Atur harga maksimal untuk setiap kategori makanan</p>
+                <p class="text-sm text-gray-600 mt-1">Set maximum price for each food category</p>
             </div>
 
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kategori</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Harga Maksimal</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Maximum Price</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Unit</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Catatan</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Terakhir Diupdate</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Notes</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Updated</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
@@ -80,14 +80,14 @@
                                 @if($category->maxPriceSetting)
                                     <span class="text-sm font-semibold text-green-600">Rp {{ number_format($category->maxPriceSetting->max_price, 0, ',', '.') }}</span>
                                 @else
-                                    <span class="text-sm text-gray-400">Belum diatur</span>
+                                    <span class="text-sm text-gray-400">Not set</span>
                                 @endif
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                 {{ $category->maxPriceSetting->unit ?? '-' }}
                             </td>
                             <td class="px-6 py-4 text-sm text-gray-500">
-                                {{ Str::limit($category->maxPriceSetting->notes ?? 'Tidak ada catatan', 50) }}
+                                {{ Str::limit($category->maxPriceSetting->notes ?? 'No notes', 50) }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                 {{ $category->maxPriceSetting ? $category->maxPriceSetting->updated_at->format('d M Y') : '-' }}
@@ -108,21 +108,21 @@
     </div>
 </div>
 
-<!-- Modal untuk Edit Max Price -->
+<!-- Edit Max Price Modal -->
 <div id="editPriceModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
     <div class="flex items-center justify-center p-4">
         <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
             <div class="p-6">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">Set Harga Maksimal</h3>
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Set Maximum Price</h3>
                 <form id="priceForm" method="POST">
                     @csrf
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Kategori</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Category</label>
                         <input type="text" id="categoryName" class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100" readonly>
                         <input type="hidden" id="categoryId" name="category_id">
                     </div>
                     <div class="mb-4">
-                        <label for="maxPrice" class="block text-sm font-medium text-gray-700 mb-2">Harga Maksimal</label>
+                        <label for="maxPrice" class="block text-sm font-medium text-gray-700 mb-2">Maximum Price</label>
                         <input type="number" id="maxPrice" name="max_price" step="0.01" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" required>
                     </div>
                     <div class="mb-4">
@@ -138,12 +138,12 @@
                         </select>
                     </div>
                     <div class="mb-6">
-                        <label for="notes" class="block text-sm font-medium text-gray-700 mb-2">Catatan (Opsional)</label>
+                        <label for="notes" class="block text-sm font-medium text-gray-700 mb-2">Notes (Optional)</label>
                         <textarea id="notes" name="notes" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"></textarea>
                     </div>
                     <div class="flex justify-end space-x-3">
-                        <button type="button" onclick="closeModal()" class="px-4 py-2 text-gray-700 bg-gray-200 rounded hover:bg-gray-300 transition">Batal</button>
-                        <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition">Simpan</button>
+                        <button type="button" onclick="closeModal()" class="px-4 py-2 text-gray-700 bg-gray-200 rounded hover:bg-gray-300 transition">Cancel</button>
+                        <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition">Save</button>
                     </div>
                 </form>
             </div>

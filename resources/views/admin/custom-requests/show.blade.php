@@ -39,33 +39,35 @@
                         </div>
                         <div class="p-8">
                             <!-- Company & Invoice Info -->
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8 pb-8 border-b-2 border-gray-300">
-                                <div>
-                                    <h2 class="text-2xl font-bold text-gray-900 mb-2">FSMS</h2>
-                                    <p class="text-gray-600 text-sm">FoodSupply Management System</p>
-                                    <p class="text-gray-600 text-sm mt-1">Jakarta, Indonesia</p>
-                                </div>
-                                <div class="text-right">
-                                    <h3 class="text-xl font-bold text-gray-900 mb-2">Custom Request</h3>
-                                    <p class="text-gray-700 font-semibold">Order #{{ $customRequest->order_number }}</p>
-                                    <p class="text-gray-600 text-sm mt-1">Date: {{ $customRequest->created_at->format('d M Y') }}</p>
-                                    <p class="text-gray-600 text-sm mt-1">
-                                        Status:
-                                        @php
-                                            $statusConfigs = [
-                                                'pending' => ['color' => 'bg-yellow-100 text-yellow-800', 'label' => 'Pending'],
-                                                'payment_pending' => ['color' => 'bg-blue-100 text-blue-800', 'label' => 'Payment Pending'],
-                                                'paid' => ['color' => 'bg-green-100 text-green-800', 'label' => 'Paid'],
-                                                'rejected' => ['color' => 'bg-red-100 text-red-800', 'label' => 'Rejected'],
-                                            ];
-                                            $config = $statusConfigs[$customRequest->status] ?? $statusConfigs['pending'];
-                                        @endphp
-                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full {{ $config['color'] }}">
-                                            {{ $config['label'] }}
-                                        </span>
-                                    </p>
-                                </div>
-                            </div>
+                            <table class="w-full mb-8 pb-8 border-b-2 border-gray-300" style="border-collapse: collapse;">
+                                <tr>
+                                    <td class="align-top" style="width: 50%;">
+                                        <h2 class="text-2xl font-bold text-gray-900 mb-2" style="line-height: 1.2;">FSMS</h2>
+                                        <p class="text-gray-600 text-sm" style="line-height: 1.4;">FoodSupply Management System</p>
+                                        <p class="text-gray-600 text-sm mt-1" style="line-height: 1.4;">Jakarta, Indonesia</p>
+                                    </td>
+                                    <td class="align-top text-right" style="width: 50%;">
+                                        <h3 class="text-2xl font-bold text-gray-900 mb-2" style="line-height: 1.2;">Custom Request</h3>
+                                        <p class="text-gray-700 font-semibold" style="line-height: 1.4;">Order #{{ $customRequest->order_number }}</p>
+                                        <p class="text-gray-600 text-sm mt-1" style="line-height: 1.4;">Date: {{ $customRequest->created_at->format('d M Y') }}</p>
+                                        <p class="text-gray-600 text-sm mt-1" style="line-height: 1.4;">
+                                            Status:
+                                            @php
+                                                $statusConfigs = [
+                                                    'pending' => ['color' => 'bg-yellow-100 text-yellow-800', 'label' => 'Pending'],
+                                                    'payment_pending' => ['color' => 'bg-blue-100 text-blue-800', 'label' => 'Payment Pending'],
+                                                    'paid' => ['color' => 'bg-green-100 text-green-800', 'label' => 'Paid'],
+                                                    'rejected' => ['color' => 'bg-red-100 text-red-800', 'label' => 'Rejected'],
+                                                ];
+                                                $config = $statusConfigs[$customRequest->status] ?? $statusConfigs['pending'];
+                                            @endphp
+                                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full {{ $config['color'] }}">
+                                                {{ $config['label'] }}
+                                            </span>
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
 
                             <!-- Customer Info -->
                             <div class="mb-8">
@@ -406,6 +408,51 @@
         });
     </script>
 @endif
+
+@push('styles')
+<style>
+@media print {
+    @page {
+        margin: 0.5cm;
+    }
+    .sidebar, .print\\:hidden, button, nav {
+        display: none !important;
+    }
+    body {
+        margin: 0;
+        padding: 0;
+    }
+    .lg\\:ml-64 {
+        margin-left: 0 !important;
+    }
+    /* Ensure header alignment for print - table layout */
+    table.w-full {
+        width: 100% !important;
+        border-collapse: collapse !important;
+    }
+    table.w-full td {
+        vertical-align: top !important;
+        padding: 0 !important;
+    }
+    table.w-full td:first-child {
+        text-align: left !important;
+    }
+    table.w-full td:last-child {
+        text-align: right !important;
+    }
+    table.w-full h2,
+    table.w-full h3 {
+        line-height: 1.2 !important;
+        margin-bottom: 0.5rem !important;
+        font-size: 1.5rem !important;
+    }
+    table.w-full p {
+        line-height: 1.4 !important;
+        margin-top: 0.25rem !important;
+    }
+}
+</style>
+@endpush
 
 @push('scripts')
 <script>

@@ -27,36 +27,38 @@
                         </div>
                         <div class="p-8">
                             <!-- Company & Invoice Info -->
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8 pb-8 border-b-2 border-gray-300">
-                                <div>
-                                    <h2 class="text-2xl font-bold text-gray-900 mb-2">FSMS</h2>
-                                    <p class="text-gray-600 text-sm">FoodSupply Management System</p>
-                                    <p class="text-gray-600 text-sm mt-1">Jakarta, Indonesia</p>
-                                </div>
-                                <div class="text-right">
-                                    <h3 class="text-xl font-bold text-gray-900 mb-2">Invoice</h3>
-                                    <p class="text-gray-700 font-semibold">Order #{{ $request->order_number }}</p>
-                                    <p class="text-gray-600 text-sm mt-1">Date: {{ $request->created_at->format('d M Y') }}</p>
-                                    <p class="text-gray-600 text-sm">
-                                        Status:
-                                        @php
-                                            $statusConfigs = [
-                                                'pending' => ['color' => 'bg-gray-100 text-gray-800', 'label' => 'Pending'],
-                                                'payment_pending' => ['color' => 'bg-yellow-100 text-yellow-800', 'label' => 'Payment Pending'],
-                                                'paid' => ['color' => 'bg-green-100 text-green-800', 'label' => 'Paid'],
-                                                'shipping' => ['color' => 'bg-blue-100 text-blue-800', 'label' => 'Shipping'],
-                                                'delivered' => ['color' => 'bg-indigo-100 text-indigo-800', 'label' => 'Delivered'],
-                                                'completed' => ['color' => 'bg-purple-100 text-purple-800', 'label' => 'Completed'],
-                                                'rejected' => ['color' => 'bg-red-100 text-red-800', 'label' => 'Rejected'],
-                                            ];
-                                            $config = $statusConfigs[$request->status] ?? $statusConfigs['pending'];
-                                        @endphp
-                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full {{ $config['color'] }}">
-                                            {{ $config['label'] }}
-                                        </span>
-                                    </p>
-                                </div>
-                            </div>
+                            <table class="w-full mb-8 pb-8 border-b-2 border-gray-300" style="border-collapse: collapse;">
+                                <tr>
+                                    <td class="align-top" style="width: 50%;">
+                                        <h2 class="text-2xl font-bold text-gray-900 mb-2" style="line-height: 1.2;">FSMS</h2>
+                                        <p class="text-gray-600 text-sm" style="line-height: 1.4;">FoodSupply Management System</p>
+                                        <p class="text-gray-600 text-sm mt-1" style="line-height: 1.4;">Jakarta, Indonesia</p>
+                                    </td>
+                                    <td class="align-top text-right" style="width: 50%;">
+                                        <h3 class="text-2xl font-bold text-gray-900 mb-2" style="line-height: 1.2;">Invoice</h3>
+                                        <p class="text-gray-700 font-semibold" style="line-height: 1.4;">Order #{{ $request->order_number }}</p>
+                                        <p class="text-gray-600 text-sm mt-1" style="line-height: 1.4;">Date: {{ $request->created_at->format('d M Y') }}</p>
+                                        <p class="text-gray-600 text-sm mt-1" style="line-height: 1.4;">
+                                            Status:
+                                            @php
+                                                $statusConfigs = [
+                                                    'pending' => ['color' => 'bg-gray-100 text-gray-800', 'label' => 'Pending'],
+                                                    'payment_pending' => ['color' => 'bg-yellow-100 text-yellow-800', 'label' => 'Payment Pending'],
+                                                    'paid' => ['color' => 'bg-green-100 text-green-800', 'label' => 'Paid'],
+                                                    'shipping' => ['color' => 'bg-blue-100 text-blue-800', 'label' => 'Shipping'],
+                                                    'delivered' => ['color' => 'bg-indigo-100 text-indigo-800', 'label' => 'Delivered'],
+                                                    'completed' => ['color' => 'bg-purple-100 text-purple-800', 'label' => 'Completed'],
+                                                    'rejected' => ['color' => 'bg-red-100 text-red-800', 'label' => 'Rejected'],
+                                                ];
+                                                $config = $statusConfigs[$request->status] ?? $statusConfigs['pending'];
+                                            @endphp
+                                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full {{ $config['color'] }}">
+                                                {{ $config['label'] }}
+                                            </span>
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
 
                             <!-- Customer Info -->
                             <div class="mb-8">
@@ -74,6 +76,20 @@
                                     @endif
                                 </div>
                             </div>
+
+                            <!-- Payment To Supplier Info -->
+                            @if(isset($orderData['supplier']) && $orderData['supplier'])
+                                <div class="mb-8">
+                                    <h3 class="text-lg font-bold text-gray-900 mb-4">Payment To:</h3>
+                                    <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                                        <p class="font-semibold text-gray-900">{{ $orderData['supplier']->name }}</p>
+                                        <p class="text-gray-600 text-sm">{{ $orderData['supplier']->email }}</p>
+                                        @if($orderData['supplier']->phone)
+                                            <p class="text-gray-600 text-sm mt-1"><i class="fas fa-phone mr-1"></i>{{ $orderData['supplier']->phone }}</p>
+                                        @endif
+                                    </div>
+                                </div>
+                            @endif
 
                             <!-- Items Table -->
                             <div class="mb-8">
@@ -144,6 +160,22 @@
                                     </div>
                                     @if($request->payment_proof_uploaded_at)
                                         <p class="text-xs text-gray-500 mt-2">Uploaded: {{ $request->payment_proof_uploaded_at->format('d M Y H:i') }}</p>
+                                    @endif
+                                    @php
+                                        // Extract payment notes from notes field
+                                        $paymentNotes = null;
+                                        if ($request->notes) {
+                                            // Match "Payment Notes: " followed by content until "Delivery Notes:" or end of string
+                                            if (preg_match('/Payment Notes:\s*(.+?)(?:\n\nDelivery Notes:|$)/s', $request->notes, $matches)) {
+                                                $paymentNotes = trim($matches[1]);
+                                            }
+                                        }
+                                    @endphp
+                                    @if($paymentNotes)
+                                        <div class="mt-3 pt-3 border-t border-gray-300">
+                                            <p class="text-sm font-medium text-gray-700 mb-1">Payment Notes:</p>
+                                            <p class="text-sm text-gray-600 whitespace-pre-wrap">{{ $paymentNotes }}</p>
+                                        </div>
                                     @endif
                                 </div>
 
@@ -240,6 +272,22 @@
                                     @if($request->received_proof_uploaded_at)
                                         <p class="text-xs text-gray-500 mt-2">Uploaded: {{ $request->received_proof_uploaded_at->format('d M Y H:i') }}</p>
                                     @endif
+                                    @php
+                                        // Extract delivery notes from notes field
+                                        $deliveryNotes = null;
+                                        if ($request->notes) {
+                                            // Match "Delivery Notes: " followed by content until end of string
+                                            if (preg_match('/Delivery Notes:\s*(.+?)$/s', $request->notes, $matches)) {
+                                                $deliveryNotes = trim($matches[1]);
+                                            }
+                                        }
+                                    @endphp
+                                    @if($deliveryNotes)
+                                        <div class="mt-3 pt-3 border-t border-gray-300">
+                                            <p class="text-sm font-medium text-gray-700 mb-1">Received Items Notes:</p>
+                                            <p class="text-sm text-gray-600 whitespace-pre-wrap">{{ $deliveryNotes }}</p>
+                                        </div>
+                                    @endif
                                 </div>
                             @endif
 
@@ -281,8 +329,8 @@
                                     </form>
                                 </div>
 
-                                <!-- Edit Received Proof Form (Hidden by default if proof exists) -->
-                                <div id="editReceivedProofForm{{ $request->id }}" class="{{ $request->received_proof ? 'hidden' : '' }}">
+                                <!-- Edit Received Proof Form (Always hidden by default, shown when Change button clicked) -->
+                                <div id="editReceivedProofForm{{ $request->id }}" class="hidden">
                                     <form method="POST" action="{{ route('customer.requests.upload-delivery-proof', $request->id) }}" enctype="multipart/form-data" class="space-y-4">
                                         @csrf
                                         <div>
@@ -376,6 +424,18 @@
                                                     <p class="text-gray-600 text-sm">{{ $orderData['delivery']['delivery_address'] }}</p>
                                                     <p class="text-gray-600 text-sm">{{ $orderData['delivery']['city'] }} {{ $orderData['delivery']['postal_code'] ?? '' }}</p>
                                                 </div>
+                                            @endif
+                                        </div>
+                                    </div>
+
+                                    <!-- Payment To Supplier Info -->
+                                    <div class="mb-8">
+                                        <h3 class="text-lg font-bold text-gray-900 mb-4">Payment To:</h3>
+                                        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                                            <p class="font-semibold text-gray-900">{{ $supplierData['supplier']->name }}</p>
+                                            <p class="text-gray-600 text-sm">{{ $supplierData['supplier']->email }}</p>
+                                            @if($supplierData['supplier']->phone)
+                                                <p class="text-gray-600 text-sm mt-1"><i class="fas fa-phone mr-1"></i>{{ $supplierData['supplier']->phone }}</p>
                                             @endif
                                         </div>
                                     </div>
@@ -507,6 +567,25 @@
                                     @endforeach
                                 </div>
 
+                                @php
+                                    // Extract payment notes from first request that has notes
+                                    $paymentNotesMulti = null;
+                                    foreach($supplierRequests->whereNotNull('payment_proof') as $req) {
+                                        if ($req->notes) {
+                                            if (preg_match('/Payment Notes:\s*(.+?)(?:\n\nDelivery Notes:|$)/s', $req->notes, $matches)) {
+                                                $paymentNotesMulti = trim($matches[1]);
+                                                break; // Take first found payment notes
+                                            }
+                                        }
+                                    }
+                                @endphp
+                                @if($paymentNotesMulti)
+                                    <div class="mt-4 pt-4 border-t border-gray-300">
+                                        <p class="text-sm font-medium text-gray-700 mb-1">Payment Notes:</p>
+                                        <p class="text-sm text-gray-600 whitespace-pre-wrap">{{ $paymentNotesMulti }}</p>
+                                    </div>
+                                @endif
+
                                 <!-- Edit Payment Proof Form (Hidden by default) -->
                                 <div id="editPaymentProofFormMulti{{ $supplierId }}" class="hidden mt-4">
                                     <form method="POST" action="{{ route('customer.requests.upload-payment-proof') }}" enctype="multipart/form-data" class="space-y-4 bg-white rounded-lg p-4 border border-gray-200">
@@ -573,6 +652,24 @@
                                                 </div>
                                             @endforeach
                                         </div>
+                                        @php
+                                            // Extract delivery notes from first request that has notes
+                                            $deliveryNotesMulti = null;
+                                            foreach($supplierRequests->whereNotNull('received_proof') as $req) {
+                                                if ($req->notes) {
+                                                    if (preg_match('/Delivery Notes:\s*(.+?)$/s', $req->notes, $matches)) {
+                                                        $deliveryNotesMulti = trim($matches[1]);
+                                                        break; // Take first found delivery notes
+                                                    }
+                                                }
+                                            }
+                                        @endphp
+                                        @if($deliveryNotesMulti)
+                                            <div class="mt-4 pt-4 border-t border-gray-300">
+                                                <p class="text-sm font-medium text-gray-700 mb-1">Received Items Notes:</p>
+                                                <p class="text-sm text-gray-600 whitespace-pre-wrap">{{ $deliveryNotesMulti }}</p>
+                                            </div>
+                                        @endif
                                     </div>
                                 @endif
 
@@ -622,8 +719,8 @@
                                         </form>
                                     </div>
 
-                                    <!-- Edit Form (Hidden by default if proof exists) -->
-                                    <div id="editReceivedProofFormMulti{{ $supplierId }}" class="{{ $hasDeliveryProof ? 'hidden' : '' }}">
+                                    <!-- Edit Form (Always hidden by default, shown when Change button clicked) -->
+                                    <div id="editReceivedProofFormMulti{{ $supplierId }}" class="hidden">
                                         <form method="POST" action="{{ route('customer.requests.upload-delivery-proof', $firstPaidRequest->id) }}" enctype="multipart/form-data" class="space-y-4">
                                             @csrf
                                             <div>
@@ -722,6 +819,31 @@
     }
     .invoice-section {
         page-break-after: auto !important;
+    }
+    /* Ensure header alignment for print - table layout */
+    table.w-full {
+        width: 100% !important;
+        border-collapse: collapse !important;
+    }
+    table.w-full td {
+        vertical-align: top !important;
+        padding: 0 !important;
+    }
+    table.w-full td:first-child {
+        text-align: left !important;
+    }
+    table.w-full td:last-child {
+        text-align: right !important;
+    }
+    table.w-full h2,
+    table.w-full h3 {
+        line-height: 1.2 !important;
+        margin-bottom: 0.5rem !important;
+        font-size: 1.5rem !important;
+    }
+    table.w-full p {
+        line-height: 1.4 !important;
+        margin-top: 0.25rem !important;
     }
 }
 

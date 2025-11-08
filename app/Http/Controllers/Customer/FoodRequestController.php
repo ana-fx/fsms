@@ -103,6 +103,78 @@ class FoodRequestController extends Controller
     }
 
     /**
+     * Display purchase report page.
+     */
+    public function purchaseReport(Request $request)
+    {
+        /** @var User $user */
+        $user = Auth::user();
+
+        $query = FoodRequest::with(['foodCategory', 'foodItem', 'assignedSupplier'])
+            ->byCustomer($user->id)
+            ->orderBy('created_at', 'desc');
+
+        // Filter by status
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        // Filter by date range
+        if ($request->filled('date_from')) {
+            $query->whereDate('created_at', '>=', $request->date_from);
+        }
+        if ($request->filled('date_to')) {
+            $query->whereDate('created_at', '<=', $request->date_to);
+        }
+
+        // Filter by month/year
+        if ($request->filled('month') && $request->filled('year')) {
+            $query->whereYear('created_at', $request->year)
+                  ->whereMonth('created_at', $request->month);
+        }
+
+        $requests = $query->get();
+
+        // Calculate statistics
+        $stats = [
+            'total' => $requests->count(),
+            'total_amount' => $requests->sum(function($req) {
+                if ($req->foodItem) {
+                    return $req->foodItem->price * $req->quantity;
+                } elseif ($req->price) {
+                    return $req->price * $req->quantity;
+                }
+                return 0;
+            }),
+            'pending' => $requests->where('status', 'pending')->count(),
+            'payment_pending' => $requests->where('status', 'payment_pending')->count(),
+            'paid' => $requests->where('status', 'paid')->count(),
+            'shipping' => $requests->where('status', 'shipping')->count(),
+            'delivered' => $requests->where('status', 'delivered')->count(),
+            'completed' => $requests->where('status', 'completed')->count(),
+            'rejected' => $requests->where('status', 'rejected')->count(),
+        ];
+
+        // Get available months/years for filter
+        $allRequests = FoodRequest::byCustomer($user->id)
+            ->select('created_at')
+            ->get();
+
+        $availableMonths = $allRequests->groupBy(function($item) {
+            return $item->created_at->format('Y-m');
+        })->map(function($group, $key) {
+            $date = \Carbon\Carbon::createFromFormat('Y-m', $key);
+            return [
+                'year' => $date->year,
+                'month' => $date->month,
+                'label' => $date->format('F Y')
+            ];
+        })->sortKeysDesc()->values();
+
+        return view('customer.requests.purchase-report', compact('requests', 'stats', 'availableMonths'));
+    }
+
+    /**
      * Show the form for creating a custom request.
      */
     public function create()
@@ -380,7 +452,17 @@ class FoodRequestController extends Controller
             return view('customer.requests.success', compact('orderData', 'requests', 'paymentProofUploaded'));
         } else {
             // Show single invoice (normal view)
-            $request->load(['foodCategory', 'foodItem', 'customer']);
+            $request->load(['foodCategory', 'foodItem.supplier', 'customer', 'assignedSupplier']);
+
+            // Get supplier information
+            $supplier = null;
+            if ($request->foodItem && $request->foodItem->supplier) {
+                // Regular request - get supplier from food item
+                $supplier = $request->foodItem->supplier;
+            } elseif ($request->assignedSupplier) {
+                // Custom request - get assigned supplier
+                $supplier = $request->assignedSupplier;
+            }
 
             // Prepare order data in same format as success page
             $orderData = [
@@ -395,6 +477,7 @@ class FoodRequestController extends Controller
                     'needed_date' => $request->needed_date,
                 ],
                 'total' => 0,
+                'supplier' => $supplier,
             ];
 
             // Build item structure for invoice

@@ -20,36 +20,27 @@ class CustomRequestController extends Controller
             ->orderBy('created_at', 'desc');
 
         // Filter by status
-        if ($request->has('status') && $request->status) {
+        if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
 
-        // Search
-        if ($request->has('search') && $request->search) {
-            $search = $request->search;
-            $query->where(function($q) use ($search) {
-                $q->where('order_number', 'like', "%{$search}%")
-                  ->orWhere('title', 'like', "%{$search}%")
-                  ->orWhereHas('customer', function($customerQuery) use ($search) {
-                      $customerQuery->where('name', 'like', "%{$search}%")
-                                    ->orWhere('email', 'like', "%{$search}%");
-                  });
-            });
+        // Filter by date range
+        if ($request->filled('date_from')) {
+            $query->whereDate('created_at', '>=', $request->date_from);
+        }
+        if ($request->filled('date_to')) {
+            $query->whereDate('created_at', '<=', $request->date_to);
+        }
+
+        // Filter by month/year
+        if ($request->filled('month') && $request->filled('year')) {
+            $query->whereYear('created_at', $request->year)
+                  ->whereMonth('created_at', $request->month);
         }
 
         $customRequests = $query->paginate(15);
 
-        // Get stats
-        $allCustomRequests = FoodRequest::whereNull('food_item_id')->get();
-        $stats = [
-            'all' => $allCustomRequests->count(),
-            'pending' => $allCustomRequests->where('status', 'pending')->count(),
-            'payment_pending' => $allCustomRequests->where('status', 'payment_pending')->count(),
-            'paid' => $allCustomRequests->where('status', 'paid')->count(),
-            'rejected' => $allCustomRequests->where('status', 'rejected')->count(),
-        ];
-
-        return view('admin.custom-requests.index', compact('customRequests', 'stats'));
+        return view('admin.custom-requests.index', compact('customRequests'));
     }
 
     /**

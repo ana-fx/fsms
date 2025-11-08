@@ -26,6 +26,7 @@ class User extends Authenticatable
         'email',
         'phone',
         'password',
+        'is_active',
     ];
 
     /**
@@ -141,5 +142,13 @@ class User extends Authenticatable
     public function defaultDeliveryAddress()
     {
         return $this->deliveryAddresses()->where('is_default', true)->first();
+    }
+
+    /**
+     * Get the food items supplied by this user (supplier).
+     */
+    public function suppliedItems(): HasMany
+    {
+        return $this->hasMany(FoodItem::class, 'supplier_id');
     }
 }

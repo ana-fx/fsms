@@ -41,8 +41,26 @@
                 <div class="bg-white">
             <!-- Session Status -->
             @if (session('status'))
-                <div class="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
+                <div class="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg flex items-center">
+                    <i class="fas fa-check-circle mr-2"></i>
                     {{ session('status') }}
+                </div>
+            @endif
+
+            <!-- Account Disabled Notification -->
+            @if (session('account_disabled'))
+                <div class="mb-4 p-4 bg-red-50 border-l-4 border-red-500 rounded-lg">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-ban text-red-500 text-xl mt-0.5"></i>
+                        </div>
+                        <div class="ml-3 flex-1">
+                            <h3 class="text-sm font-semibold text-red-800 mb-1">Account Disabled</h3>
+                            <p class="text-sm text-red-700">
+                                {{ session('disabled_message', 'Your account has been disabled. Please contact administrator for assistance.') }}
+                            </p>
+                        </div>
+                    </div>
                 </div>
             @endif
 
@@ -66,7 +84,10 @@
                         placeholder="Enter your email"
                     >
                     @error('email')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        <div class="mt-2 p-3 bg-red-50 border border-red-200 rounded-lg flex items-start">
+                            <i class="fas fa-exclamation-circle text-red-500 mr-2 mt-0.5"></i>
+                            <p class="text-sm text-red-700 flex-1">{{ $message }}</p>
+                        </div>
                     @enderror
                 </div>
 

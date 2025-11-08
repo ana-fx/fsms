@@ -59,70 +59,18 @@
                 @endif
             </a>
 
-            <!-- Supplier Management -->
-            <div class="space-y-1">
-                <button class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-green-600 rounded-lg transition-colors"
-                        onclick="toggleSubmenu('suppliers')">
-                    <div class="flex items-center">
-                        <i class="fas fa-truck mr-3 text-lg"></i>
-                        Kelola Supplier
-                    </div>
-                    <i class="fas fa-chevron-down text-xs transition-transform" id="suppliers-arrow"></i>
-                </button>
-                <div id="suppliers-submenu" class="hidden ml-8 space-y-1">
-                    <a href="#" class="block px-4 py-2 text-sm text-gray-600 hover:text-green-600 hover:bg-gray-50 rounded transition-colors">
-                        <i class="fas fa-users mr-2"></i>
-                        Daftar Supplier
-                    </a>
-                    <a href="#" class="block px-4 py-2 text-sm text-gray-600 hover:text-green-600 hover:bg-gray-50 rounded transition-colors">
-                        <i class="fas fa-plus mr-2"></i>
-                        Tambah Supplier
-                    </a>
-                    <a href="#" class="block px-4 py-2 text-sm text-gray-600 hover:text-green-600 hover:bg-gray-50 rounded transition-colors">
-                        <i class="fas fa-chart-bar mr-2"></i>
-                        Performa Supplier
-                    </a>
-                </div>
-            </div>
-
-            <!-- Customer Management -->
-            <div class="space-y-1">
-                <button class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-green-600 rounded-lg transition-colors"
-                        onclick="toggleSubmenu('customers')">
-                    <div class="flex items-center">
-                        <i class="fas fa-users mr-3 text-lg"></i>
-                        Kelola Customer
-                    </div>
-                    <i class="fas fa-chevron-down text-xs transition-transform" id="customers-arrow"></i>
-                </button>
-                <div id="customers-submenu" class="hidden ml-8 space-y-1">
-                    <a href="#" class="block px-4 py-2 text-sm text-gray-600 hover:text-green-600 hover:bg-gray-50 rounded transition-colors">
-                        <i class="fas fa-users mr-2"></i>
-                        Daftar Customer
-                    </a>
-                    <a href="#" class="block px-4 py-2 text-sm text-gray-600 hover:text-green-600 hover:bg-gray-50 rounded transition-colors">
-                        <i class="fas fa-plus mr-2"></i>
-                        Tambah Customer
-                    </a>
-                    <a href="#" class="block px-4 py-2 text-sm text-gray-600 hover:text-green-600 hover:bg-gray-50 rounded transition-colors">
-                        <i class="fas fa-chart-line mr-2"></i>
-                        Aktivitas Customer
-                    </a>
-                </div>
-            </div>
-
             <!-- Price Management -->
             <a href="{{ route('admin.max-price') }}"
                class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.max-price') ? 'bg-green-100 text-green-700 border-r-2 border-green-600' : 'text-gray-700 hover:bg-gray-100 hover:text-green-600' }}">
                 <i class="fas fa-dollar-sign mr-3 text-lg"></i>
-                Set Harga Maksimal
+                Set Maximum Price
             </a>
 
             <!-- User Management -->
             <a href="{{ route('admin.users') }}"
                class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.users') ? 'bg-green-100 text-green-700 border-r-2 border-green-600' : 'text-gray-700 hover:bg-gray-100 hover:text-green-600' }}">
                 <i class="fas fa-user-cog mr-3 text-lg"></i>
-                Manajemen User
+                User Management
             </a>
 
             <!-- Reports -->
@@ -131,18 +79,18 @@
                         onclick="toggleSubmenu('reports')">
                     <div class="flex items-center">
                         <i class="fas fa-chart-line mr-3 text-lg"></i>
-                        Laporan
+                        Reports
                     </div>
                     <i class="fas fa-chevron-down text-xs transition-transform" id="reports-arrow"></i>
                 </button>
                 <div id="reports-submenu" class="hidden ml-8 space-y-1">
                     <a href="#" class="block px-4 py-2 text-sm text-gray-600 hover:text-green-600 hover:bg-gray-50 rounded transition-colors">
                         <i class="fas fa-chart-bar mr-2"></i>
-                        Laporan Bulanan
+                        Monthly Reports
                     </a>
                     <a href="#" class="block px-4 py-2 text-sm text-gray-600 hover:text-green-600 hover:bg-gray-50 rounded transition-colors">
                         <i class="fas fa-chart-pie mr-2"></i>
-                        Statistik Sistem
+                        System Statistics
                     </a>
                     <a href="#" class="block px-4 py-2 text-sm text-gray-600 hover:text-green-600 hover:bg-gray-50 rounded transition-colors">
                         <i class="fas fa-file-export mr-2"></i>
@@ -178,7 +126,7 @@
             @csrf
             <button type="submit" class="w-full flex items-center px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors">
                 <i class="fas fa-sign-out-alt mr-3"></i>
-                Keluar
+                Logout
             </button>
         </form>
     </div>

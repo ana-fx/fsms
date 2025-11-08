@@ -48,8 +48,8 @@
                         <i class="fas fa-users text-xl"></i>
                     </div>
                     <div class="ml-4">
-                        <p class="text-sm font-medium text-gray-600">Total Akun</p>
-                        <p class="text-2xl font-semibold text-gray-900">{{ \App\Models\User::count() }}</p>
+                        <p class="text-sm font-medium text-gray-600">Total Accounts</p>
+                        <p class="text-2xl font-semibold text-gray-900">{{ $users->count() }}</p>
                     </div>
                 </div>
             </div>
@@ -95,18 +95,18 @@
         <div class="flex flex-col gap-4 mb-6">
             <!-- Header Row -->
             <div class="flex items-center justify-between">
-                <h2 class="text-lg md:text-xl font-semibold text-gray-900">Daftar User</h2>
+                <h2 class="text-lg md:text-xl font-semibold text-gray-900">User List</h2>
                 <button onclick="openAddUserModal()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition flex items-center text-sm md:text-base">
                     <i class="fas fa-user-plus mr-2"></i>
-                    <span class="hidden sm:inline">Tambah User Baru</span>
-                    <span class="sm:hidden">Tambah</span>
+                    <span class="hidden sm:inline">Add New User</span>
+                    <span class="sm:hidden">Add</span>
                 </button>
             </div>
 
             <!-- Filter Row -->
             <div class="flex flex-col sm:flex-row gap-2">
                 <select class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm flex-1 sm:flex-none sm:w-auto">
-                    <option>Semua Role</option>
+                    <option>All Roles</option>
                     <option>Super Admin</option>
                     <option>Supplier</option>
                     <option>Customer</option>
@@ -120,16 +120,16 @@
                 <thead class="bg-gray-50 hidden md:table-header-group">
                     <tr>
                         <th class="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                        <th class="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama</th>
+                        <th class="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                         <th class="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">Email</th>
                         <th class="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
                         <th class="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden xl:table-cell">Status</th>
-                        <th class="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">Terdaftar</th>
-                        <th class="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                        <th class="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">Registered</th>
+                        <th class="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
-                    @foreach(\App\Models\User::with('roles')->get() as $user)
+                    @foreach($users as $user)
                     <tr data-user-id="{{ $user->id }}" data-user-name="{{ $user->name }}" data-user-email="{{ $user->email }}" data-user-phone="{{ $user->phone ?? '' }}" data-user-role="{{ $user->roles->first()->name ?? '' }}" class="hover:bg-gray-50">
                         <td class="px-3 lg:px-6 py-3 md:py-4 whitespace-nowrap text-sm font-medium text-gray-900">#{{ $user->id }}</td>
                         <td class="px-3 lg:px-6 py-3 md:py-4 whitespace-nowrap text-sm text-gray-900">{{ $user->name }}</td>
@@ -154,10 +154,12 @@
                             @endif
                         </td>
                         <td class="px-3 lg:px-6 py-3 md:py-4 whitespace-nowrap hidden xl:table-cell">
-                            @if($user->email_verified_at)
-                                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Aktif</span>
+                            @if($user->is_active == false)
+                                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Disabled</span>
+                            @elseif($user->email_verified_at)
+                                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Active</span>
                             @else
-                                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Belum Verifikasi</span>
+                                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Unverified</span>
                             @endif
                         </td>
                         <td class="px-3 lg:px-6 py-3 md:py-4 whitespace-nowrap text-sm text-gray-500 hidden lg:table-cell">{{ $user->created_at->format('d M Y') }}</td>
@@ -166,15 +168,14 @@
                                 <button class="text-green-600 hover:text-green-900 p-1 md:p-0" onclick="editUser({{ $user->id }})" title="Edit User">
                                     <i class="fas fa-edit text-sm md:text-base"></i>
                                 </button>
-                                <button class="text-green-600 hover:text-green-900 p-1 md:p-0" onclick="changePassword({{ $user->id }})" title="Ubah Password">
+                                <button class="text-green-600 hover:text-green-900 p-1 md:p-0" onclick="changePassword({{ $user->id }})" title="Change Password">
                                     <i class="fas fa-key text-sm md:text-base"></i>
                                 </button>
-                                <button class="text-green-600 hover:text-green-900 p-1 md:p-0" onclick="changeRole({{ $user->id }})" title="Ubah Role">
-                                    <i class="fas fa-user-tag text-sm md:text-base"></i>
-                                </button>
                                 @if($user->id !== auth()->id())
-                                <button class="text-red-600 hover:text-red-900 p-1 md:p-0" onclick="deleteUser({{ $user->id }})" title="Delete User">
-                                    <i class="fas fa-trash text-sm md:text-base"></i>
+                                <button class="{{ ($user->is_active == false) ? 'text-green-600 hover:text-green-900' : 'text-orange-600 hover:text-orange-900' }} p-1 md:p-0" 
+                                        onclick="toggleUserStatus({{ $user->id }}, {{ $user->is_active ? 'true' : 'false' }})" 
+                                        title="{{ ($user->is_active == false) ? 'Enable Account' : 'Disable Account' }}">
+                                    <i class="fas {{ ($user->is_active == false) ? 'fa-check-circle' : 'fa-ban' }} text-sm md:text-base"></i>
                                 </button>
                                 @endif
                             </div>
@@ -188,13 +189,13 @@
         <!-- Pagination -->
         <div class="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div class="text-xs sm:text-sm text-gray-700 text-center sm:text-left">
-                Menampilkan <span class="font-medium">1</span> sampai <span class="font-medium">{{ \App\Models\User::count() }}</span> dari <span class="font-medium">{{ \App\Models\User::count() }}</span> hasil
+                Showing <span class="font-medium">1</span> to <span class="font-medium">{{ $users->count() }}</span> of <span class="font-medium">{{ $users->count() }}</span> results
             </div>
-            @if(\App\Models\User::count() > 0)
+            @if($users->count() > 0)
             <div class="flex space-x-2">
-                <button class="px-2 sm:px-3 py-2 border border-gray-300 rounded-md text-xs sm:text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-50" disabled>Sebelumnya</button>
+                <button class="px-2 sm:px-3 py-2 border border-gray-300 rounded-md text-xs sm:text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-50" disabled>Previous</button>
                 <button class="px-2 sm:px-3 py-2 bg-blue-600 text-white rounded-md text-xs sm:text-sm">1</button>
-                <button class="px-2 sm:px-3 py-2 border border-gray-300 rounded-md text-xs sm:text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-50" disabled>Selanjutnya</button>
+                <button class="px-2 sm:px-3 py-2 border border-gray-300 rounded-md text-xs sm:text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-50" disabled>Next</button>
             </div>
             @endif
         </div>
@@ -204,16 +205,20 @@
     </div>
 </div>
 
-<!-- Modal untuk Tambah User -->
-<div id="addUserModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
-    <div class="flex items-center justify-center p-4">
-        <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
+<!-- Add User Modal -->
+<div id="addUserModal" class="fixed inset-0 z-[100] hidden" style="display: none;">
+    <!-- Background overlay - covers full viewport including sidebar -->
+    <div class="fixed inset-0 transition-opacity" style="background-color: rgba(0, 0, 0, 0.5); left: 0; right: 0; top: 0; bottom: 0;" onclick="closeAddUserModal()"></div>
+
+    <!-- Modal panel - centered in area after sidebar -->
+    <div class="fixed inset-0 flex items-center justify-center p-4 pointer-events-none" id="addUserModalContainer">
+        <div class="bg-white bg-opacity-90 backdrop-blur-lg rounded-lg shadow-xl max-w-md w-full border border-white border-opacity-30 pointer-events-auto transform transition-all" onclick="event.stopPropagation()">
             <div class="p-6">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">Tambah User Baru</h3>
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Add New User</h3>
                 <form method="POST" action="{{ route('admin.users.store') }}">
                     @csrf
                     <div class="mb-4">
-                        <label for="addName" class="block text-sm font-medium text-gray-700 mb-2">Nama</label>
+                        <label for="addName" class="block text-sm font-medium text-gray-700 mb-2">Name</label>
                         <input type="text" id="addName" name="name" value="{{ old('name') }}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" required>
                         @error('name') <span class="text-red-600 text-sm">{{ $message }}</span> @enderror
                     </div>
@@ -223,9 +228,7 @@
                         @error('email') <span class="text-red-600 text-sm">{{ $message }}</span> @enderror
                     </div>
                     <div class="mb-4">
-                        <label for="addPhone" class="block text-sm font-medium text-gray-700 mb-2">
-                            <i class="fas fa-phone mr-2 text-green-600"></i>Phone Number
-                        </label>
+                        <label for="addPhone" class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
                         <input type="tel" id="addPhone" name="phone" value="{{ old('phone') }}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="Enter phone number (e.g., 081234567890)" required>
                         @error('phone') <span class="text-red-600 text-sm">{{ $message }}</span> @enderror
                     </div>
@@ -235,13 +238,13 @@
                         @error('password') <span class="text-red-600 text-sm">{{ $message }}</span> @enderror
                     </div>
                     <div class="mb-4">
-                        <label for="addPasswordConfirmation" class="block text-sm font-medium text-gray-700 mb-2">Konfirmasi Password</label>
+                        <label for="addPasswordConfirmation" class="block text-sm font-medium text-gray-700 mb-2">Confirm Password</label>
                         <input type="password" id="addPasswordConfirmation" name="password_confirmation" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" required>
                     </div>
                     <div class="mb-6">
                         <label for="addRole" class="block text-sm font-medium text-gray-700 mb-2">Role</label>
                         <select id="addRole" name="role" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" required>
-                            <option value="">Pilih Role</option>
+                            <option value="">Select Role</option>
                             <option value="super_admin" {{ old('role') == 'super_admin' ? 'selected' : '' }}>Super Admin</option>
                             <option value="supplier" {{ old('role') == 'supplier' ? 'selected' : '' }}>Supplier</option>
                             <option value="customer" {{ old('role') == 'customer' ? 'selected' : '' }}>Customer</option>
@@ -249,8 +252,8 @@
                         @error('role') <span class="text-red-600 text-sm">{{ $message }}</span> @enderror
                     </div>
                     <div class="flex justify-end space-x-3">
-                        <button type="button" onclick="closeAddUserModal()" class="px-4 py-2 text-gray-700 bg-gray-200 rounded hover:bg-gray-300">Batal</button>
-                        <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Tambah User</button>
+                        <button type="button" onclick="closeAddUserModal()" class="px-4 py-2 text-gray-700 bg-gray-200 rounded hover:bg-gray-300">Cancel</button>
+                        <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Add User</button>
                     </div>
                 </form>
             </div>
@@ -258,10 +261,14 @@
     </div>
 </div>
 
-<!-- Modal untuk Edit User -->
-<div id="editUserModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
-    <div class="flex items-center justify-center p-4">
-        <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
+<!-- Edit User Modal -->
+<div id="editUserModal" class="fixed inset-0 z-[100] hidden" style="display: none;">
+    <!-- Background overlay - covers full viewport including sidebar -->
+    <div class="fixed inset-0 transition-opacity" style="background-color: rgba(0, 0, 0, 0.5); left: 0; right: 0; top: 0; bottom: 0;" onclick="closeEditUserModal()"></div>
+
+    <!-- Modal panel - centered in area after sidebar -->
+    <div class="fixed inset-0 flex items-center justify-center p-4 pointer-events-none" id="editUserModalContainer">
+        <div class="bg-white bg-opacity-90 backdrop-blur-lg rounded-lg shadow-xl max-w-md w-full border border-white border-opacity-30 pointer-events-auto transform transition-all" onclick="event.stopPropagation()">
             <div class="p-6">
                 <h3 class="text-lg font-semibold text-gray-900 mb-4">Edit User</h3>
                 <form method="POST" id="editUserForm">
@@ -270,7 +277,7 @@
                     <input type="hidden" id="editUserId" name="id">
 
                     <div class="mb-4">
-                        <label for="editName" class="block text-sm font-medium text-gray-700 mb-2">Nama</label>
+                        <label for="editName" class="block text-sm font-medium text-gray-700 mb-2">Name</label>
                         <input type="text" id="editName" name="name" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" required>
                         @error('name') <span class="text-red-600 text-sm">{{ $message }}</span> @enderror
                     </div>
@@ -279,25 +286,14 @@
                         <input type="email" id="editEmail" name="email" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" required>
                         @error('email') <span class="text-red-600 text-sm">{{ $message }}</span> @enderror
                     </div>
-                    <div class="mb-4">
-                        <label for="editPhone" class="block text-sm font-medium text-gray-700 mb-2">
-                            <i class="fas fa-phone mr-2 text-green-600"></i>Phone Number
-                        </label>
+                    <div class="mb-6">
+                        <label for="editPhone" class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
                         <input type="tel" id="editPhone" name="phone" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="Enter phone number (e.g., 081234567890)" required>
                         @error('phone') <span class="text-red-600 text-sm">{{ $message }}</span> @enderror
                     </div>
-                    <div class="mb-6">
-                        <label for="editRole" class="block text-sm font-medium text-gray-700 mb-2">Role</label>
-                        <select id="editRole" name="role" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" disabled>
-                            <option value="super_admin">Super Admin</option>
-                            <option value="supplier">Supplier</option>
-                            <option value="customer">Customer</option>
-                        </select>
-                        <p class="mt-1 text-xs text-gray-500">Note: Role cannot be changed here. Use the role change button instead.</p>
-                    </div>
                     <div class="flex justify-end space-x-3">
-                        <button type="button" onclick="closeEditUserModal()" class="px-4 py-2 text-gray-700 bg-gray-200 rounded hover:bg-gray-300">Batal</button>
-                        <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Simpan</button>
+                        <button type="button" onclick="closeEditUserModal()" class="px-4 py-2 text-gray-700 bg-gray-200 rounded hover:bg-gray-300">Cancel</button>
+                        <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Save</button>
                     </div>
                 </form>
             </div>
@@ -305,30 +301,34 @@
     </div>
 </div>
 
-<!-- Modal untuk Ubah Password -->
-<div id="changePasswordModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden">
-    <div class="flex items-center justify-center p-4">
-        <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
+<!-- Change Password Modal -->
+<div id="changePasswordModal" class="fixed inset-0 z-[100] hidden" style="display: none;">
+    <!-- Background overlay - covers full viewport including sidebar -->
+    <div class="fixed inset-0 transition-opacity" style="background-color: rgba(0, 0, 0, 0.5); left: 0; right: 0; top: 0; bottom: 0;" onclick="closePasswordModal()"></div>
+
+    <!-- Modal panel - centered in area after sidebar -->
+    <div class="fixed inset-0 flex items-center justify-center p-4 pointer-events-none" id="changePasswordModalContainer">
+        <div class="bg-white bg-opacity-90 backdrop-blur-lg rounded-lg shadow-xl max-w-md w-full border border-white border-opacity-30 pointer-events-auto transform transition-all" onclick="event.stopPropagation()">
             <div class="p-6">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">Ubah Password</h3>
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Change Password</h3>
                 <form>
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Password Baru</label>
-                        <input type="password" id="newPassword" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="Masukkan password baru">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">New Password</label>
+                        <input type="password" id="newPassword" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="Enter new password">
                     </div>
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Konfirmasi Password</label>
-                        <input type="password" id="confirmPassword" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="Konfirmasi password baru">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Confirm Password</label>
+                        <input type="password" id="confirmPassword" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="Confirm new password">
                     </div>
                     <div class="mb-6">
                         <div class="flex items-center">
                             <input type="checkbox" id="showPassword" class="mr-2">
-                            <label for="showPassword" class="text-sm text-gray-700">Tampilkan password</label>
+                            <label for="showPassword" class="text-sm text-gray-700">Show password</label>
                         </div>
                     </div>
                     <div class="flex justify-end space-x-3">
-                        <button type="button" onclick="closePasswordModal()" class="px-4 py-2 text-gray-700 bg-gray-200 rounded hover:bg-gray-300">Batal</button>
-                        <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Ubah Password</button>
+                        <button type="button" onclick="closePasswordModal()" class="px-4 py-2 text-gray-700 bg-gray-200 rounded hover:bg-gray-300">Cancel</button>
+                        <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Change Password</button>
                     </div>
                 </form>
             </div>
@@ -336,40 +336,28 @@
     </div>
 </div>
 
-<!-- Modal untuk Ubah Role -->
-<div id="changeRoleModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden">
-    <div class="flex items-center justify-center p-4">
-        <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
+<!-- Confirm Modal -->
+<div id="confirmModal" class="fixed inset-0 z-[100] hidden" style="display: none;">
+    <!-- Background overlay - covers full viewport including sidebar -->
+    <div class="fixed inset-0 transition-opacity" style="background-color: rgba(0, 0, 0, 0.5); left: 0; right: 0; top: 0; bottom: 0;" onclick="closeConfirmModal()"></div>
+
+    <!-- Modal panel - centered in area after sidebar -->
+    <div class="fixed inset-0 flex items-center justify-center p-4 pointer-events-none" id="confirmModalContainer">
+        <div class="bg-white bg-opacity-90 backdrop-blur-lg rounded-lg shadow-xl max-w-md w-full border border-white border-opacity-30 pointer-events-auto transform transition-all" onclick="event.stopPropagation()">
             <div class="p-6">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">Ubah Role</h3>
-                <form>
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">User</label>
-                        <input type="text" id="userName" class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100" readonly>
+                <div class="flex items-center mb-4">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-exclamation-triangle text-orange-500 text-2xl"></i>
                     </div>
-                    <div class="mb-6">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Role Baru</label>
-                        <select id="newRole" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
-                            <option value="super_admin">Super Admin</option>
-                            <option value="supplier">Supplier</option>
-                            <option value="customer">Customer</option>
-                        </select>
+                    <div class="ml-3">
+                        <h3 class="text-lg font-semibold text-gray-900">Confirm Action</h3>
                     </div>
-                    <div class="mb-6">
-                        <div class="bg-yellow-50 border border-yellow-200 rounded-md p-3">
-                            <div class="flex">
-                                <i class="fas fa-exclamation-triangle text-yellow-400 mr-2 mt-0.5"></i>
-                                <div class="text-sm text-yellow-800">
-                                    <strong>Peringatan:</strong> Mengubah role akan mempengaruhi akses user ke sistem. Pastikan role yang dipilih sesuai dengan kebutuhan.
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="flex justify-end space-x-3">
-                        <button type="button" onclick="closeRoleModal()" class="px-4 py-2 text-gray-700 bg-gray-200 rounded hover:bg-gray-300">Batal</button>
-                        <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Ubah Role</button>
-                    </div>
-                </form>
+                </div>
+                <p id="confirmMessage" class="text-sm text-gray-600 mb-6"></p>
+                <div class="flex justify-end space-x-3">
+                    <button type="button" onclick="closeConfirmModal()" class="px-4 py-2 text-gray-700 bg-gray-200 rounded hover:bg-gray-300">Cancel</button>
+                    <button type="button" onclick="executeConfirmAction()" class="px-4 py-2 bg-orange-600 text-white rounded hover:bg-orange-700">Confirm</button>
+                </div>
             </div>
         </div>
     </div>
@@ -378,13 +366,54 @@
 <!-- JavaScript Functions -->
 <script>
 function openAddUserModal() {
-    document.getElementById('addUserModal').classList.remove('hidden');
+    const modal = document.getElementById('addUserModal');
+    if (!modal) {
+        console.error('Add user modal not found');
+        return;
+    }
+    
+    // Calculate center position considering sidebar on desktop
+    const isDesktop = window.innerWidth >= 1024; // lg breakpoint
+    const sidebarWidth = isDesktop ? 256 : 0; // 64 * 4 = 256px (lg:w-64)
+    
+    // Get viewport dimensions
+    const viewportWidth = window.innerWidth;
+    
+    // Calculate available width (viewport minus sidebar)
+    const availableWidth = viewportWidth - sidebarWidth;
+    
+    // Center modal in available content area (ignoring sidebar)
+    const modalContainer = document.getElementById('addUserModalContainer');
+    if (modalContainer) {
+        modalContainer.style.left = sidebarWidth + 'px';
+        modalContainer.style.width = availableWidth + 'px';
+    }
+    
+    // Show modal
+    modal.classList.remove('hidden');
+    modal.style.display = 'block';
+    
+    // Disable body scroll
+    document.body.style.overflow = 'hidden';
 }
 
 function closeAddUserModal() {
-    document.getElementById('addUserModal').classList.add('hidden');
+    const modal = document.getElementById('addUserModal');
+    if (!modal) {
+        return;
+    }
+    
+    modal.classList.add('hidden');
+    modal.style.display = 'none';
+    
     // Clear form
-    document.getElementById('addUserModal').querySelector('form').reset();
+    const form = modal.querySelector('form');
+    if (form) {
+        form.reset();
+    }
+    
+    // Enable body scroll
+    document.body.style.overflow = '';
 }
 
 function editUser(userId) {
@@ -404,36 +433,131 @@ function editUser(userId) {
     document.getElementById('editName').value = userData.name;
     document.getElementById('editEmail').value = userData.email;
     document.getElementById('editPhone').value = userData.phone;
-    document.getElementById('editRole').value = userData.role;
 
     // Set form action
     document.getElementById('editUserForm').action = `/admin/users/${userData.id}`;
 
     // Show modal
-    document.getElementById('editUserModal').classList.remove('hidden');
+    const modal = document.getElementById('editUserModal');
+    if (!modal) {
+        console.error('Edit user modal not found');
+        return;
+    }
+    
+    // Calculate center position considering sidebar on desktop
+    const isDesktop = window.innerWidth >= 1024; // lg breakpoint
+    const sidebarWidth = isDesktop ? 256 : 0; // 64 * 4 = 256px (lg:w-64)
+    
+    // Get viewport dimensions
+    const viewportWidth = window.innerWidth;
+    
+    // Calculate available width (viewport minus sidebar)
+    const availableWidth = viewportWidth - sidebarWidth;
+    
+    // Center modal in available content area (ignoring sidebar)
+    const modalContainer = document.getElementById('editUserModalContainer');
+    if (modalContainer) {
+        modalContainer.style.left = sidebarWidth + 'px';
+        modalContainer.style.width = availableWidth + 'px';
+    }
+    
+    modal.classList.remove('hidden');
+    modal.style.display = 'block';
+    
+    // Disable body scroll
+    document.body.style.overflow = 'hidden';
 }
 
 function closeEditUserModal() {
-    document.getElementById('editUserModal').classList.add('hidden');
-    document.getElementById('editUserForm').reset();
+    const modal = document.getElementById('editUserModal');
+    if (!modal) {
+        return;
+    }
+    
+    modal.classList.add('hidden');
+    modal.style.display = 'none';
+    
+    const form = document.getElementById('editUserForm');
+    if (form) {
+        form.reset();
+    }
+    
+    // Enable body scroll
+    document.body.style.overflow = '';
 }
 
 function changePassword(userId) {
-    document.getElementById('changePasswordModal').classList.remove('hidden');
-    // Implement change password logic
+    const modal = document.getElementById('changePasswordModal');
+    if (!modal) {
+        console.error('Change password modal not found');
+        return;
+    }
+    
+    // Calculate center position considering sidebar on desktop
+    const isDesktop = window.innerWidth >= 1024; // lg breakpoint
+    const sidebarWidth = isDesktop ? 256 : 0; // 64 * 4 = 256px (lg:w-64)
+    
+    // Get viewport dimensions
+    const viewportWidth = window.innerWidth;
+    
+    // Calculate available width (viewport minus sidebar)
+    const availableWidth = viewportWidth - sidebarWidth;
+    
+    // Center modal in available content area (ignoring sidebar)
+    const modalContainer = document.getElementById('changePasswordModalContainer');
+    if (modalContainer) {
+        modalContainer.style.left = sidebarWidth + 'px';
+        modalContainer.style.width = availableWidth + 'px';
+    }
+    
+    // Show modal
+    modal.classList.remove('hidden');
+    modal.style.display = 'block';
+    
+    // Disable body scroll
+    document.body.style.overflow = 'hidden';
+    
+    // TODO: Implement change password logic
 }
 
-function changeRole(userId) {
-    // Get user data and populate modal
-    const userName = document.querySelector(`tr[data-user-id="${userId}"] td:nth-child(2)`).textContent;
-    document.getElementById('userName').value = userName;
-    document.getElementById('changeRoleModal').classList.remove('hidden');
-}
-
-function deleteUser(userId) {
-    showConfirmModal('Are you sure you want to delete this user? This action cannot be undone.', function() {
-        // Implement delete user logic
-        showNotification('User deleted successfully', 'success');
+function toggleUserStatus(userId, isActive) {
+    const action = isActive ? 'disable' : 'enable';
+    const message = `Are you sure you want to ${action} this user account? ${isActive ? 'The user will not be able to login.' : 'The user will be able to login again.'}`;
+    
+    showConfirmModal(message, function() {
+        // Get CSRF token
+        let csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+        if (!csrfToken) {
+            // Fallback: try to get from existing form
+            const existingForm = document.querySelector('form[method="POST"]');
+            if (existingForm) {
+                const existingToken = existingForm.querySelector('input[name="_token"]');
+                if (existingToken) {
+                    csrfToken = existingToken.value;
+                }
+            }
+        }
+        
+        if (!csrfToken) {
+            alert('CSRF token not found. Please refresh the page and try again.');
+            return;
+        }
+        
+        // Create form and submit
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/admin/users/${userId}/toggle-status`;
+        form.style.display = 'none';
+        
+        // Add CSRF token
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = '_token';
+        csrfInput.value = csrfToken;
+        form.appendChild(csrfInput);
+        
+        document.body.appendChild(form);
+        form.submit();
     });
 }
 
@@ -478,7 +602,29 @@ function showConfirmModal(message, callback) {
     if (modal && messageEl) {
         messageEl.textContent = message;
         confirmCallback = callback;
+        
+        // Calculate center position considering sidebar on desktop
+        const isDesktop = window.innerWidth >= 1024; // lg breakpoint
+        const sidebarWidth = isDesktop ? 256 : 0; // 64 * 4 = 256px (lg:w-64)
+        
+        // Get viewport dimensions
+        const viewportWidth = window.innerWidth;
+        
+        // Calculate available width (viewport minus sidebar)
+        const availableWidth = viewportWidth - sidebarWidth;
+        
+        // Center modal in available content area (ignoring sidebar)
+        const modalContainer = document.getElementById('confirmModalContainer');
+        if (modalContainer) {
+            modalContainer.style.left = sidebarWidth + 'px';
+            modalContainer.style.width = availableWidth + 'px';
+        }
+        
         modal.classList.remove('hidden');
+        modal.style.display = 'block';
+        
+        // Disable body scroll
+        document.body.style.overflow = 'hidden';
     }
 }
 
@@ -486,7 +632,11 @@ function closeConfirmModal() {
     const modal = document.getElementById('confirmModal');
     if (modal) {
         modal.classList.add('hidden');
+        modal.style.display = 'none';
         confirmCallback = null;
+        
+        // Enable body scroll
+        document.body.style.overflow = '';
     }
 }
 
@@ -502,15 +652,25 @@ function closeModal() {
 }
 
 function closePasswordModal() {
-    document.getElementById('changePasswordModal').classList.add('hidden');
+    const modal = document.getElementById('changePasswordModal');
+    if (!modal) {
+        return;
+    }
+    
+    modal.classList.add('hidden');
+    modal.style.display = 'none';
+    
     // Clear form
-    document.getElementById('newPassword').value = '';
-    document.getElementById('confirmPassword').value = '';
-    document.getElementById('showPassword').checked = false;
-}
-
-function closeRoleModal() {
-    document.getElementById('changeRoleModal').classList.add('hidden');
+    const newPassword = document.getElementById('newPassword');
+    const confirmPassword = document.getElementById('confirmPassword');
+    const showPassword = document.getElementById('showPassword');
+    
+    if (newPassword) newPassword.value = '';
+    if (confirmPassword) confirmPassword.value = '';
+    if (showPassword) showPassword.checked = false;
+    
+    // Enable body scroll
+    document.body.style.overflow = '';
 }
 
 // Show/Hide Password functionality
@@ -522,24 +682,87 @@ document.addEventListener('DOMContentLoaded', function() {
     if (showPasswordCheckbox) {
         showPasswordCheckbox.addEventListener('change', function() {
             const type = this.checked ? 'text' : 'password';
-            newPasswordInput.type = type;
-            confirmPasswordInput.type = type;
+            if (newPasswordInput) newPasswordInput.type = type;
+            if (confirmPasswordInput) confirmPasswordInput.type = type;
         });
     }
 
     // Password confirmation validation
-    if (confirmPasswordInput) {
+    if (confirmPasswordInput && newPasswordInput) {
         confirmPasswordInput.addEventListener('input', function() {
             const newPassword = newPasswordInput.value;
             const confirmPassword = this.value;
 
             if (newPassword !== confirmPassword) {
-                this.setCustomValidity('Password tidak cocok');
+                this.setCustomValidity('Password does not match');
             } else {
                 this.setCustomValidity('');
             }
         });
     }
+
+    // Close modals on ESC key press
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            // Check which modal is open and close it
+            const addUserModal = document.getElementById('addUserModal');
+            const editUserModal = document.getElementById('editUserModal');
+            const changePasswordModal = document.getElementById('changePasswordModal');
+
+            if (addUserModal && !addUserModal.classList.contains('hidden')) {
+                closeAddUserModal();
+            } else if (editUserModal && !editUserModal.classList.contains('hidden')) {
+                closeEditUserModal();
+            } else if (changePasswordModal && !changePasswordModal.classList.contains('hidden')) {
+                closePasswordModal();
+            }
+            
+            const confirmModal = document.getElementById('confirmModal');
+            if (confirmModal && !confirmModal.classList.contains('hidden')) {
+                closeConfirmModal();
+            }
+        }
+    });
+
+    // Handle window resize to recalculate modal position
+    let resizeTimeout;
+    window.addEventListener('resize', function() {
+        const addUserModal = document.getElementById('addUserModal');
+        const editUserModal = document.getElementById('editUserModal');
+        const changePasswordModal = document.getElementById('changePasswordModal');
+
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(function() {
+            // Recalculate modal position on resize
+            const isDesktop = window.innerWidth >= 1024;
+            const sidebarWidth = isDesktop ? 256 : 0;
+            const viewportWidth = window.innerWidth;
+            const availableWidth = viewportWidth - sidebarWidth;
+
+            // Update all open modals
+            if (addUserModal && !addUserModal.classList.contains('hidden')) {
+                const modalContainer = document.getElementById('addUserModalContainer');
+                if (modalContainer) {
+                    modalContainer.style.left = sidebarWidth + 'px';
+                    modalContainer.style.width = availableWidth + 'px';
+                }
+            }
+            if (editUserModal && !editUserModal.classList.contains('hidden')) {
+                const modalContainer = document.getElementById('editUserModalContainer');
+                if (modalContainer) {
+                    modalContainer.style.left = sidebarWidth + 'px';
+                    modalContainer.style.width = availableWidth + 'px';
+                }
+            }
+            if (changePasswordModal && !changePasswordModal.classList.contains('hidden')) {
+                const modalContainer = document.getElementById('changePasswordModalContainer');
+                if (modalContainer) {
+                    modalContainer.style.left = sidebarWidth + 'px';
+                    modalContainer.style.width = availableWidth + 'px';
+                }
+            }
+        }, 100);
+    });
 });
 </script>
 @endsection

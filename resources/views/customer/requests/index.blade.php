@@ -121,7 +121,7 @@
                                         <a href="{{ route('customer.requests.edit', $request) }}" class="inline-flex items-center px-3 py-1.5 bg-blue-50 text-blue-700 rounded-md hover:bg-blue-100 text-sm font-medium transition-colors">
                                             <i class="fas fa-edit mr-1.5 text-xs"></i>Edit
                                         </a>
-                                        <button onclick="confirmDeleteRequest({{ $request->id }}, '{{ $request->title }}')" class="inline-flex items-center px-3 py-1.5 bg-red-50 text-red-700 rounded-md hover:bg-red-100 text-sm font-medium transition-colors">
+                                        <button onclick="confirmDeleteRequest({{ $request->id }}, {{ json_encode($request->order_number) }}, {{ json_encode($request->title) }})" class="inline-flex items-center px-3 py-1.5 bg-red-50 text-red-700 rounded-md hover:bg-red-100 text-sm font-medium transition-colors">
                                             <i class="fas fa-trash mr-1.5 text-xs"></i>Hapus
                                         </button>
                                     @else
@@ -219,7 +219,7 @@
                                                         <i class="fas fa-edit text-sm"></i>
                                                     </span>
                                                 @endif
-                                                <button onclick="confirmDeleteRequest({{ $request->id }}, '{{ $request->title }}')" class="inline-flex items-center justify-center w-9 h-9 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition-colors" title="Delete">
+                                                <button onclick="confirmDeleteRequest({{ $request->id }}, {{ json_encode($request->order_number) }}, {{ json_encode($request->title) }})" class="inline-flex items-center justify-center w-9 h-9 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition-colors" title="Delete">
                                                     <i class="fas fa-trash text-sm"></i>
                                                 </button>
                                             @else
@@ -266,28 +266,34 @@
 </div>
 
 <!-- Confirmation Modal -->
-<div id="confirmModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-50 hidden items-center justify-center" style="display: none;">
-    <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
-        <div class="p-6">
-            <div class="flex items-center mb-4">
-                <div class="flex items-center justify-center w-12 h-12 rounded-full bg-yellow-100 mr-4">
-                    <i class="fas fa-exclamation-triangle text-yellow-600 text-xl"></i>
+<div id="confirmModal" class="fixed inset-0 z-[100] hidden" style="display: none;">
+    <!-- Background overlay - transparent -->
+    <div class="fixed inset-0 transition-opacity" style="background-color: rgba(0, 0, 0, 0.5);" onclick="closeConfirmModal()"></div>
+
+    <!-- Modal panel - centered -->
+    <div class="fixed inset-0 flex items-center justify-center p-4 pointer-events-none" style="left: 0; right: 0; top: 0; bottom: 0;">
+        <div class="bg-white bg-opacity-70 backdrop-blur-lg rounded-lg shadow-xl max-w-md w-full border border-white border-opacity-30 pointer-events-auto" onclick="event.stopPropagation()">
+            <div class="p-6">
+                <div class="flex items-center mb-4">
+                    <div class="flex items-center justify-center w-12 h-12 rounded-full bg-yellow-100 mr-4">
+                        <i class="fas fa-exclamation-triangle text-yellow-600 text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900">Confirm Delete</h3>
                 </div>
-                <h3 class="text-lg font-semibold text-gray-900">Confirm Delete</h3>
+                <p id="confirmMessage" class="text-gray-600 mb-6"></p>
+                <form id="deleteForm" method="POST" class="inline">
+                    @csrf
+                    @method('DELETE')
+                    <div class="flex justify-end space-x-3">
+                        <button type="button" onclick="closeConfirmModal()" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium">
+                            Cancel
+                        </button>
+                        <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium">
+                            Delete
+                        </button>
+                    </div>
+                </form>
             </div>
-            <p id="confirmMessage" class="text-gray-600 mb-6"></p>
-            <form id="deleteForm" method="POST" class="inline">
-                @csrf
-                @method('DELETE')
-                <div class="flex justify-end space-x-3">
-                    <button type="button" onclick="closeConfirmModal()" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium">
-                        Cancel
-                    </button>
-                    <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium">
-                        Delete
-                    </button>
-                </div>
-            </form>
         </div>
     </div>
 </div>
@@ -489,19 +495,37 @@ function closePaymentProofModal() {
     document.getElementById('paymentProofContent').innerHTML = '<div class="flex items-center justify-center py-8"><div class="text-gray-500"><i class="fas fa-spinner fa-spin text-2xl"></i></div></div>';
 }
 
-function confirmDeleteRequest(id, title) {
+function confirmDeleteRequest(id, orderNumber, title) {
     const modal = document.getElementById('confirmModal');
+    if (!modal) {
+        console.error('Confirm modal not found');
+        return;
+    }
+    
     document.getElementById('confirmMessage').textContent = `Are you sure you want to delete "${title}"? This action cannot be undone.`;
-    document.getElementById('deleteForm').action = `/customer/requests/${id}`;
+    // Use order_number for route since FoodRequest uses order_number as route key
+    document.getElementById('deleteForm').action = `/customer/requests/${orderNumber}`;
+    
+    // Show modal
     modal.classList.remove('hidden');
-    modal.style.display = 'flex';
+    modal.style.display = 'block';
+    
+    // Disable body scroll
+    document.body.style.overflow = 'hidden';
 }
 
 function closeConfirmModal() {
     const modal = document.getElementById('confirmModal');
+    if (!modal) {
+        return;
+    }
+    
     modal.classList.add('hidden');
     modal.style.display = 'none';
     document.getElementById('deleteForm').action = '';
+    
+    // Enable body scroll
+    document.body.style.overflow = '';
 }
 
 // Initialize file upload handlers after page load

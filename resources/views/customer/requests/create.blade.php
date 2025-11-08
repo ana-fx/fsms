@@ -17,14 +17,9 @@
             <div class="w-full py-8">
                 <!-- Header -->
                 <div class="mb-8 px-4 sm:px-6 lg:px-8">
-                    <div class="flex items-center">
-                        <a href="{{ route('customer.requests.index') }}" class="text-gray-500 hover:text-gray-700 mr-4">
-                            <i class="fas fa-arrow-left text-xl"></i>
-                        </a>
-                        <div>
-                            <h1 class="text-3xl font-bold text-gray-900">Create Custom Request</h1>
-                            <p class="mt-2 text-gray-600">Submit a custom ingredient request manually</p>
-                        </div>
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-900">Create Custom Request</h1>
+                        <p class="mt-2 text-gray-600">Submit a custom ingredient request manually</p>
                     </div>
                 </div>
 

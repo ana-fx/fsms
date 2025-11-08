@@ -127,15 +127,26 @@
                                                 @if($order->description)
                                                     <div class="text-sm text-gray-600">{{ Str::limit($order->description, 60) }}</div>
                                                 @endif
+                                                @if($order->foodCategory)
+                                                    <div class="text-xs text-gray-500 mt-1">{{ $order->foodCategory->name }}</div>
+                                                @endif
                                             </td>
                                             <td class="border border-gray-300 px-4 py-3 text-center text-gray-700">
                                                 {{ number_format($order->quantity, 2) }} {{ $order->unit }}
                                             </td>
                                             <td class="border border-gray-300 px-4 py-3 text-right text-gray-700">
-                                                N/A
+                                                @if($order->price)
+                                                    Rp {{ number_format($order->price, 0, ',', '.') }}
+                                                @else
+                                                    N/A
+                                                @endif
                                             </td>
                                             <td class="border border-gray-300 px-4 py-3 text-right font-semibold text-gray-900">
-                                                N/A
+                                                @if($order->price)
+                                                    Rp {{ number_format($order->price * $order->quantity, 0, ',', '.') }}
+                                                @else
+                                                    N/A
+                                                @endif
                                             </td>
                                         </tr>
                                     @endif
@@ -146,6 +157,8 @@
                                         <td class="border border-gray-300 px-4 py-3 text-right font-bold text-xl text-gray-900">
                                             @if($order->foodItem)
                                                 Rp {{ number_format($order->foodItem->price * $order->quantity, 0, ',', '.') }}
+                                            @elseif($order->price)
+                                                Rp {{ number_format($order->price * $order->quantity, 0, ',', '.') }}
                                             @else
                                                 N/A
                                             @endif
@@ -174,6 +187,22 @@
                                 @if($order->payment_proof_uploaded_at)
                                     <p class="text-xs text-gray-500 mt-2">Uploaded: {{ $order->payment_proof_uploaded_at->format('d M Y H:i') }}</p>
                                 @endif
+                                @php
+                                    // Extract payment notes from notes field
+                                    $paymentNotes = null;
+                                    if ($order->notes) {
+                                        // Match "Payment Notes: " followed by content until "Delivery Notes:" or end of string
+                                        if (preg_match('/Payment Notes:\s*(.+?)(?:\n\nDelivery Notes:|$)/s', $order->notes, $matches)) {
+                                            $paymentNotes = trim($matches[1]);
+                                        }
+                                    }
+                                @endphp
+                                @if($paymentNotes)
+                                    <div class="mt-3 pt-3 border-t border-gray-300">
+                                        <p class="text-sm font-medium text-gray-700 mb-1">Payment Notes:</p>
+                                        <p class="text-sm text-gray-600 whitespace-pre-wrap">{{ $paymentNotes }}</p>
+                                    </div>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -191,44 +220,63 @@
                                 @if($order->received_proof_uploaded_at)
                                     <p class="text-xs text-gray-500 mt-2">Uploaded: {{ $order->received_proof_uploaded_at->format('d M Y H:i') }}</p>
                                 @endif
+                                @php
+                                    // Extract delivery notes from notes field
+                                    $deliveryNotes = null;
+                                    if ($order->notes) {
+                                        // Match "Delivery Notes: " followed by content until end of string
+                                        if (preg_match('/Delivery Notes:\s*(.+?)$/s', $order->notes, $matches)) {
+                                            $deliveryNotes = trim($matches[1]);
+                                        }
+                                    }
+                                @endphp
+                                @if($deliveryNotes)
+                                    <div class="mt-3 pt-3 border-t border-gray-300">
+                                        <p class="text-sm font-medium text-gray-700 mb-1">Received Items Notes:</p>
+                                        <p class="text-sm text-gray-600 whitespace-pre-wrap">{{ $deliveryNotes }}</p>
+                                    </div>
+                                @endif
                             </div>
                         @endif
 
                         @if($order->status === 'paid')
-                            <form method="POST" action="{{ route('supplier.orders.upload-delivery-proof', $order) }}" enctype="multipart/form-data" class="space-y-4">
-                                @csrf
-                                <div>
-                                    <label for="received_proof" class="block text-sm font-medium text-gray-700 mb-2">
-                                        Upload Received Items Proof <span class="text-red-500">*</span>
-                                    </label>
-                                    <input type="file"
-                                           id="received_proof"
-                                           name="received_proof"
-                                           accept="image/*,.pdf"
-                                           class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-600 file:text-white hover:file:bg-green-700 file:cursor-pointer"
-                                           required>
-                                    <p class="text-xs text-gray-500 mt-1">Accepted formats: JPG, PNG, PDF (Max 5MB)</p>
-                                    @error('received_proof')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
-                                </div>
-                                <div>
-                                    <label for="delivery_notes" class="block text-sm font-medium text-gray-700 mb-2">
-                                        Notes (Optional)
-                                    </label>
-                                    <textarea name="delivery_notes"
-                                              id="delivery_notes"
-                                              rows="3"
-                                              class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                                              placeholder="Add any additional notes about receiving the items..."></textarea>
-                                    @error('delivery_notes')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
-                                </div>
-                                <button type="submit" class="w-full bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold">
-                                    <i class="fas fa-upload mr-2"></i>Upload Received Items Proof
-                                </button>
-                            </form>
+                            <!-- Upload Form (Only shown if no received_proof exists) -->
+                            <div id="uploadReceivedProofForm{{ $order->id }}" class="{{ $order->received_proof ? 'hidden' : '' }}">
+                                <form method="POST" action="{{ route('supplier.orders.upload-delivery-proof', $order) }}" enctype="multipart/form-data" class="space-y-4">
+                                    @csrf
+                                    <div>
+                                        <label for="received_proof" class="block text-sm font-medium text-gray-700 mb-2">
+                                            Upload Received Items Proof <span class="text-red-500">*</span>
+                                        </label>
+                                        <input type="file"
+                                               id="received_proof"
+                                               name="received_proof"
+                                               accept="image/*,.pdf"
+                                               class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-600 file:text-white hover:file:bg-green-700 file:cursor-pointer"
+                                               required>
+                                        <p class="text-xs text-gray-500 mt-1">Accepted formats: JPG, PNG, PDF (Max 5MB)</p>
+                                        @error('received_proof')
+                                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                    <div>
+                                        <label for="delivery_notes" class="block text-sm font-medium text-gray-700 mb-2">
+                                            Notes (Optional)
+                                        </label>
+                                        <textarea name="delivery_notes"
+                                                  id="delivery_notes"
+                                                  rows="3"
+                                                  class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                                                  placeholder="Add any additional notes about receiving the items..."></textarea>
+                                        @error('delivery_notes')
+                                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                    <button type="submit" class="w-full bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold">
+                                        <i class="fas fa-upload mr-2"></i>Upload Received Items Proof
+                                    </button>
+                                </form>
+                            </div>
                         @else
                             <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
                                     <p class="text-sm text-gray-600">

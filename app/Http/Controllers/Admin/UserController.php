@@ -17,7 +17,9 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::with('roles')->paginate(10);
+        // Get all users with roles
+        // Note: Using get() instead of paginate() to show all users
+        $users = User::with('roles')->get();
 
         return view('admin.users', compact('users'));
     }
@@ -42,6 +44,7 @@ class UserController extends Controller
             'phone' => $validated['phone'],
             'password' => Hash::make($validated['password']),
             'email_verified_at' => now(),
+            'is_active' => true,
         ]);
 
         // Assign role
@@ -78,21 +81,23 @@ class UserController extends Controller
     }
 
     /**
-     * Remove the specified user from storage.
+     * Toggle user account status (enable/disable).
      */
-    public function destroy($id)
+    public function toggleStatus($id)
     {
-        // Prevent deleting yourself
+        // Prevent disabling yourself
         if ($id == IlluminateAuth::id()) {
             return redirect()->route('admin.users')
-                ->with('error', 'Anda tidak dapat menghapus akun sendiri!');
+                ->with('error', 'You cannot disable your own account!');
         }
 
         $user = User::findOrFail($id);
-        $user->delete();
+        $user->is_active = !$user->is_active;
+        $user->save();
 
+        $status = $user->is_active ? 'enabled' : 'disabled';
         return redirect()->route('admin.users')
-            ->with('success', 'User berhasil dihapus!');
+            ->with('success', "User account has been {$status} successfully!");
     }
 
     /**
@@ -113,28 +118,5 @@ class UserController extends Controller
             ->with('success', 'Password berhasil diubah!');
     }
 
-    /**
-     * Change user role.
-     */
-    public function changeRole(Request $request, $id)
-    {
-        $validated = $request->validate([
-            'role' => ['required', 'string', 'in:super_admin,supplier,customer'],
-        ]);
-
-        $user = User::findOrFail($id);
-
-        // Remove all existing roles
-        $user->roles()->detach();
-
-        // Assign new role
-        $role = Role::where('name', $validated['role'])->first();
-        if ($role) {
-            $user->roles()->attach($role->id);
-        }
-
-        return redirect()->route('admin.users')
-            ->with('success', 'Role berhasil diubah!');
-    }
 }
 

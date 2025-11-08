@@ -38,6 +38,7 @@ class UserSeeder extends Seeder
                 'phone' => '081234567800',
                 'password' => Hash::make('admin@fsms.com'),
                 'email_verified_at' => now(),
+                'is_active' => true,
             ]
         );
         $admin->assignRole('super_admin');
@@ -51,6 +52,7 @@ class UserSeeder extends Seeder
                 'phone' => '081234567801',
                 'password' => Hash::make('supplier@fsms.com'),
                 'email_verified_at' => now(),
+                'is_active' => true,
             ]
         );
         $supplier->assignRole('supplier');
@@ -83,6 +85,7 @@ class UserSeeder extends Seeder
                     'phone' => $supplierData['phone'],
                     'password' => Hash::make($supplierData['email']),
                     'email_verified_at' => now(),
+                    'is_active' => true,
                 ]
             );
             $newSupplier->assignRole('supplier');
@@ -97,6 +100,7 @@ class UserSeeder extends Seeder
                 'phone' => '081234567890',
                 'password' => Hash::make('customer@fsms.com'),
                 'email_verified_at' => now(),
+                'is_active' => true,
             ]
         );
         $customer->assignRole('customer');
@@ -204,6 +208,7 @@ class UserSeeder extends Seeder
                     'phone' => $customerData['phone'],
                     'password' => Hash::make($customerData['email']),
                     'email_verified_at' => now(),
+                    'is_active' => true,
                 ]
             );
             $newCustomer->assignRole('customer');

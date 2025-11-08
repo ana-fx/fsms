@@ -9,6 +9,7 @@
         'customer.requests.checkout',
         'customer.requests.show',
         'customer.requests.edit',
+        'customer.purchase-report',
         'customer.settings.account',
         'customer.settings.delivery-addresses',
         'customer.settings.account.password',

@@ -33,103 +33,122 @@
     </div>
 
     <!-- Navigation Menu -->
-    <nav class="mt-6 flex-1 overflow-y-auto">
-        <div class="px-4 space-y-4">
-            <!-- Main Section -->
-            <div class="space-y-1">
+    <nav class="flex-1 overflow-y-auto py-4">
+        <div class="space-y-1 px-3">
+            <!-- Dashboard -->
             <a href="{{ route('customer.dashboard') }}"
-               class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('customer.dashboard') ? 'bg-green-100 text-green-700 border-r-2 border-green-600' : 'text-gray-700 hover:bg-gray-100 hover:text-green-600' }}">
-                    <i class="fas fa-home mr-3 text-lg"></i>
-                Dashboard
+               class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('customer.dashboard') ? 'bg-green-50 text-green-700 border-r-2 border-green-600 shadow-sm' : 'text-gray-700 hover:bg-gray-50 hover:text-green-600' }}">
+                <i class="fas fa-home w-5 text-center mr-3"></i>
+                <span>Dashboard</span>
             </a>
-                <a href="{{ route('customer.requests.index') }}"
-                   class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('customer.requests.index') || request()->routeIs('customer.requests.show') || request()->routeIs('customer.requests.edit') ? 'bg-green-100 text-green-700 border-r-2 border-green-600' : 'text-gray-700 hover:bg-gray-100 hover:text-green-600' }}">
-                    <i class="fas fa-list-alt mr-3 text-lg"></i>
-                    Requests
-                    @php
-                        $pendingPaymentCount = \App\Models\FoodRequest::where('customer_id', auth()->id())
-                            ->where('status', 'payment_pending')
-                            ->count();
-                    @endphp
-                    @if($pendingPaymentCount > 0)
-                        <span class="ml-auto bg-orange-500 text-white text-xs font-semibold px-2 py-1 rounded-full animate-pulse" title="{{ $pendingPaymentCount }} payment(s) pending">
-                            <i class="fas fa-exclamation-circle mr-1"></i>{{ $pendingPaymentCount }}
-                        </span>
-                    @endif
-                </a>
-                <a href="{{ route('customer.requests.custom.create') }}"
-                   class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('customer.requests.custom.*') ? 'bg-green-100 text-green-700 border-r-2 border-green-600' : 'text-gray-700 hover:bg-gray-100 hover:text-green-600' }}">
-                    <i class="fas fa-plus-circle mr-3 text-lg"></i>
-                    Custom Request
-                </a>
-            </div>
+
+            <!-- Divider -->
+            <div class="my-3 border-t border-gray-200"></div>
 
             <!-- Shopping Section -->
-            <div class="space-y-1">
-                <div class="px-4 py-2">
-                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Shopping</p>
-                </div>
-                <a href="{{ route('customer.ingredients') }}"
-                   class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('customer.ingredients') ? 'bg-green-100 text-green-700 border-r-2 border-green-600' : 'text-gray-700 hover:bg-gray-100 hover:text-green-600' }}">
-                    <i class="fas fa-box mr-3 text-lg"></i>
-                    Ingredients
-                </a>
-                <a href="{{ route('customer.cart') }}"
-                   class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('customer.cart') ? 'bg-green-100 text-green-700 border-r-2 border-green-600' : 'text-gray-700 hover:bg-gray-100 hover:text-green-600' }}">
-                    <i class="fas fa-shopping-cart mr-3 text-lg"></i>
-                    Cart
-                    @php
-                        $cartCount = array_sum(array_column(session('cart', []), 'quantity'));
-                    @endphp
-                    @if($cartCount > 0)
-                        <span id="cart-badge" class="ml-auto bg-green-600 text-white text-xs font-semibold px-2 py-1 rounded-full">{{ $cartCount }}</span>
-                    @else
-                        <span id="cart-badge" class="hidden ml-auto bg-green-600 text-white text-xs font-semibold px-2 py-1 rounded-full">0</span>
-                    @endif
-                </a>
+            <div class="px-3 mb-2">
+                <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Shopping</p>
+                    </div>
+            
+            <a href="{{ route('customer.ingredients') }}"
+               class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('customer.ingredients') ? 'bg-green-50 text-green-700 border-r-2 border-green-600 shadow-sm' : 'text-gray-700 hover:bg-gray-50 hover:text-green-600' }}">
+                <i class="fas fa-box w-5 text-center mr-3"></i>
+                <span>Ingredients</span>
+            </a>
+            
+            <a href="{{ route('customer.cart') }}"
+               class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('customer.cart') ? 'bg-green-50 text-green-700 border-r-2 border-green-600 shadow-sm' : 'text-gray-700 hover:bg-gray-50 hover:text-green-600' }}">
+                <i class="fas fa-shopping-cart w-5 text-center mr-3"></i>
+                <span>Cart</span>
+                @php
+                    $cartCount = array_sum(array_column(session('cart', []), 'quantity'));
+                @endphp
+                @if($cartCount > 0)
+                    <span id="cart-badge" class="ml-auto bg-green-600 text-white text-xs font-bold px-2 py-0.5 rounded-full min-w-[20px] text-center">{{ $cartCount }}</span>
+                @else
+                    <span id="cart-badge" class="hidden ml-auto bg-green-600 text-white text-xs font-bold px-2 py-0.5 rounded-full min-w-[20px] text-center">0</span>
+                @endif
+            </a>
+
+            <!-- Divider -->
+            <div class="my-3 border-t border-gray-200"></div>
+
+            <!-- Orders Section -->
+            <div class="px-3 mb-2">
+                <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Orders</p>
             </div>
 
-            <!-- Settings Section -->
-            <div class="space-y-1">
-                <div class="px-4 py-2">
-                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Settings</p>
-                </div>
+            <a href="{{ route('customer.requests.index') }}"
+               class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('customer.requests.index') || request()->routeIs('customer.requests.show') || request()->routeIs('customer.requests.edit') ? 'bg-green-50 text-green-700 border-r-2 border-green-600 shadow-sm' : 'text-gray-700 hover:bg-gray-50 hover:text-green-600' }}">
+                <i class="fas fa-list-alt w-5 text-center mr-3"></i>
+                <span>My Requests</span>
                 @php
-                    $isSettingsActive = request()->routeIs('customer.settings.*');
+                    $pendingPaymentCount = \App\Models\FoodRequest::where('customer_id', auth()->id())
+                        ->where('status', 'payment_pending')
+                        ->count();
                 @endphp
-                <div class="space-y-1">
-                    <button class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ $isSettingsActive ? 'bg-green-100 text-green-700 border-r-2 border-green-600' : 'text-gray-700 hover:bg-gray-100 hover:text-green-600' }}"
-                            onclick="toggleSubmenu('settings')">
-                    <div class="flex items-center">
-                            <i class="fas fa-cog mr-3 text-lg"></i>
-                            Settings
-                        </div>
-                        <i class="fas fa-chevron-down text-xs transition-transform {{ $isSettingsActive ? 'rotate-180' : '' }}" id="settings-arrow"></i>
-                    </button>
-                    <div id="settings-submenu" class="{{ $isSettingsActive ? '' : 'hidden' }} ml-8 space-y-1">
-                        <a href="{{ route('customer.settings.account') }}"
-                           class="block px-4 py-2 text-sm text-gray-600 hover:text-green-600 hover:bg-gray-50 rounded transition-colors {{ request()->routeIs('customer.settings.account') ? 'text-green-600 bg-green-50 font-medium' : '' }}">
-                            <i class="fas fa-user-circle mr-2"></i>
-                            Account Settings
-                        </a>
-                        <a href="{{ route('customer.settings.delivery-addresses') }}"
-                           class="block px-4 py-2 text-sm text-gray-600 hover:text-green-600 hover:bg-gray-50 rounded transition-colors {{ request()->routeIs('customer.settings.delivery-addresses') ? 'text-green-600 bg-green-50 font-medium' : '' }}">
-                            <i class="fas fa-map-marker-alt mr-2"></i>
-                            Delivery Addresses
-                        </a>
-                    </div>
+                @if($pendingPaymentCount > 0)
+                    <span class="ml-auto bg-orange-500 text-white text-xs font-bold px-2 py-0.5 rounded-full min-w-[20px] text-center animate-pulse" title="{{ $pendingPaymentCount }} payment(s) pending">
+                        {{ $pendingPaymentCount }}
+                    </span>
+                @endif
+            </a>
+            
+            <a href="{{ route('customer.requests.custom.create') }}"
+               class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('customer.requests.custom.*') ? 'bg-green-50 text-green-700 border-r-2 border-green-600 shadow-sm' : 'text-gray-700 hover:bg-gray-50 hover:text-green-600' }}">
+                <i class="fas fa-plus-circle w-5 text-center mr-3"></i>
+                <span>Custom Request</span>
+            </a>
+            
+            <a href="{{ route('customer.purchase-report') }}"
+               class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('customer.purchase-report') ? 'bg-green-50 text-green-700 border-r-2 border-green-600 shadow-sm' : 'text-gray-700 hover:bg-gray-50 hover:text-green-600' }}">
+                <i class="fas fa-chart-line w-5 text-center mr-3"></i>
+                <span>Purchase Report</span>
+            </a>
+
+            <!-- Divider -->
+            <div class="my-3 border-t border-gray-200"></div>
+
+            <!-- Settings Section -->
+            <div class="px-3 mb-2">
+                <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Account</p>
+            </div>
+            
+            @php
+                $isSettingsActive = request()->routeIs('customer.settings.*');
+            @endphp
+            
+            <button class="w-full flex items-center justify-between px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 {{ $isSettingsActive ? 'bg-green-50 text-green-700 border-r-2 border-green-600 shadow-sm' : 'text-gray-700 hover:bg-gray-50 hover:text-green-600' }}"
+                    onclick="toggleSubmenu('settings')">
+                <div class="flex items-center">
+                    <i class="fas fa-cog w-5 text-center mr-3"></i>
+                    <span>Settings</span>
                 </div>
+                <i class="fas fa-chevron-down text-xs transition-transform duration-200 {{ $isSettingsActive ? 'rotate-180' : '' }}" id="settings-arrow"></i>
+            </button>
+            
+            <div id="settings-submenu" class="{{ $isSettingsActive ? '' : 'hidden' }} ml-4 mt-1 space-y-1 border-l-2 border-gray-200 pl-3">
+                <a href="{{ route('customer.settings.account') }}"
+                   class="flex items-center px-3 py-2 text-sm rounded-md transition-all duration-200 {{ request()->routeIs('customer.settings.account') ? 'text-green-600 bg-green-50 font-medium' : 'text-gray-600 hover:text-green-600 hover:bg-gray-50' }}">
+                    <i class="fas fa-user-circle w-4 text-center mr-2 text-xs"></i>
+                    <span>Account</span>
+                </a>
+                <a href="{{ route('customer.settings.delivery-addresses') }}"
+                   class="flex items-center px-3 py-2 text-sm rounded-md transition-all duration-200 {{ request()->routeIs('customer.settings.delivery-addresses') ? 'text-green-600 bg-green-50 font-medium' : 'text-gray-600 hover:text-green-600 hover:bg-gray-50' }}">
+                    <i class="fas fa-map-marker-alt w-4 text-center mr-2 text-xs"></i>
+                    <span>Addresses</span>
+                </a>
             </div>
         </div>
     </nav>
 
     <!-- Logout Section -->
-    <div class="mt-auto p-4 border-t border-gray-200 bg-gray-50 flex-shrink-0">
-        <form method="POST" action="{{ route('logout') }}">
+    <div class="mt-auto border-t border-gray-200 bg-gray-50 flex-shrink-0">
+        <form method="POST" action="{{ route('logout') }}" class="p-3">
             @csrf
-            <button type="submit" class="w-full flex items-center px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors">
-                <i class="fas fa-sign-out-alt mr-3"></i>
-                Keluar
+            <button type="submit" class="w-full flex items-center px-3 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200">
+                <i class="fas fa-sign-out-alt w-5 text-center mr-3"></i>
+                <span>Logout</span>
             </button>
         </form>
     </div>

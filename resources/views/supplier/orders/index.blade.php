@@ -78,6 +78,9 @@
                                                     </div>
                                                 @else
                                                     <div class="text-sm font-medium text-gray-900">{{ $order->title }}</div>
+                                                    @if($order->price)
+                                                        <div class="text-xs text-gray-500">Rp {{ number_format($order->price, 0, ',', '.') }}/{{ $order->unit }}</div>
+                                                    @endif
                                                 @endif
                                             </div>
                                         </td>
@@ -91,6 +94,8 @@
                                         <td class="px-4 py-3 text-sm text-gray-900 font-semibold">
                                             @if($order->foodItem)
                                                 Rp {{ number_format($order->foodItem->price * $order->quantity, 0, ',', '.') }}
+                                            @elseif($order->price)
+                                                Rp {{ number_format($order->price * $order->quantity, 0, ',', '.') }}
                                             @else
                                                 N/A
                                             @endif

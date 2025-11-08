@@ -23,62 +23,64 @@
                     </div>
                 </div>
 
-                <!-- Stats Cards -->
-                <div class="grid grid-cols-1 md:grid-cols-5 gap-4 px-4 sm:px-6 lg:px-8 mb-6">
-                    <div class="bg-white rounded-lg shadow p-4">
-                        <div class="text-sm font-medium text-gray-600">All Requests</div>
-                        <div class="text-2xl font-bold text-gray-900 mt-1">{{ $stats['all'] }}</div>
-                    </div>
-                    <div class="bg-white rounded-lg shadow p-4">
-                        <div class="text-sm font-medium text-yellow-600">Pending</div>
-                        <div class="text-2xl font-bold text-yellow-900 mt-1">{{ $stats['pending'] }}</div>
-                    </div>
-                    <div class="bg-white rounded-lg shadow p-4">
-                        <div class="text-sm font-medium text-blue-600">Payment Pending</div>
-                        <div class="text-2xl font-bold text-blue-900 mt-1">{{ $stats['payment_pending'] }}</div>
-                    </div>
-                    <div class="bg-white rounded-lg shadow p-4">
-                        <div class="text-sm font-medium text-green-600">Paid</div>
-                        <div class="text-2xl font-bold text-green-900 mt-1">{{ $stats['paid'] }}</div>
-                    </div>
-                    <div class="bg-white rounded-lg shadow p-4">
-                        <div class="text-sm font-medium text-red-600">Rejected</div>
-                        <div class="text-2xl font-bold text-red-900 mt-1">{{ $stats['rejected'] }}</div>
-                    </div>
-                </div>
-
-                <!-- Filters and Search -->
-                <div class="bg-white rounded-lg shadow mx-4 sm:mx-6 lg:mx-8 mb-6 p-4">
-                    <form method="GET" action="{{ route('admin.custom-requests.index') }}" class="flex flex-col md:flex-row gap-4">
-                        <div class="flex-1">
-                            <input type="text" name="search" value="{{ request('search') }}"
-                                   placeholder="Search by order number, title, or customer..."
-                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
-                        </div>
-                        <div>
-                            <select name="status" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
-                                <option value="">All Status</option>
-                                <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Pending</option>
-                                <option value="payment_pending" {{ request('status') === 'payment_pending' ? 'selected' : '' }}>Payment Pending</option>
-                                <option value="paid" {{ request('status') === 'paid' ? 'selected' : '' }}>Paid</option>
-                                <option value="rejected" {{ request('status') === 'rejected' ? 'selected' : '' }}>Rejected</option>
-                            </select>
-                        </div>
-                        <button type="submit" class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold">
-                            <i class="fas fa-search mr-2"></i>Search
-                        </button>
-                        @if(request('search') || request('status'))
-                            <a href="{{ route('admin.custom-requests.index') }}" class="px-6 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors font-semibold">
-                                <i class="fas fa-times mr-2"></i>Clear
-                            </a>
-                        @endif
-                    </form>
-                </div>
-
                 <!-- Requests List -->
                 <div class="bg-white rounded-lg shadow mx-4 sm:mx-6 lg:mx-8">
-                    <div class="px-4 sm:px-6 py-4 border-b border-gray-200">
-                        <h3 class="text-lg font-medium text-gray-900">Custom Requests List</h3>
+                    <!-- Filter Section inside table container -->
+                    <div class="px-4 sm:px-6 py-3 border-b border-gray-200">
+                        <form method="GET" action="{{ route('admin.custom-requests.index') }}" class="flex flex-wrap items-end gap-3">
+                            <!-- Status Filter -->
+                            <div class="flex-1 min-w-[120px]">
+                                <label for="status" class="block text-xs font-medium text-gray-600 mb-1">Status</label>
+                                <select name="status" id="status" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-green-500 focus:border-green-500">
+                                    <option value="">All</option>
+                                    <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
+                                    <option value="payment_pending" {{ request('status') == 'payment_pending' ? 'selected' : '' }}>Payment Pending</option>
+                                    <option value="paid" {{ request('status') == 'paid' ? 'selected' : '' }}>Paid</option>
+                                    <option value="rejected" {{ request('status') == 'rejected' ? 'selected' : '' }}>Rejected</option>
+                                </select>
+                            </div>
+
+                            <!-- Date From -->
+                            <div class="flex-1 min-w-[140px]">
+                                <label for="date_from" class="block text-xs font-medium text-gray-600 mb-1">Date From</label>
+                                <input type="date" name="date_from" id="date_from" value="{{ request('date_from') }}" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-green-500 focus:border-green-500">
+                            </div>
+
+                            <!-- Date To -->
+                            <div class="flex-1 min-w-[140px]">
+                                <label for="date_to" class="block text-xs font-medium text-gray-600 mb-1">Date To</label>
+                                <input type="date" name="date_to" id="date_to" value="{{ request('date_to') }}" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-green-500 focus:border-green-500">
+                            </div>
+
+                            <!-- Month/Year Filter -->
+                            <div class="flex-1 min-w-[180px]">
+                                <label for="month" class="block text-xs font-medium text-gray-600 mb-1">Month/Year</label>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <select name="month" id="month" class="px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-green-500 focus:border-green-500">
+                                        <option value="">Month</option>
+                                        @for($i = 1; $i <= 12; $i++)
+                                            <option value="{{ $i }}" {{ request('month') == $i ? 'selected' : '' }}>{{ date('M', mktime(0, 0, 0, $i, 1)) }}</option>
+                                        @endfor
+                                    </select>
+                                    <select name="year" id="year" class="px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-green-500 focus:border-green-500">
+                                        <option value="">Year</option>
+                                        @for($i = date('Y'); $i >= date('Y') - 5; $i--)
+                                            <option value="{{ $i }}" {{ request('year') == $i ? 'selected' : '' }}>{{ $i }}</option>
+                                        @endfor
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="flex items-end gap-2">
+                                <button type="submit" class="bg-green-600 text-white px-3 py-1.5 rounded-md hover:bg-green-700 transition-colors text-sm font-medium">
+                                    <i class="fas fa-filter mr-1"></i>Filter
+                                </button>
+                                <a href="{{ route('admin.custom-requests.index') }}" class="px-3 py-1.5 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors text-sm" title="Reset">
+                                    <i class="fas fa-redo"></i>
+                                </a>
+                            </div>
+                        </form>
                     </div>
 
                     @if($customRequests->count() > 0)
@@ -212,4 +214,3 @@
     </script>
 @endif
 @endsection
-
