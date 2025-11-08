@@ -182,4 +182,8 @@ Route::middleware(['auth', 'role:customer'])->group(function () {
         ->name('customer.settings.delivery-addresses.update');
     Route::delete('/customer/settings/delivery-addresses/{id}', [AccountSettingsController::class, 'deleteAddress'])
         ->name('customer.settings.delivery-addresses.delete');
+
+    // Reports
+    Route::get('/customer/reports/purchases', [\App\Http\Controllers\Customer\PurchaseReportController::class, 'index'])
+        ->name('customer.reports.purchases');
 });
