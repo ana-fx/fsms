@@ -62,6 +62,11 @@
                     <i class="fas fa-plus-circle mr-3 text-lg"></i>
                     Custom Request
                 </a>
+                <a href="{{ route('customer.reports.purchases') }}"
+                   class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('customer.reports.purchases') ? 'bg-green-100 text-green-700 border-r-2 border-green-600' : 'text-gray-700 hover:bg-gray-100 hover:text-green-600' }}">
+                    <i class="fas fa-chart-line mr-3 text-lg"></i>
+                    Purchase Report
+                </a>
             </div>
 
             <!-- Shopping Section -->
