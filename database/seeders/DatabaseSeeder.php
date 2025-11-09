@@ -25,9 +25,6 @@ class DatabaseSeeder extends Seeder
         // Seed ingredients for suppliers
         $this->call(IngredientSeeder::class);
 
-        // Seed max price settings
-        $this->call(MaxPriceSettingSeeder::class);
-
         // User::factory(10)->create();
 
         // User::factory()->create([

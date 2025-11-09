@@ -277,16 +277,17 @@
                                 @foreach($cartItems as $cartItem)
                                     <div class="pb-4 border-b border-gray-200 last:border-0">
                                         <div class="flex items-start space-x-3">
-                                            @if($cartItem['product']->image)
-                                                <img src="{{ asset('storage/' . $cartItem['product']->image) }}"
-                                                     alt="{{ $cartItem['product']->name }}"
-                                                     class="w-16 h-16 object-cover rounded-lg flex-shrink-0">
-                                            @else
-                                                <div class="flex items-center justify-center w-16 h-16 rounded-lg flex-shrink-0"
-                                                     style="background: linear-gradient(135deg, {{ $cartItem['product']->foodCategory->color }}20 0%, {{ $cartItem['product']->foodCategory->color }}40 100%);">
-                                                    <i class="{{ $cartItem['product']->foodCategory->icon }} text-xl" style="color: {{ $cartItem['product']->foodCategory->color }}"></i>
-                                                </div>
-                                            @endif
+                                            <div class="flex items-center justify-center w-16 h-16 rounded-lg flex-shrink-0 overflow-hidden bg-gray-100">
+                                                @if($cartItem['product']->image)
+                                                    <img src="{{ asset('storage/' . $cartItem['product']->image) }}"
+                                                         alt="{{ $cartItem['product']->name }}"
+                                                         class="w-full h-full object-cover">
+                                                @else
+                                                    <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                                                    </svg>
+                                                @endif
+                                            </div>
 
                                             <div class="flex-1 min-w-0">
                                                 <h4 class="font-semibold text-gray-900 mb-1">{{ $cartItem['product']->name }}</h4>
@@ -299,7 +300,7 @@
                                                 </div>
                                                 <div class="flex justify-between items-center">
                                                     <span class="text-sm text-gray-600">
-                                                        {{ $cartItem['quantity'] }} {{ $cartItem['product']->unit }} × Rp {{ number_format($cartItem['product']->price, 0, ',', '.') }}
+                                                        {{ $cartItem['quantity'] }} {{ $cartItem['product']->unit }} × Rp {{ number_format($cartItem['final_price'], 0, ',', '.') }}
                                                     </span>
                                                     <span class="text-lg font-bold text-green-600">
                                                         Rp {{ number_format($cartItem['subtotal'], 0, ',', '.') }}

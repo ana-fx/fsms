@@ -76,7 +76,6 @@
                         <!-- Phone -->
                         <div class="mb-6">
                             <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">
-                                <i class="fas fa-phone mr-2 text-green-600"></i>
                                 Phone Number <span class="text-red-500">*</span>
                             </label>
                             <input type="tel" name="phone" id="phone" value="{{ old('phone', $user->phone) }}"

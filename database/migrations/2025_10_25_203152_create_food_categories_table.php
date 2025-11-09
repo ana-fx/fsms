@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('food_categories', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('parent_id')->nullable();
             $table->string('name');
             $table->string('slug')->unique();
             $table->text('description')->nullable();
@@ -22,6 +23,11 @@ return new class extends Migration
             $table->integer('sort_order')->default(0);
             $table->timestamps();
         });
+
+        // Add foreign key constraint after table is created (self-referencing)
+        Schema::table('food_categories', function (Blueprint $table) {
+            $table->foreign('parent_id')->references('id')->on('food_categories')->onDelete('cascade');
+        });
     }
 
     /**
@@ -29,6 +35,9 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::table('food_categories', function (Blueprint $table) {
+            $table->dropForeign(['parent_id']);
+        });
         Schema::dropIfExists('food_categories');
     }
 };

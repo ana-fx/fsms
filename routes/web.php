@@ -6,7 +6,7 @@ use Laravel\Fortify\Features;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\Admin\MaxPriceController;
+use App\Http\Controllers\Admin\IngredientController as AdminIngredientController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Customer\IngredientController;
 use App\Http\Controllers\Supplier\IngredientController as SupplierIngredientController;
@@ -63,10 +63,10 @@ Route::middleware(['auth', 'role:super_admin'])->group(function () {
     Route::post('/admin/users/{id}/toggle-status', [UserController::class, 'toggleStatus'])->name('admin.users.toggle-status');
     Route::post('/admin/users/{id}/change-password', [UserController::class, 'changePassword'])->name('admin.users.change-password');
 
-    // Max Price Management
-    Route::get('/admin/max-price', [MaxPriceController::class, 'index'])->name('admin.max-price');
-    Route::post('/admin/max-price', [MaxPriceController::class, 'store'])->name('admin.max-price.store');
-    Route::post('/admin/max-price/{id}', [MaxPriceController::class, 'update'])->name('admin.max-price.update');
+    // Ingredients Management
+    Route::get('/admin/max-price', [AdminIngredientController::class, 'index'])->name('admin.max-price');
+    Route::post('/admin/ingredients/{foodItem}/update-price-increment', [AdminIngredientController::class, 'updatePriceIncrement'])->name('admin.ingredients.update-price-increment');
+    Route::post('/admin/ingredients/{foodItem}/update-max-price', [AdminIngredientController::class, 'updateMaxPrice'])->name('admin.ingredients.update-max-price');
 
     // Admin Account Settings Routes
     Route::get('/admin/settings/account', [AdminAccountSettingsController::class, 'index'])
@@ -85,6 +85,12 @@ Route::middleware(['auth', 'role:super_admin'])->group(function () {
         ->name('admin.custom-requests.approve');
     Route::post('/admin/custom-requests/{customRequest}/reject', [\App\Http\Controllers\Admin\CustomRequestController::class, 'reject'])
         ->name('admin.custom-requests.reject');
+
+    // Transaction Report
+    Route::get('/admin/transactions', [\App\Http\Controllers\Admin\TransactionReportController::class, 'index'])
+        ->name('admin.transactions.index');
+    Route::get('/admin/transactions/{transaction}', [\App\Http\Controllers\Admin\TransactionReportController::class, 'show'])
+        ->name('admin.transactions.show');
 });
 
 Route::middleware(['auth', 'role:supplier'])->group(function () {

@@ -29,24 +29,38 @@
                                 <div class="space-y-4">
                                     @foreach($items as $index => $item)
                                         <div class="flex items-start border-b border-gray-200 pb-4 last:border-0" id="cart-item-{{ $item['product']->id }}">
-                                            <!-- Product Icon -->
-                                            <div class="flex items-center justify-center w-20 h-20 rounded-lg mr-4 flex-shrink-0"
-                                                 style="background: linear-gradient(135deg, {{ $item['product']->foodCategory->color }}20 0%, {{ $item['product']->foodCategory->color }}40 100%);">
-                                                <i class="{{ $item['product']->foodCategory->icon }} text-2xl" style="color: {{ $item['product']->foodCategory->color }}"></i>
+                                            <!-- Product Image/Icon -->
+                                            <div class="flex items-center justify-center w-20 h-20 rounded-lg mr-4 flex-shrink-0 overflow-hidden bg-gray-100">
+                                                @if($item['product']->image)
+                                                    <img src="{{ asset('storage/' . $item['product']->image) }}"
+                                                         alt="{{ $item['product']->name }}"
+                                                         class="w-full h-full object-cover">
+                                                @else
+                                                    <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                                                    </svg>
+                                                @endif
                                             </div>
 
                                             <!-- Product Info -->
                                             <div class="flex-1">
                                                 <h3 class="font-semibold text-lg text-gray-900 mb-1">{{ $item['product']->name }}</h3>
                                                 <p class="text-sm text-gray-500 mb-2">{{ Str::limit($item['product']->description, 50) }}</p>
-                                                <p class="text-xs text-blue-600 mb-2">
-                                                    <i class="fas fa-info-circle mr-1"></i>Min. Purchase: {{ $item['product']->min_purchase }} {{ $item['product']->unit }}
-                                                </p>
+                                                <div class="text-xs mb-2 space-y-1">
+                                                    <p class="text-blue-600">
+                                                        <i class="fas fa-info-circle mr-1"></i>Min. Purchase: {{ $item['product']->min_purchase }} {{ $item['product']->unit }}
+                                                    </p>
+                                                    @if($item['product']->max_purchase)
+                                                        <p class="text-red-600">
+                                                            <i class="fas fa-exclamation-circle mr-1"></i>Max. Purchase: {{ $item['product']->max_purchase }} {{ $item['product']->unit }}
+                                                        </p>
+                                                    @endif
+                                                </div>
 
                                                 <div class="flex items-center justify-between">
                                                     <!-- Quantity Control -->
                                                     <div class="flex items-center space-x-3">
-                                                        <button onclick="decrementQuantity({{ $item['product']->id }}, {{ $item['quantity'] }}, {{ $item['product']->min_purchase }})"
+                                                        <button onclick="decrementQuantity({{ $item['product']->id }}, {{ $item['quantity'] }}, {{ $item['product']->min_purchase }}, {{ $item['product']->max_purchase ?? 'null' }})"
                                                                 class="w-8 h-8 flex items-center justify-center border border-gray-300 rounded hover:bg-gray-100 transition-colors {{ $item['quantity'] <= $item['product']->min_purchase ? 'opacity-50 cursor-not-allowed' : '' }}"
                                                                 {{ $item['quantity'] <= $item['product']->min_purchase ? 'disabled' : '' }}>
                                                             <i class="fas fa-minus text-xs"></i>
@@ -55,12 +69,14 @@
                                                                id="quantity-{{ $item['product']->id }}"
                                                                value="{{ $item['quantity'] }}"
                                                                min="{{ $item['product']->min_purchase }}"
+                                                               @if($item['product']->max_purchase) max="{{ $item['product']->max_purchase }}" @endif
                                                                step="0.01"
-                                                               onchange="updateQuantity({{ $item['product']->id }}, this.value, {{ $item['product']->min_purchase }})"
-                                                               onblur="validateQuantity({{ $item['product']->id }}, this.value, {{ $item['product']->min_purchase }})"
+                                                               onchange="updateQuantity({{ $item['product']->id }}, this.value, {{ $item['product']->min_purchase }}, {{ $item['product']->max_purchase ?? 'null' }})"
+                                                               onblur="validateQuantity({{ $item['product']->id }}, this.value, {{ $item['product']->min_purchase }}, {{ $item['product']->max_purchase ?? 'null' }})"
                                                                class="w-20 text-center border border-gray-300 rounded py-1 text-sm">
-                                                        <button onclick="incrementQuantity({{ $item['product']->id }}, {{ $item['quantity'] }}, {{ $item['product']->min_purchase }})"
-                                                                class="w-8 h-8 flex items-center justify-center border border-gray-300 rounded hover:bg-gray-100 transition-colors">
+                                                        <button onclick="incrementQuantity({{ $item['product']->id }}, {{ $item['quantity'] }}, {{ $item['product']->min_purchase }}, {{ $item['product']->max_purchase ?? 'null' }})"
+                                                                class="w-8 h-8 flex items-center justify-center border border-gray-300 rounded hover:bg-gray-100 transition-colors {{ $item['product']->max_purchase && $item['quantity'] >= $item['product']->max_purchase ? 'opacity-50 cursor-not-allowed' : '' }}"
+                                                                {{ $item['product']->max_purchase && $item['quantity'] >= $item['product']->max_purchase ? 'disabled' : '' }}>
                                                             <i class="fas fa-plus text-xs"></i>
                                                         </button>
                                                         <span class="text-sm text-gray-500">{{ $item['product']->unit }}</span>
@@ -69,7 +85,9 @@
                                                     <!-- Price -->
                                                     <div class="text-right">
                                                         <p class="text-green-600 font-bold text-lg">Rp {{ number_format($item['subtotal'], 0, ',', '.') }}</p>
-                                                        <p class="text-xs text-gray-500">Rp {{ number_format($item['product']->price, 0, ',', '.') }} / {{ $item['product']->unit }}</p>
+                                                        <p class="text-xs text-gray-500">
+                                                            Rp {{ number_format($item['final_price'], 0, ',', '.') }} / {{ $item['product']->unit }}
+                                                        </p>
                                                     </div>
                                                 </div>
                                             </div>
@@ -296,36 +314,57 @@ window.addEventListener('resize', function() {
 }
 </style>
 <script>
-function decrementQuantity(productId, currentQuantity, minPurchase) {
+function decrementQuantity(productId, currentQuantity, minPurchase, maxPurchase) {
     const newQuantity = Math.max(minPurchase, currentQuantity - 1);
     if (newQuantity < currentQuantity) {
-        updateQuantity(productId, newQuantity, minPurchase);
+        updateQuantity(productId, newQuantity, minPurchase, maxPurchase);
     }
 }
 
-function incrementQuantity(productId, currentQuantity, minPurchase) {
-    const newQuantity = currentQuantity + 1;
-    updateQuantity(productId, newQuantity, minPurchase);
+function incrementQuantity(productId, currentQuantity, minPurchase, maxPurchase) {
+    const max = maxPurchase !== null && maxPurchase !== undefined ? maxPurchase : Infinity;
+    const newQuantity = Math.min(max, currentQuantity + 1);
+    if (newQuantity > currentQuantity) {
+        updateQuantity(productId, newQuantity, minPurchase, maxPurchase);
+    } else if (maxPurchase !== null && maxPurchase !== undefined) {
+        showNotification(`Maximum purchase is ${maxPurchase}.`, 'warning');
+    }
 }
 
-function validateQuantity(productId, quantity, minPurchase) {
+function validateQuantity(productId, quantity, minPurchase, maxPurchase) {
     const qty = parseFloat(quantity) || 0;
+    const max = maxPurchase !== null && maxPurchase !== undefined ? maxPurchase : Infinity;
+
     if (qty > 0 && qty < minPurchase) {
         showNotification(`Minimum purchase is ${minPurchase}. Setting to minimum.`, 'warning');
         document.getElementById(`quantity-${productId}`).value = minPurchase;
-        updateQuantity(productId, minPurchase, minPurchase);
+        updateQuantity(productId, minPurchase, minPurchase, maxPurchase);
+    } else if (qty > max) {
+        showNotification(`Maximum purchase is ${maxPurchase}. Setting to maximum.`, 'warning');
+        document.getElementById(`quantity-${productId}`).value = maxPurchase;
+        updateQuantity(productId, maxPurchase, minPurchase, maxPurchase);
     }
 }
 
-function updateQuantity(productId, quantity, minPurchase = 1) {
+function updateQuantity(productId, quantity, minPurchase = 1, maxPurchase = null) {
     const qty = parseFloat(quantity) || 0;
+    const max = maxPurchase !== null && maxPurchase !== undefined ? maxPurchase : Infinity;
 
     // Ensure quantity is at least min_purchase
     if (qty > 0 && qty < minPurchase) {
         showNotification(`Minimum purchase is ${minPurchase}. Please enter at least ${minPurchase}.`, 'warning');
         // Reset input to minimum
         document.getElementById(`quantity-${productId}`).value = minPurchase;
-        updateQuantity(productId, minPurchase, minPurchase);
+        updateQuantity(productId, minPurchase, minPurchase, maxPurchase);
+        return;
+    }
+
+    // Ensure quantity is at most max_purchase if set
+    if (maxPurchase !== null && maxPurchase !== undefined && qty > maxPurchase) {
+        showNotification(`Maximum purchase is ${maxPurchase}. Please enter at most ${maxPurchase}.`, 'warning');
+        // Reset input to maximum
+        document.getElementById(`quantity-${productId}`).value = maxPurchase;
+        updateQuantity(productId, maxPurchase, minPurchase, maxPurchase);
         return;
     }
 

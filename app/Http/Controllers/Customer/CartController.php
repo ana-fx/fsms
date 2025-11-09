@@ -37,11 +37,13 @@ class CartController extends Controller
         foreach ($cart as $itemId => $item) {
             $product = FoodItem::with('foodCategory')->find($itemId);
             if ($product) {
-                $subtotal = $product->price * $item['quantity'];
+                $finalPrice = $product->getFinalPrice();
+                $subtotal = $finalPrice * $item['quantity'];
                 $items[] = [
                     'product' => $product,
                     'quantity' => $item['quantity'],
                     'subtotal' => $subtotal,
+                    'final_price' => $finalPrice,
                 ];
                 $total += $subtotal;
             }
@@ -62,37 +64,33 @@ class CartController extends Controller
 
         $product = FoodItem::findOrFail($request->product_id);
 
-        // Check minimum purchase requirement
-        if ($request->quantity < $product->min_purchase) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Minimum purchase is ' . $product->min_purchase . ' ' . $product->unit . '. Please add at least the minimum quantity.'
-            ], 400);
-        }
-
         $cart = $this->getCart();
         $itemId = $request->product_id;
 
         if (isset($cart[$itemId])) {
             // Update quantity (add to existing)
             $newQuantity = $cart[$itemId]['quantity'] + $request->quantity;
-            
-            // Check minimum purchase for total quantity
-            if ($newQuantity < $product->min_purchase) {
+
+            // Validate purchase quantity (min, max, stock)
+            $validation = $product->validatePurchaseQuantity($newQuantity);
+            if (!$validation['valid']) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Total quantity must be at least ' . $product->min_purchase . ' ' . $product->unit
+                    'message' => $validation['message']
                 ], 400);
             }
+
             $cart[$itemId]['quantity'] = $newQuantity;
         } else {
-            // Add new item - ensure it meets minimum purchase
-            if ($request->quantity < $product->min_purchase) {
+            // Add new item - validate purchase quantity
+            $validation = $product->validatePurchaseQuantity($request->quantity);
+            if (!$validation['valid']) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Minimum purchase is ' . $product->min_purchase . ' ' . $product->unit
+                    'message' => $validation['message']
                 ], 400);
             }
+
             $cart[$itemId] = [
                 'quantity' => $request->quantity,
             ];
@@ -126,18 +124,19 @@ class CartController extends Controller
             ], 404);
         }
 
-        // Check minimum purchase requirement
-        if ($request->quantity > 0 && $request->quantity < $product->min_purchase) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Minimum purchase is ' . $product->min_purchase . ' ' . $product->unit . '. Please enter at least the minimum quantity.'
-            ], 400);
-        }
-
         if ($request->quantity <= 0) {
             // Remove item if quantity is 0 or less
             unset($cart[$itemId]);
         } else {
+            // Validate purchase quantity (min, max, stock)
+            $validation = $product->validatePurchaseQuantity($request->quantity);
+            if (!$validation['valid']) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $validation['message']
+                ], 400);
+            }
+
             $cart[$itemId]['quantity'] = $request->quantity;
         }
 

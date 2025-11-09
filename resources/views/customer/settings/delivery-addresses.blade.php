@@ -13,51 +13,37 @@
 
     <!-- Main Content -->
     <div class="w-full lg:ml-64 transition-all duration-300">
-        <div class="flex-1 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
-            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="flex-1 bg-gray-50 min-h-screen">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
                 <!-- Header -->
-                <div class="mb-8">
-                    <div class="flex items-center gap-4 mb-4">
-                        <a href="{{ route('customer.dashboard') }}" class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200 shadow-sm">
-                            <i class="fas fa-arrow-left"></i>
+                <div class="mb-6 sm:mb-8">
+                    <div class="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
+                        <a href="{{ route('customer.dashboard') }}" class="inline-flex items-center justify-center w-9 h-9 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-white transition-colors">
+                            <i class="fas fa-arrow-left text-sm"></i>
                         </a>
-                        <div class="flex items-center gap-3">
-                            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center shadow-lg">
-                                <i class="fas fa-map-marker-alt text-white text-lg"></i>
-                            </div>
-                            <div>
-                                <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">Delivery Addresses</h1>
-                                <p class="text-sm text-gray-500 mt-0.5">Manage your delivery locations</p>
-                            </div>
+                        <div>
+                            <h1 class="text-xl sm:text-2xl font-semibold text-gray-900">Delivery Addresses</h1>
+                            <p class="text-xs sm:text-sm text-gray-500 mt-0.5">Manage your delivery locations</p>
                         </div>
                     </div>
-                    <p class="ml-16 text-sm text-gray-600">Add and manage multiple delivery addresses for faster checkout experience</p>
                 </div>
 
                 <!-- Status Messages -->
                 @if(session('status'))
                     @php $alert = session('status'); $type = $alert['type'] ?? 'success'; @endphp
-                    <div class="mb-6">
+                    <div class="mb-4 sm:mb-6">
                         @if($type === 'danger')
-                            <div class="rounded-md bg-red-50 p-4 border border-red-200">
-                                <div class="flex">
-                                    <div class="flex-shrink-0">
-                                        <i class="fas fa-exclamation-circle text-red-600"></i>
-                                    </div>
-                                    <div class="ml-3">
-                                        <p class="text-sm font-medium text-red-800">{{ $alert['message'] ?? $alert }}</p>
-                                    </div>
+                            <div class="rounded-lg bg-red-50 p-3 sm:p-4 border border-red-200">
+                                <div class="flex items-start gap-3">
+                                    <i class="fas fa-exclamation-circle text-red-600 mt-0.5 flex-shrink-0"></i>
+                                    <p class="text-sm font-medium text-red-800">{{ $alert['message'] ?? $alert }}</p>
                                 </div>
                             </div>
                         @else
-                            <div class="rounded-md bg-green-50 p-4 border border-green-200">
-                                <div class="flex">
-                                    <div class="flex-shrink-0">
-                                        <i class="fas fa-check-circle text-green-600"></i>
-                                    </div>
-                                    <div class="ml-3">
-                                        <p class="text-sm font-medium text-green-800">{{ $alert['message'] ?? $alert }}</p>
-                                    </div>
+                            <div class="rounded-lg bg-green-50 p-3 sm:p-4 border border-green-200">
+                                <div class="flex items-start gap-3">
+                                    <i class="fas fa-check-circle text-green-600 mt-0.5 flex-shrink-0"></i>
+                                    <p class="text-sm font-medium text-green-800">{{ $alert['message'] ?? $alert }}</p>
                                 </div>
                             </div>
                         @endif
@@ -65,75 +51,66 @@
                 @endif
 
                 <!-- Action Header -->
-                <div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div class="mb-4 sm:mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
                     <div>
-                        <h2 class="text-lg font-semibold text-gray-900">My Addresses</h2>
-                        <p class="text-sm text-gray-500 mt-1">{{ isset($addresses) && $addresses->count() > 0 ? $addresses->count() . ' saved address' . ($addresses->count() > 1 ? 'es' : '') : 'No addresses saved' }}</p>
+                        <h2 class="text-base sm:text-lg font-medium text-gray-900">My Addresses</h2>
+                        <p class="text-xs sm:text-sm text-gray-500 mt-0.5">{{ isset($addresses) && $addresses->count() > 0 ? $addresses->count() . ' saved address' . ($addresses->count() > 1 ? 'es' : '') : 'No addresses saved' }}</p>
                     </div>
                     <button onclick="openAddAddressModal()"
-                            class="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-xl hover:from-green-700 hover:to-green-800 transition-all duration-200 font-semibold text-sm shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
-                        <i class="fas fa-plus mr-2"></i>Add New Address
+                            class="inline-flex items-center justify-center px-4 sm:px-5 py-2 sm:py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium text-sm">
+                        <i class="fas fa-plus mr-1.5 text-xs"></i>Add New Address
                     </button>
                 </div>
 
                 <!-- Addresses List -->
                 @if(isset($addresses) && $addresses->count() > 0)
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
                         @foreach($addresses as $address)
-                            <div class="group relative bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden {{ $address->is_default ? 'ring-2 ring-green-500 ring-offset-2' : '' }}">
+                            <div class="group relative bg-white rounded-lg border {{ $address->is_default ? 'border-green-500 border-2' : 'border-gray-200' }} hover:border-gray-300 transition-colors overflow-hidden">
                                 @if($address->is_default)
-                                    <div class="absolute top-0 right-0 bg-gradient-to-br from-green-500 to-green-600 text-white px-4 py-1 rounded-bl-lg shadow-lg">
-                                        <span class="text-xs font-semibold flex items-center">
-                                            <i class="fas fa-star mr-1.5 text-yellow-300"></i>Default
+                                    <div class="absolute top-3 right-3">
+                                        <span class="inline-flex items-center px-2 py-1 rounded-md bg-green-50 text-green-700 text-xs font-medium">
+                                            <i class="fas fa-star mr-1 text-xs"></i>Default
                                         </span>
                                     </div>
                                 @endif
                                 
-                                <div class="p-6 pt-8">
+                                <div class="p-4 sm:p-5">
                                     <!-- Header -->
-                                    <div class="flex items-start justify-between mb-4">
-                                        <div class="flex items-center gap-3">
-                                            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-md">
-                                                <i class="fas fa-map-marker-alt text-white"></i>
-                                            </div>
-                                            <div>
-                                                @if($address->label)
-                                                    <h3 class="font-bold text-gray-900 text-lg">{{ $address->label }}</h3>
-                                                @else
-                                                    <h3 class="font-bold text-gray-900 text-lg">{{ $address->recipient_name }}</h3>
-                                                @endif
-                                            </div>
-                                        </div>
+                                    <div class="mb-4 {{ $address->is_default ? 'pr-16' : '' }}">
+                                        @if($address->label)
+                                            <h3 class="font-semibold text-gray-900 text-base mb-1">{{ $address->label }}</h3>
+                                            <p class="text-sm text-gray-600">{{ $address->recipient_name }}</p>
+                                        @else
+                                            <h3 class="font-semibold text-gray-900 text-base">{{ $address->recipient_name }}</h3>
+                                        @endif
                                     </div>
 
                                     <!-- Address Details -->
-                                    <div class="space-y-2 mb-6">
-                                        @if($address->label)
-                                            <p class="text-sm font-medium text-gray-700">{{ $address->recipient_name }}</p>
-                                        @endif
-                                        <div class="flex items-start gap-2">
-                                            <i class="fas fa-phone text-gray-400 text-xs mt-1"></i>
-                                            <p class="text-sm text-gray-600">{{ $address->recipient_phone }}</p>
+                                    <div class="space-y-2.5 mb-5 text-sm text-gray-600">
+                                        <div class="flex items-start gap-2.5">
+                                            <i class="fas fa-phone text-gray-400 text-xs mt-0.5 flex-shrink-0"></i>
+                                            <span class="break-words">{{ $address->recipient_phone }}</span>
                                         </div>
-                                        <div class="flex items-start gap-2">
-                                            <i class="fas fa-map-pin text-gray-400 text-xs mt-1"></i>
-                                            <p class="text-sm text-gray-600 leading-relaxed">{{ $address->delivery_address }}</p>
+                                        <div class="flex items-start gap-2.5">
+                                            <i class="fas fa-map-marker-alt text-gray-400 text-xs mt-0.5 flex-shrink-0"></i>
+                                            <span class="break-words leading-relaxed">{{ $address->delivery_address }}</span>
                                         </div>
-                                        <div class="flex items-start gap-2">
-                                            <i class="fas fa-city text-gray-400 text-xs mt-1"></i>
-                                            <p class="text-sm text-gray-600">{{ $address->city }}{{ $address->postal_code ? ' ' . $address->postal_code : '' }}</p>
+                                        <div class="flex items-start gap-2.5">
+                                            <i class="fas fa-city text-gray-400 text-xs mt-0.5 flex-shrink-0"></i>
+                                            <span>{{ $address->city }}{{ $address->postal_code ? ' ' . $address->postal_code : '' }}</span>
                                         </div>
                                     </div>
 
                                     <!-- Actions -->
                                     <div class="flex items-center gap-2 pt-4 border-t border-gray-100">
                                         <button onclick="openEditAddressModal({{ $address->id }}, '{{ $address->label ?? '' }}', '{{ $address->recipient_name }}', '{{ $address->recipient_phone }}', '{{ addslashes($address->delivery_address) }}', '{{ $address->city }}', '{{ $address->postal_code ?? '' }}', {{ $address->is_default ? 'true' : 'false' }})"
-                                                class="flex-1 inline-flex items-center justify-center px-4 py-2.5 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors font-medium text-sm">
-                                            <i class="fas fa-edit mr-2"></i>Edit
+                                                class="flex-1 inline-flex items-center justify-center px-3 py-2 text-gray-700 rounded-md hover:bg-gray-50 transition-colors font-medium text-xs sm:text-sm border border-gray-200">
+                                            <i class="fas fa-edit mr-1.5 text-xs"></i>Edit
                                         </button>
                                         <button onclick="confirmDeleteAddress({{ $address->id }}, '{{ $address->label ?? $address->recipient_name }}')"
-                                                class="flex-1 inline-flex items-center justify-center px-4 py-2.5 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition-colors font-medium text-sm">
-                                            <i class="fas fa-trash mr-2"></i>Delete
+                                                class="flex-1 inline-flex items-center justify-center px-3 py-2 text-red-600 rounded-md hover:bg-red-50 transition-colors font-medium text-xs sm:text-sm border border-red-200">
+                                            <i class="fas fa-trash mr-1.5 text-xs"></i>Delete
                                         </button>
                                     </div>
                                 </div>
@@ -142,15 +119,15 @@
                     </div>
                 @else
                     <!-- Empty State -->
-                    <div class="bg-white rounded-2xl shadow-lg p-12 text-center">
-                        <div class="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                            <i class="fas fa-map-marker-alt text-4xl text-gray-400"></i>
+                    <div class="bg-white rounded-lg border border-gray-200 p-8 sm:p-12 text-center">
+                        <div class="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4 sm:mb-6 rounded-full bg-gray-50 flex items-center justify-center">
+                            <i class="fas fa-map-marker-alt text-2xl sm:text-3xl text-gray-400"></i>
                         </div>
-                        <h3 class="text-xl font-bold text-gray-900 mb-2">No delivery addresses yet</h3>
-                        <p class="text-gray-500 mb-8 max-w-md mx-auto">Get started by adding your first delivery address. You can add multiple addresses and switch between them during checkout.</p>
+                        <h3 class="text-lg sm:text-xl font-semibold text-gray-900 mb-2">No delivery addresses yet</h3>
+                        <p class="text-sm sm:text-base text-gray-500 mb-6 sm:mb-8 max-w-md mx-auto">Get started by adding your first delivery address. You can add multiple addresses and switch between them during checkout.</p>
                         <button onclick="openAddAddressModal()"
-                                class="inline-flex items-center justify-center px-8 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-xl hover:from-green-700 hover:to-green-800 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
-                            <i class="fas fa-plus mr-2"></i>Add Your First Address
+                                class="inline-flex items-center justify-center px-5 sm:px-6 py-2.5 sm:py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium text-sm">
+                            <i class="fas fa-plus mr-1.5 text-xs"></i>Add Your First Address
                         </button>
                     </div>
                 @endif
@@ -160,231 +137,233 @@
 </div>
 
 <!-- Add Address Modal -->
-<div id="addAddressModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 backdrop-blur-sm z-[9999] flex items-center justify-center p-4 overflow-y-auto" style="display: none;">
-    <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full my-8 max-h-[calc(100vh-4rem)] overflow-y-auto">
-        <div class="p-6 sm:p-8">
-            <div class="flex items-center justify-between mb-8">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center">
-                        <i class="fas fa-plus text-white text-sm"></i>
-                    </div>
-                    <h3 class="text-xl sm:text-2xl font-bold text-gray-900">Add New Address</h3>
-                </div>
-                <button onclick="closeAddAddressModal()" class="w-8 h-8 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors flex items-center justify-center">
-                    <i class="fas fa-times"></i>
+<div id="addAddressModal" class="hidden fixed inset-0 z-[9999]" style="display: none; background-color: rgba(0, 0, 0, 0.5);">
+    <div class="fixed inset-0 flex items-center justify-center p-4 pointer-events-none" id="addAddressModalContainer">
+        <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[calc(100vh-4rem)] overflow-y-auto pointer-events-auto border border-gray-200">
+            <div class="p-5 sm:p-6">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-lg sm:text-xl font-semibold text-gray-900">Add New Address</h3>
+                <button onclick="closeAddAddressModal()" class="w-8 h-8 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-50 transition-colors flex items-center justify-center">
+                    <i class="fas fa-times text-sm"></i>
                 </button>
             </div>
 
             <form method="POST" action="{{ route('customer.settings.delivery-addresses.store') }}">
                 @csrf
-                <div class="mb-4">
-                    <label for="add_label" class="block text-sm font-medium text-gray-700 mb-2">
-                        Label (e.g., Home, Office)
-                    </label>
-                    <input type="text" name="label" id="add_label"
-                           class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all"
-                           placeholder="Enter label (optional)">
-                </div>
-
-                <div class="mb-4">
-                    <label for="add_recipient_name" class="block text-sm font-medium text-gray-700 mb-2">
-                        Recipient Name <span class="text-red-500">*</span>
-                    </label>
-                    <input type="text" name="recipient_name" id="add_recipient_name" required
-                           class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all"
-                           placeholder="Enter recipient name">
-                </div>
-
-                <div class="mb-4">
-                    <label for="add_recipient_phone" class="block text-sm font-medium text-gray-700 mb-2">
-                        Phone Number <span class="text-red-500">*</span>
-                    </label>
-                    <input type="tel" name="recipient_phone" id="add_recipient_phone" required
-                           class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all"
-                           placeholder="Enter phone number">
-                </div>
-
-                <div class="mb-4">
-                    <label for="add_delivery_address" class="block text-sm font-medium text-gray-700 mb-2">
-                        Delivery Address <span class="text-red-500">*</span>
-                    </label>
-                    <textarea name="delivery_address" id="add_delivery_address" rows="3" required
-                              class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all"
-                              placeholder="Enter complete delivery address"></textarea>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div class="space-y-4">
                     <div>
-                        <label for="add_city" class="block text-sm font-medium text-gray-700 mb-2">
-                            City <span class="text-red-500">*</span>
+                        <label for="add_label" class="block text-sm font-medium text-gray-700 mb-1.5">
+                            Label (e.g., Home, Office)
                         </label>
-                        <input type="text" name="city" id="add_city" required
-                               class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all"
-                               placeholder="Enter city">
+                        <input type="text" name="label" id="add_label"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all text-sm"
+                               placeholder="Enter label (optional)">
                     </div>
 
                     <div>
-                        <label for="add_postal_code" class="block text-sm font-medium text-gray-700 mb-2">
-                            Postal Code
+                        <label for="add_recipient_name" class="block text-sm font-medium text-gray-700 mb-1.5">
+                            Recipient Name <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" name="postal_code" id="add_postal_code"
-                               class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all"
-                               placeholder="Enter postal code">
+                        <input type="text" name="recipient_name" id="add_recipient_name" required
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all text-sm"
+                               placeholder="Enter recipient name">
+                    </div>
+
+                    <div>
+                        <label for="add_recipient_phone" class="block text-sm font-medium text-gray-700 mb-1.5">
+                            Phone Number <span class="text-red-500">*</span>
+                        </label>
+                        <input type="tel" name="recipient_phone" id="add_recipient_phone" required
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all text-sm"
+                               placeholder="Enter phone number">
+                    </div>
+
+                    <div>
+                        <label for="add_delivery_address" class="block text-sm font-medium text-gray-700 mb-1.5">
+                            Delivery Address <span class="text-red-500">*</span>
+                        </label>
+                        <textarea name="delivery_address" id="add_delivery_address" rows="3" required
+                                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all text-sm resize-none"
+                                  placeholder="Enter complete delivery address"></textarea>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label for="add_city" class="block text-sm font-medium text-gray-700 mb-1.5">
+                                City <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" name="city" id="add_city" required
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all text-sm"
+                                   placeholder="Enter city">
+                        </div>
+
+                        <div>
+                            <label for="add_postal_code" class="block text-sm font-medium text-gray-700 mb-1.5">
+                                Postal Code
+                            </label>
+                            <input type="text" name="postal_code" id="add_postal_code"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all text-sm"
+                                   placeholder="Enter postal code">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="add_is_default" class="block text-sm font-medium text-gray-700 mb-1.5">
+                            Set as default address
+                        </label>
+                        <select name="is_default" id="add_is_default" required
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all text-sm">
+                            <option value="0">No</option>
+                            <option value="1">Yes</option>
+                        </select>
+                        <p class="mt-1 text-xs text-gray-500">Only one address can be set as default</p>
                     </div>
                 </div>
 
-                <div class="mb-6">
-                    <label for="add_is_default" class="block text-sm font-medium text-gray-700 mb-2">
-                        Set as default address
-                    </label>
-                    <select name="is_default" id="add_is_default" required
-                            class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all">
-                        <option value="0">No</option>
-                        <option value="1">Yes</option>
-                    </select>
-                    <p class="mt-1 text-xs text-gray-500">Only one address can be set as default</p>
-                </div>
-
-                <div class="flex flex-col-reverse sm:flex-row justify-end gap-3 mt-8 pt-6 border-t border-gray-200">
+                <div class="flex flex-col-reverse sm:flex-row justify-end gap-3 mt-6 pt-5 border-t border-gray-200">
                     <button type="button" onclick="closeAddAddressModal()"
-                            class="w-full sm:w-auto px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 hover:border-gray-400 transition-all font-semibold">
+                            class="w-full sm:w-auto px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium text-sm">
                         Cancel
                     </button>
                     <button type="submit"
-                            class="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-xl hover:from-green-700 hover:to-green-800 transition-all font-semibold shadow-lg hover:shadow-xl">
-                        <i class="fas fa-save mr-2"></i>Save Address
+                            class="w-full sm:w-auto px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium text-sm">
+                        <i class="fas fa-save mr-1.5 text-xs"></i>Save Address
                     </button>
                 </div>
             </form>
+            </div>
         </div>
     </div>
 </div>
 
 <!-- Edit Address Modal -->
-<div id="editAddressModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 backdrop-blur-sm z-[9999] flex items-center justify-center p-4 overflow-y-auto" style="display: none;">
-    <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full my-8 max-h-[calc(100vh-4rem)] overflow-y-auto">
-        <div class="p-6 sm:p-8">
-            <div class="flex items-center justify-between mb-8">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
-                        <i class="fas fa-edit text-white text-sm"></i>
-                    </div>
-                    <h3 class="text-xl sm:text-2xl font-bold text-gray-900">Edit Address</h3>
-                </div>
-                <button onclick="closeEditAddressModal()" class="w-8 h-8 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors flex items-center justify-center">
-                    <i class="fas fa-times"></i>
+<div id="editAddressModal" class="hidden fixed inset-0 z-[9999]" style="display: none; background-color: rgba(0, 0, 0, 0.5);">
+    <div class="fixed inset-0 flex items-center justify-center p-4 pointer-events-none" id="editAddressModalContainer">
+        <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[calc(100vh-4rem)] overflow-y-auto pointer-events-auto border border-gray-200">
+            <div class="p-5 sm:p-6">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-lg sm:text-xl font-semibold text-gray-900">Edit Address</h3>
+                <button onclick="closeEditAddressModal()" class="w-8 h-8 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-50 transition-colors flex items-center justify-center">
+                    <i class="fas fa-times text-sm"></i>
                 </button>
             </div>
 
             <form id="editAddressForm" method="POST">
                 @csrf
                 @method('PUT')
-                <div class="mb-4">
-                    <label for="edit_label" class="block text-sm font-medium text-gray-700 mb-2">
-                        Label (e.g., Home, Office)
-                    </label>
-                    <input type="text" name="label" id="edit_label"
-                           class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all"
-                           placeholder="Enter label (optional)">
-                </div>
-
-                <div class="mb-4">
-                    <label for="edit_recipient_name" class="block text-sm font-medium text-gray-700 mb-2">
-                        Recipient Name <span class="text-red-500">*</span>
-                    </label>
-                    <input type="text" name="recipient_name" id="edit_recipient_name" required
-                           class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all"
-                           placeholder="Enter recipient name">
-                </div>
-
-                <div class="mb-4">
-                    <label for="edit_recipient_phone" class="block text-sm font-medium text-gray-700 mb-2">
-                        Phone Number <span class="text-red-500">*</span>
-                    </label>
-                    <input type="tel" name="recipient_phone" id="edit_recipient_phone" required
-                           class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all"
-                           placeholder="Enter phone number">
-                </div>
-
-                <div class="mb-4">
-                    <label for="edit_delivery_address" class="block text-sm font-medium text-gray-700 mb-2">
-                        Delivery Address <span class="text-red-500">*</span>
-                    </label>
-                    <textarea name="delivery_address" id="edit_delivery_address" rows="3" required
-                              class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all"
-                              placeholder="Enter complete delivery address"></textarea>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div class="space-y-4">
                     <div>
-                        <label for="edit_city" class="block text-sm font-medium text-gray-700 mb-2">
-                            City <span class="text-red-500">*</span>
+                        <label for="edit_label" class="block text-sm font-medium text-gray-700 mb-1.5">
+                            Label (e.g., Home, Office)
                         </label>
-                        <input type="text" name="city" id="edit_city" required
-                               class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all"
-                               placeholder="Enter city">
+                        <input type="text" name="label" id="edit_label"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all text-sm"
+                               placeholder="Enter label (optional)">
                     </div>
 
                     <div>
-                        <label for="edit_postal_code" class="block text-sm font-medium text-gray-700 mb-2">
-                            Postal Code
+                        <label for="edit_recipient_name" class="block text-sm font-medium text-gray-700 mb-1.5">
+                            Recipient Name <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" name="postal_code" id="edit_postal_code"
-                               class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all"
-                               placeholder="Enter postal code">
+                        <input type="text" name="recipient_name" id="edit_recipient_name" required
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all text-sm"
+                               placeholder="Enter recipient name">
+                    </div>
+
+                    <div>
+                        <label for="edit_recipient_phone" class="block text-sm font-medium text-gray-700 mb-1.5">
+                            Phone Number <span class="text-red-500">*</span>
+                        </label>
+                        <input type="tel" name="recipient_phone" id="edit_recipient_phone" required
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all text-sm"
+                               placeholder="Enter phone number">
+                    </div>
+
+                    <div>
+                        <label for="edit_delivery_address" class="block text-sm font-medium text-gray-700 mb-1.5">
+                            Delivery Address <span class="text-red-500">*</span>
+                        </label>
+                        <textarea name="delivery_address" id="edit_delivery_address" rows="3" required
+                                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all text-sm resize-none"
+                                  placeholder="Enter complete delivery address"></textarea>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label for="edit_city" class="block text-sm font-medium text-gray-700 mb-1.5">
+                                City <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" name="city" id="edit_city" required
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all text-sm"
+                                   placeholder="Enter city">
+                        </div>
+
+                        <div>
+                            <label for="edit_postal_code" class="block text-sm font-medium text-gray-700 mb-1.5">
+                                Postal Code
+                            </label>
+                            <input type="text" name="postal_code" id="edit_postal_code"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all text-sm"
+                                   placeholder="Enter postal code">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="edit_is_default" class="block text-sm font-medium text-gray-700 mb-1.5">
+                            Set as default address
+                        </label>
+                        <select name="is_default" id="edit_is_default" required
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all text-sm">
+                            <option value="0">No</option>
+                            <option value="1">Yes</option>
+                        </select>
+                        <p class="mt-1 text-xs text-gray-500">Only one address can be set as default</p>
                     </div>
                 </div>
 
-                <div class="mb-6">
-                    <label for="edit_is_default" class="block text-sm font-medium text-gray-700 mb-2">
-                        Set as default address
-                    </label>
-                    <select name="is_default" id="edit_is_default" required
-                            class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all">
-                        <option value="0">No</option>
-                        <option value="1">Yes</option>
-                    </select>
-                    <p class="mt-1 text-xs text-gray-500">Only one address can be set as default</p>
-                </div>
-
-                <div class="flex flex-col-reverse sm:flex-row justify-end gap-3 mt-8 pt-6 border-t border-gray-200">
+                <div class="flex flex-col-reverse sm:flex-row justify-end gap-3 mt-6 pt-5 border-t border-gray-200">
                     <button type="button" onclick="closeEditAddressModal()"
-                            class="w-full sm:w-auto px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 hover:border-gray-400 transition-all font-semibold">
+                            class="w-full sm:w-auto px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium text-sm">
                         Cancel
                     </button>
                     <button type="submit"
-                            class="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-xl hover:from-green-700 hover:to-green-800 transition-all font-semibold shadow-lg hover:shadow-xl">
-                        <i class="fas fa-save mr-2"></i>Update Address
+                            class="w-full sm:w-auto px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium text-sm">
+                        <i class="fas fa-save mr-1.5 text-xs"></i>Update Address
                     </button>
                 </div>
             </form>
+            </div>
         </div>
     </div>
 </div>
 
 <!-- Confirmation Modal -->
-<div id="confirmDeleteModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 backdrop-blur-sm z-[9999] hidden items-center justify-center" style="display: none;">
-    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4">
-        <div class="p-8">
-            <div class="flex items-center mb-6">
-                <div class="flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-yellow-400 to-yellow-500 mr-4 shadow-lg">
-                    <i class="fas fa-exclamation-triangle text-white text-2xl"></i>
+<div id="confirmDeleteModal" class="hidden fixed inset-0 z-[9999]" style="display: none; background-color: rgba(0, 0, 0, 0.5);">
+    <div class="fixed inset-0 flex items-center justify-center p-4 pointer-events-none" id="confirmDeleteModalContainer">
+        <div class="bg-white rounded-lg shadow-xl max-w-md w-full pointer-events-auto border border-gray-200">
+            <div class="p-5 sm:p-6">
+                <div class="flex items-start gap-4 mb-4">
+                    <div class="flex items-center justify-center w-10 h-10 rounded-full bg-red-50 flex-shrink-0">
+                        <i class="fas fa-exclamation-triangle text-red-600 text-lg"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Confirm Delete</h3>
+                        <p id="confirmDeleteMessage" class="text-sm text-gray-600 leading-relaxed"></p>
+                    </div>
                 </div>
-                <h3 class="text-xl font-bold text-gray-900">Confirm Delete</h3>
+                <form id="deleteAddressForm" method="POST" class="inline">
+                    @csrf
+                    @method('DELETE')
+                    <div class="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-4 border-t border-gray-200">
+                        <button type="button" onclick="closeDeleteModal()" class="w-full sm:w-auto px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium text-sm">
+                            Cancel
+                        </button>
+                        <button type="submit" class="w-full sm:w-auto px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium text-sm">
+                            <i class="fas fa-trash mr-1.5 text-xs"></i>Delete Address
+                        </button>
+                    </div>
+                </form>
             </div>
-            <p id="confirmDeleteMessage" class="text-gray-600 mb-8 text-sm leading-relaxed"></p>
-            <form id="deleteAddressForm" method="POST" class="inline">
-                @csrf
-                @method('DELETE')
-                <div class="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-4 border-t border-gray-200">
-                    <button type="button" onclick="closeDeleteModal()" class="w-full sm:w-auto px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 hover:border-gray-400 transition-all font-semibold">
-                        Cancel
-                    </button>
-                    <button type="submit" class="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-xl hover:from-red-700 hover:to-red-800 transition-all font-semibold shadow-lg hover:shadow-xl">
-                        <i class="fas fa-trash mr-2"></i>Delete Address
-                    </button>
-                </div>
-            </form>
         </div>
     </div>
 </div>
@@ -427,11 +406,25 @@ function showNotification(message, type = 'success') {
 
 function confirmDeleteAddress(id, label) {
     const modal = document.getElementById('confirmDeleteModal');
+    const container = document.getElementById('confirmDeleteModalContainer');
     const addressLabel = label || 'this address';
     document.getElementById('confirmDeleteMessage').textContent = `Are you sure you want to delete "${addressLabel}"? This action cannot be undone.`;
     document.getElementById('deleteAddressForm').action = '{{ url("/customer/settings/delivery-addresses") }}/' + id;
+    
+    // Calculate center position considering sidebar on desktop
+    const isDesktop = window.innerWidth >= 1024; // lg breakpoint
+    const sidebarWidth = isDesktop ? 256 : 0; // 64 * 4 = 256px (lg:ml-64)
+    const viewportWidth = window.innerWidth;
+    const availableWidth = viewportWidth - sidebarWidth;
+    
+    // Set container position to center in available content area
+    if (container) {
+        container.style.left = sidebarWidth + 'px';
+        container.style.width = availableWidth + 'px';
+    }
+    
     modal.classList.remove('hidden');
-    modal.style.display = 'flex';
+    modal.style.display = 'block';
     document.body.style.overflow = 'hidden';
 }
 
@@ -444,7 +437,21 @@ function closeDeleteModal() {
 }
 function openAddAddressModal() {
     const modal = document.getElementById('addAddressModal');
-    modal.style.display = 'flex';
+    const container = document.getElementById('addAddressModalContainer');
+    
+    // Calculate center position considering sidebar on desktop
+    const isDesktop = window.innerWidth >= 1024; // lg breakpoint
+    const sidebarWidth = isDesktop ? 256 : 0; // 64 * 4 = 256px (lg:ml-64)
+    const viewportWidth = window.innerWidth;
+    const availableWidth = viewportWidth - sidebarWidth;
+    
+    // Set container position to center in available content area
+    if (container) {
+        container.style.left = sidebarWidth + 'px';
+        container.style.width = availableWidth + 'px';
+    }
+    
+    modal.style.display = 'block';
     modal.classList.remove('hidden');
     // Prevent body scroll when modal is open
     document.body.style.overflow = 'hidden';
@@ -468,8 +475,23 @@ function openEditAddressModal(id, label, recipientName, recipientPhone, delivery
     document.getElementById('edit_postal_code').value = postalCode || '';
     // Set select for default address
     document.getElementById('edit_is_default').value = isDefault ? '1' : '0';
+    
     const modal = document.getElementById('editAddressModal');
-    modal.style.display = 'flex';
+    const container = document.getElementById('editAddressModalContainer');
+    
+    // Calculate center position considering sidebar on desktop
+    const isDesktop = window.innerWidth >= 1024; // lg breakpoint
+    const sidebarWidth = isDesktop ? 256 : 0; // 64 * 4 = 256px (lg:ml-64)
+    const viewportWidth = window.innerWidth;
+    const availableWidth = viewportWidth - sidebarWidth;
+    
+    // Set container position to center in available content area
+    if (container) {
+        container.style.left = sidebarWidth + 'px';
+        container.style.width = availableWidth + 'px';
+    }
+    
+    modal.style.display = 'block';
     modal.classList.remove('hidden');
     // Prevent body scroll when modal is open
     document.body.style.overflow = 'hidden';
@@ -482,6 +504,42 @@ function closeEditAddressModal() {
     // Restore body scroll
     document.body.style.overflow = '';
 }
+
+// Handle window resize to keep modals centered
+let modalResizeTimeout;
+window.addEventListener('resize', function() {
+    clearTimeout(modalResizeTimeout);
+    modalResizeTimeout = setTimeout(function() {
+        const isDesktop = window.innerWidth >= 1024;
+        const sidebarWidth = isDesktop ? 256 : 0;
+        const viewportWidth = window.innerWidth;
+        const availableWidth = viewportWidth - sidebarWidth;
+        
+        // Update Add Address Modal
+        const addModal = document.getElementById('addAddressModal');
+        const addContainer = document.getElementById('addAddressModalContainer');
+        if (addModal && !addModal.classList.contains('hidden') && addContainer) {
+            addContainer.style.left = sidebarWidth + 'px';
+            addContainer.style.width = availableWidth + 'px';
+        }
+        
+        // Update Edit Address Modal
+        const editModal = document.getElementById('editAddressModal');
+        const editContainer = document.getElementById('editAddressModalContainer');
+        if (editModal && !editModal.classList.contains('hidden') && editContainer) {
+            editContainer.style.left = sidebarWidth + 'px';
+            editContainer.style.width = availableWidth + 'px';
+        }
+        
+        // Update Delete Modal
+        const deleteModal = document.getElementById('confirmDeleteModal');
+        const deleteContainer = document.getElementById('confirmDeleteModalContainer');
+        if (deleteModal && !deleteModal.classList.contains('hidden') && deleteContainer) {
+            deleteContainer.style.left = sidebarWidth + 'px';
+            deleteContainer.style.width = availableWidth + 'px';
+        }
+    }, 100);
+});
 
 // Close modal when clicking outside
 document.addEventListener('DOMContentLoaded', function() {
@@ -504,6 +562,19 @@ document.addEventListener('DOMContentLoaded', function() {
     deleteModal.addEventListener('click', function(e) {
         if (e.target === deleteModal) {
             closeDeleteModal();
+        }
+    });
+    
+    // Close modals on ESC key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            if (!addModal.classList.contains('hidden')) {
+                closeAddAddressModal();
+            } else if (!editModal.classList.contains('hidden')) {
+                closeEditAddressModal();
+            } else if (!deleteModal.classList.contains('hidden')) {
+                closeDeleteModal();
+            }
         }
     });
 

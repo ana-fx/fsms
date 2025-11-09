@@ -18,15 +18,8 @@ class FoodCategory extends Model
         'color',
         'is_active',
         'sort_order',
+        'parent_id',
     ];
-
-    /**
-     * Get the max price setting for this category.
-     */
-    public function maxPriceSetting()
-    {
-        return $this->hasOne(MaxPriceSetting::class);
-    }
 
     protected $casts = [
         'is_active' => 'boolean',
@@ -39,6 +32,47 @@ class FoodCategory extends Model
     public function foodRequests(): HasMany
     {
         return $this->hasMany(FoodRequest::class);
+    }
+
+    /**
+     * Get the parent category.
+     */
+    public function parent()
+    {
+        return $this->belongsTo(FoodCategory::class, 'parent_id');
+    }
+
+    /**
+     * Get the child categories.
+     */
+    public function children()
+    {
+        return $this->hasMany(FoodCategory::class, 'parent_id')->orderBy('sort_order')->orderBy('name');
+    }
+
+    /**
+     * Get all food items in this category and its sub-categories.
+     */
+    public function allFoodItems()
+    {
+        $categoryIds = $this->children()->pluck('id')->prepend($this->id);
+        return \App\Models\FoodItem::whereIn('food_category_id', $categoryIds);
+    }
+
+    /**
+     * Check if this category is a parent category.
+     */
+    public function isParent(): bool
+    {
+        return $this->parent_id === null;
+    }
+
+    /**
+     * Check if this category is a sub-category.
+     */
+    public function isSubCategory(): bool
+    {
+        return $this->parent_id !== null;
     }
 
     /**

@@ -72,6 +72,22 @@
                                             <p class="text-gray-600 text-sm">{{ $orderData['delivery']['recipient_phone'] }}</p>
                                             <p class="text-gray-600 text-sm">{{ $orderData['delivery']['delivery_address'] }}</p>
                                             <p class="text-gray-600 text-sm">{{ $orderData['delivery']['city'] }} {{ $orderData['delivery']['postal_code'] ?? '' }}</p>
+                                            @if(isset($orderData['delivery']['needed_date']) && $orderData['delivery']['needed_date'])
+                                                <p class="text-gray-600 text-sm mt-2">
+                                                    <span class="font-medium">Needed Date:</span>
+                                                    @if($orderData['delivery']['needed_date'] instanceof \Carbon\Carbon)
+                                                        {{ $orderData['delivery']['needed_date']->format('d M Y') }}
+                                                    @else
+                                                        {{ \Carbon\Carbon::parse($orderData['delivery']['needed_date'])->format('d M Y') }}
+                                                    @endif
+                                                </p>
+                                            @endif
+                                            @if(isset($orderData['delivery']['delivery_notes']) && !empty($orderData['delivery']['delivery_notes']))
+                                                <div class="mt-2 pt-2 border-t border-gray-200">
+                                                    <p class="text-gray-900 font-medium text-sm mb-1">Delivery Notes:</p>
+                                                    <p class="text-gray-600 text-sm whitespace-pre-wrap">{{ $orderData['delivery']['delivery_notes'] }}</p>
+                                                </div>
+                                            @endif
                                         </div>
                                     @endif
                                 </div>
@@ -115,7 +131,10 @@
                                                     {{ number_format($item['quantity'], 2) }} {{ $item['product']->unit }}
                                                 </td>
                                                 <td class="border border-gray-300 px-4 py-3 text-right text-gray-700">
-                                                    Rp {{ number_format($item['product']->price, 0, ',', '.') }}
+                                                    @php
+                                                        $itemPrice = $item['final_price'] ?? ($item['product']->price ?? $item['product']->getFinalPrice());
+                                                    @endphp
+                                                    Rp {{ number_format($itemPrice, 0, ',', '.') }}
                                                 </td>
                                                 <td class="border border-gray-300 px-4 py-3 text-right font-semibold text-gray-900">
                                                     Rp {{ number_format($item['subtotal'], 0, ',', '.') }}
@@ -423,6 +442,17 @@
                                                     <p class="text-gray-600 text-sm">{{ $orderData['delivery']['recipient_phone'] }}</p>
                                                     <p class="text-gray-600 text-sm">{{ $orderData['delivery']['delivery_address'] }}</p>
                                                     <p class="text-gray-600 text-sm">{{ $orderData['delivery']['city'] }} {{ $orderData['delivery']['postal_code'] ?? '' }}</p>
+                                                    @if(isset($orderData['delivery']['needed_date']) && $orderData['delivery']['needed_date'])
+                                                        <p class="text-gray-600 text-sm mt-2">
+                                                            <span class="font-medium">Needed Date:</span> {{ \Carbon\Carbon::parse($orderData['delivery']['needed_date'])->format('d M Y') }}
+                                                        </p>
+                                                    @endif
+                                                    @if(isset($orderData['delivery']['delivery_notes']) && $orderData['delivery']['delivery_notes'])
+                                                        <div class="mt-2 pt-2 border-t border-gray-200">
+                                                            <p class="text-gray-900 font-medium text-sm mb-1">Delivery Notes:</p>
+                                                            <p class="text-gray-600 text-sm whitespace-pre-wrap">{{ $orderData['delivery']['delivery_notes'] }}</p>
+                                                        </div>
+                                                    @endif
                                                 </div>
                                             @endif
                                         </div>
@@ -464,7 +494,10 @@
                                                             {{ number_format($item['quantity'], 2) }} {{ $item['product']->unit }}
                                                         </td>
                                                         <td class="border border-gray-300 px-4 py-3 text-right text-gray-700">
-                                                            Rp {{ number_format($item['product']->price, 0, ',', '.') }}
+                                                            @php
+                                                                $itemPrice = $item['final_price'] ?? ($item['product']->price ?? $item['product']->getFinalPrice());
+                                                            @endphp
+                                                            Rp {{ number_format($itemPrice, 0, ',', '.') }}
                                                         </td>
                                                         <td class="border border-gray-300 px-4 py-3 text-right font-semibold text-gray-900">
                                                             Rp {{ number_format($item['subtotal'], 0, ',', '.') }}

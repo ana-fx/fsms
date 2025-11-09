@@ -18,9 +18,13 @@ return new class extends Migration
             $table->string('name');
             $table->text('description')->nullable();
             $table->decimal('price', 12, 2);
+            $table->decimal('max_price', 12, 2)->nullable();
+            $table->decimal('default_price_increment', 12, 2)->default(500);
+            $table->enum('price_increment_type', ['fixed', 'percentage'])->default('fixed');
             $table->string('unit'); // kg, liter, pcs, karton, dus, dll
             $table->integer('stock')->default(0);
             $table->integer('min_purchase')->default(0);
+            $table->integer('max_purchase')->nullable();
             $table->string('image')->nullable();
             $table->boolean('is_active')->default(true);
             $table->softDeletes();

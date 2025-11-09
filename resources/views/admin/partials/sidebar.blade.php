@@ -34,88 +34,74 @@
 
     <!-- Navigation Menu -->
     <nav class="mt-6 flex-1 overflow-y-auto">
-        <div class="px-4 space-y-2">
-            <!-- Dashboard -->
-            <a href="{{ route('admin.dashboard') }}"
-               class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.dashboard') ? 'bg-green-100 text-green-700 border-r-2 border-green-600' : 'text-gray-700 hover:bg-gray-100 hover:text-green-600' }}">
-                <i class="fas fa-tachometer-alt mr-3 text-lg"></i>
-                Dashboard
-            </a>
-
-            <!-- Custom Requests Management -->
-            <a href="{{ route('admin.custom-requests.index') }}"
-               class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.custom-requests.*') ? 'bg-green-100 text-green-700 border-r-2 border-green-600' : 'text-gray-700 hover:bg-gray-100 hover:text-green-600' }}">
-                <i class="fas fa-clipboard-list mr-3 text-lg"></i>
-                Custom Requests
-                @php
-                    $pendingCustomRequests = \App\Models\FoodRequest::whereNull('food_item_id')
-                        ->where('status', 'pending')
-                        ->count();
-                @endphp
-                @if($pendingCustomRequests > 0)
-                    <span class="ml-auto bg-orange-500 text-white text-xs font-semibold px-2 py-1 rounded-full animate-pulse" title="{{ $pendingCustomRequests }} pending">
-                        {{ $pendingCustomRequests }}
-                    </span>
-                @endif
-            </a>
-
-            <!-- Price Management -->
-            <a href="{{ route('admin.max-price') }}"
-               class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.max-price') ? 'bg-green-100 text-green-700 border-r-2 border-green-600' : 'text-gray-700 hover:bg-gray-100 hover:text-green-600' }}">
-                <i class="fas fa-dollar-sign mr-3 text-lg"></i>
-                Set Maximum Price
-            </a>
-
-            <!-- User Management -->
-            <a href="{{ route('admin.users') }}"
-               class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.users') ? 'bg-green-100 text-green-700 border-r-2 border-green-600' : 'text-gray-700 hover:bg-gray-100 hover:text-green-600' }}">
-                <i class="fas fa-user-cog mr-3 text-lg"></i>
-                User Management
-            </a>
-
-            <!-- Reports -->
+        <div class="px-4 space-y-6">
+            <!-- Main Section -->
             <div class="space-y-1">
-                <button class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-green-600 rounded-lg transition-colors"
-                        onclick="toggleSubmenu('reports')">
-                    <div class="flex items-center">
-                        <i class="fas fa-chart-line mr-3 text-lg"></i>
-                        Reports
-                    </div>
-                    <i class="fas fa-chevron-down text-xs transition-transform" id="reports-arrow"></i>
-                </button>
-                <div id="reports-submenu" class="hidden ml-8 space-y-1">
-                    <a href="#" class="block px-4 py-2 text-sm text-gray-600 hover:text-green-600 hover:bg-gray-50 rounded transition-colors">
-                        <i class="fas fa-chart-bar mr-2"></i>
-                        Monthly Reports
-                    </a>
-                    <a href="#" class="block px-4 py-2 text-sm text-gray-600 hover:text-green-600 hover:bg-gray-50 rounded transition-colors">
-                        <i class="fas fa-chart-pie mr-2"></i>
-                        System Statistics
-                    </a>
-                    <a href="#" class="block px-4 py-2 text-sm text-gray-600 hover:text-green-600 hover:bg-gray-50 rounded transition-colors">
-                        <i class="fas fa-file-export mr-2"></i>
-                        Export Data
-                    </a>
+                <div class="px-4 py-2">
+                    <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Main</p>
                 </div>
+                <a href="{{ route('admin.dashboard') }}"
+                   class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.dashboard') ? 'bg-green-100 text-green-700 border-r-2 border-green-600' : 'text-gray-700 hover:bg-gray-100 hover:text-green-600' }}">
+                    <i class="fas fa-tachometer-alt mr-3 text-lg"></i>
+                    Dashboard
+                </a>
             </div>
 
-            <!-- Settings -->
+            <!-- Management Section -->
             <div class="space-y-1">
-                <button class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-green-600 rounded-lg transition-colors"
-                        onclick="toggleSubmenu('settings')">
-                    <div class="flex items-center">
-                <i class="fas fa-cog mr-3 text-lg"></i>
-                        Settings
-                    </div>
-                    <i class="fas fa-chevron-down text-xs transition-transform" id="settings-arrow"></i>
-                </button>
-                <div id="settings-submenu" class="hidden ml-8 space-y-1">
-                    <a href="{{ route('admin.settings.account') }}"
-                       class="block px-4 py-2 text-sm text-gray-600 hover:text-green-600 hover:bg-gray-50 rounded transition-colors {{ request()->routeIs('admin.settings.account') ? 'text-green-600 bg-green-50' : '' }}">
-                        <i class="fas fa-user-circle mr-2"></i>
-                        Account Settings
-                    </a>
+                <div class="px-4 py-2">
+                    <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Management</p>
                 </div>
+                
+                <!-- Custom Requests -->
+                <a href="{{ route('admin.custom-requests.index') }}"
+                   class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.custom-requests.*') ? 'bg-green-100 text-green-700 border-r-2 border-green-600' : 'text-gray-700 hover:bg-gray-100 hover:text-green-600' }}">
+                    <i class="fas fa-clipboard-list mr-3 text-lg"></i>
+                    <span class="flex-1">Custom Requests</span>
+                    @php
+                        $pendingCustomRequests = \App\Models\FoodRequest::whereNull('food_item_id')
+                            ->where('status', 'pending')
+                            ->count();
+                    @endphp
+                    @if($pendingCustomRequests > 0)
+                        <span class="bg-orange-500 text-white text-xs font-semibold px-2 py-0.5 rounded-full animate-pulse" title="{{ $pendingCustomRequests }} pending">
+                            {{ $pendingCustomRequests }}
+                        </span>
+                    @endif
+                </a>
+
+                <!-- Ingredients -->
+                <a href="{{ route('admin.max-price') }}"
+                   class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.max-price') ? 'bg-green-100 text-green-700 border-r-2 border-green-600' : 'text-gray-700 hover:bg-gray-100 hover:text-green-600' }}">
+                    <i class="fas fa-carrot mr-3 text-lg"></i>
+                    Ingredients
+                </a>
+
+                <!-- User Management -->
+                <a href="{{ route('admin.users') }}"
+                   class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.users') ? 'bg-green-100 text-green-700 border-r-2 border-green-600' : 'text-gray-700 hover:bg-gray-100 hover:text-green-600' }}">
+                    <i class="fas fa-users mr-3 text-lg"></i>
+                    Users
+                </a>
+
+                <!-- Transaction Report -->
+                <a href="{{ route('admin.transactions.index') }}"
+                   class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.transactions.*') ? 'bg-green-100 text-green-700 border-r-2 border-green-600' : 'text-gray-700 hover:bg-gray-100 hover:text-green-600' }}">
+                    <i class="fas fa-chart-line mr-3 text-lg"></i>
+                    Transaction Report
+                </a>
+            </div>
+
+            <!-- Settings Section -->
+            <div class="space-y-1">
+                <div class="px-4 py-2">
+                    <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Settings</p>
+                </div>
+                <a href="{{ route('admin.settings.account') }}"
+                   class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.settings.*') ? 'bg-green-100 text-green-700 border-r-2 border-green-600' : 'text-gray-700 hover:bg-gray-100 hover:text-green-600' }}">
+                    <i class="fas fa-user-circle mr-3 text-lg"></i>
+                    Account Settings
+                </a>
             </div>
         </div>
     </nav>
@@ -193,17 +179,4 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Submenu Toggle Function
-function toggleSubmenu(menuId) {
-    const submenu = document.getElementById(menuId + '-submenu');
-    const arrow = document.getElementById(menuId + '-arrow');
-
-    if (submenu.classList.contains('hidden')) {
-        submenu.classList.remove('hidden');
-        arrow.style.transform = 'rotate(180deg)';
-    } else {
-        submenu.classList.add('hidden');
-        arrow.style.transform = 'rotate(0deg)';
-    }
-}
 </script>

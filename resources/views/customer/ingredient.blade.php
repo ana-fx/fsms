@@ -56,7 +56,7 @@
                         </div>
 
                         <!-- Clear Button -->
-                        <button type="button" 
+                        <button type="button"
                                 id="clearBtn"
                                 class="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-300 transition-colors font-semibold {{ !request('search') && !request('category') ? 'hidden' : '' }}">
                             <i class="fas fa-times mr-2"></i>Reset
@@ -113,9 +113,9 @@ function showNotification(message, type = 'success') {
         warning: { bg: 'bg-yellow-50', border: 'border-yellow-200', text: 'text-yellow-800', icon: 'fa-exclamation-triangle', iconColor: 'text-yellow-600' },
         info: { bg: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-800', icon: 'fa-info-circle', iconColor: 'text-blue-600' }
     };
-    
+
     const color = colors[type] || colors.success;
-    
+
     const notification = document.createElement('div');
     notification.className = `fixed top-4 right-4 ${color.bg} ${color.border} border rounded-lg shadow-lg z-50 flex items-center space-x-3 p-4 animate-slide-in`;
     notification.style.minWidth = '300px';
@@ -130,9 +130,9 @@ function showNotification(message, type = 'success') {
             <i class="fas fa-times"></i>
         </button>
     `;
-    
+
     document.body.appendChild(notification);
-    
+
     setTimeout(() => {
         notification.style.animation = 'slide-out 0.3s ease-out';
         setTimeout(() => notification.remove(), 300);
@@ -147,7 +147,7 @@ function selectProduct(productId) {
 function addToCart(productId, minPurchase = 1) {
     // Use min_purchase as default quantity
     const quantity = minPurchase || 1;
-    
+
     fetch('{{ route("customer.cart.add") }}', {
         method: 'POST',
         headers: {
@@ -206,29 +206,29 @@ document.addEventListener('DOMContentLoaded', function() {
     const productsContainer = document.getElementById('productsContainer');
     const paginationContainer = document.getElementById('paginationContainer');
     const searchLoading = document.getElementById('searchLoading');
-    
+
     function performSearch() {
         const search = searchInput.value.trim();
         const category = categorySelect.value;
-        
+
         // Show/hide clear button
         if (search || category) {
             clearBtn.classList.remove('hidden');
         } else {
             clearBtn.classList.add('hidden');
         }
-        
+
         // Show loading
         if (searchLoading) {
             searchLoading.classList.remove('hidden');
         }
-        
+
         // Prepare URL
         const url = new URL('{{ route("customer.ingredients") }}', window.location.origin);
         if (search) url.searchParams.set('search', search);
         if (category) url.searchParams.set('category', category);
         url.searchParams.set('ajax', '1');
-        
+
         // Fetch results
         fetch(url.toString(), {
             headers: {
@@ -246,10 +246,10 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(data => {
             // Update products grid
             productsContainer.innerHTML = data.html;
-            
+
             // Reattach pagination click handlers for AJAX
             attachPaginationHandlers();
-            
+
             // Hide loading
             if (searchLoading) {
                 searchLoading.classList.add('hidden');
@@ -262,14 +262,14 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-    
+
     // Search input with debounce
     if (searchInput) {
         searchInput.addEventListener('input', function() {
             clearTimeout(searchTimeout);
             searchTimeout = setTimeout(performSearch, 500); // Wait 500ms after user stops typing
         });
-        
+
         // Also trigger on Enter
         searchInput.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
@@ -279,21 +279,21 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-    
+
     // Category filter
     if (categorySelect) {
         categorySelect.addEventListener('change', function() {
             performSearch();
         });
     }
-    
+
     // Clear button
     if (clearBtn) {
         clearBtn.addEventListener('click', function() {
             clearSearch();
         });
     }
-    
+
     // Prevent form submission
     const searchForm = document.getElementById('searchForm');
     if (searchForm) {
@@ -303,29 +303,29 @@ document.addEventListener('DOMContentLoaded', function() {
             performSearch();
         });
     }
-    
+
     // Attach pagination handlers for AJAX pagination
     function attachPaginationHandlers() {
         const paginationContainer = document.getElementById('paginationContainer');
         if (!paginationContainer) return;
-        
+
         const paginationLinks = paginationContainer.querySelectorAll('a[href]');
         paginationLinks.forEach(link => {
             link.addEventListener('click', function(e) {
                 e.preventDefault();
                 const url = new URL(link.href);
                 url.searchParams.set('ajax', '1');
-                
+
                 // Preserve current search params
                 const currentSearch = searchInput.value.trim();
                 const currentCategory = categorySelect.value;
                 if (currentSearch) url.searchParams.set('search', currentSearch);
                 if (currentCategory) url.searchParams.set('category', currentCategory);
-                
+
                 if (searchLoading) {
                     searchLoading.classList.remove('hidden');
                 }
-                
+
                 fetch(url.toString(), {
                     headers: {
                         'X-Requested-With': 'XMLHttpRequest',
@@ -345,7 +345,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (searchLoading) {
                         searchLoading.classList.add('hidden');
                     }
-                    
+
                     // Scroll to top of products
                     productsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 })
@@ -358,10 +358,10 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
-    
+
     // Initial attachment
     attachPaginationHandlers();
-    
+
     // Make performSearch available globally for clearSearch
     window.performSearch = performSearch;
 })();

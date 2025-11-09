@@ -48,11 +48,13 @@ class FoodRequestController extends Controller
         foreach ($cart as $itemId => $item) {
             $product = FoodItem::with('foodCategory')->find($itemId);
             if ($product) {
-                $subtotal = $product->price * $item['quantity'];
+                $finalPrice = $product->getFinalPrice();
+                $subtotal = $finalPrice * $item['quantity'];
                 $cartItems[] = [
                     'product' => $product,
                     'quantity' => $item['quantity'],
                     'subtotal' => $subtotal,
+                    'final_price' => $finalPrice,
                 ];
                 $cartTotal += $subtotal;
                 $cartCount += $item['quantity'];
@@ -139,10 +141,12 @@ class FoodRequestController extends Controller
         $stats = [
             'total' => $requests->count(),
             'total_amount' => $requests->sum(function($req) {
-                if ($req->foodItem) {
-                    return $req->foodItem->price * $req->quantity;
-                } elseif ($req->price) {
+                if ($req->price) {
+                    // Use stored price (already includes increment)
                     return $req->price * $req->quantity;
+                } elseif ($req->foodItem) {
+                    // Calculate final price with increment
+                    return $req->foodItem->getFinalPrice() * $req->quantity;
                 }
                 return 0;
             }),
@@ -202,11 +206,13 @@ class FoodRequestController extends Controller
         foreach ($cart as $itemId => $item) {
             $product = FoodItem::with('foodCategory')->find($itemId);
             if ($product) {
-                $subtotal = $product->price * $item['quantity'];
+                $finalPrice = $product->getFinalPrice();
+                $subtotal = $finalPrice * $item['quantity'];
                 $cartItems[] = [
                     'product' => $product,
                     'quantity' => $item['quantity'],
                     'subtotal' => $subtotal,
+                    'final_price' => $finalPrice,
                 ];
                 $total += $subtotal;
             }
@@ -282,7 +288,8 @@ class FoodRequestController extends Controller
         foreach ($cart as $itemId => $item) {
             $product = FoodItem::with(['foodCategory', 'supplier'])->find($itemId);
             if ($product) {
-                $subtotal = $product->price * $item['quantity'];
+                $finalPrice = $product->getFinalPrice();
+                $subtotal = $finalPrice * $item['quantity'];
 
                 // Initialize supplier group if not exists
                 if (!isset($ordersBySupplier[$product->supplier_id])) {
@@ -299,10 +306,11 @@ class FoodRequestController extends Controller
                     'product' => $product,
                     'quantity' => $item['quantity'],
                     'subtotal' => $subtotal,
+                    'final_price' => $finalPrice,
                 ];
                 $ordersBySupplier[$product->supplier_id]['total'] += $subtotal;
 
-                // Create FoodRequest
+                // Create FoodRequest with final price
                 $foodRequest = FoodRequest::create([
                     'customer_id' => Auth::id(),
                     'food_category_id' => $product->food_category_id,
@@ -311,6 +319,7 @@ class FoodRequestController extends Controller
                     'description' => 'Request for ' . $item['quantity'] . ' ' . $product->unit . ' of ' . $product->name,
                     'quantity' => $item['quantity'],
                     'unit' => $product->unit,
+                    'price' => $finalPrice, // Store final price with increment
                     'recipient_name' => $validated['recipient_name'],
                     'recipient_phone' => $validated['recipient_phone'],
                     'delivery_address' => $validated['delivery_address'],
@@ -482,12 +491,14 @@ class FoodRequestController extends Controller
 
             // Build item structure for invoice
             if ($request->foodItem) {
-                // Regular order from food item
-                $subtotal = $request->foodItem->price * $request->quantity;
+                // Regular order from food item - use stored price or calculate final price
+                $itemPrice = $request->price ?? $request->foodItem->getFinalPrice();
+                $subtotal = $itemPrice * $request->quantity;
                 $orderData['items'][] = [
                     'product' => $request->foodItem,
                     'quantity' => $request->quantity,
                     'subtotal' => $subtotal,
+                    'final_price' => $itemPrice,
                 ];
                 $orderData['total'] = $subtotal;
             } elseif ($request->price) {
@@ -559,22 +570,27 @@ class FoodRequestController extends Controller
             foreach ($cart as $itemId => $item) {
                 $product = FoodItem::with('foodCategory')->find($itemId);
                 if ($product) {
-                    $subtotal = $product->price * $item['quantity'];
+                    $finalPrice = $product->getFinalPrice();
+                    $subtotal = $finalPrice * $item['quantity'];
                     $cartItems[] = [
                         'product' => $product,
                         'quantity' => $item['quantity'],
                         'subtotal' => $subtotal,
+                        'final_price' => $finalPrice,
                     ];
                 }
             }
         } else {
             // Build cart from request data
             if ($request->foodItem) {
-                $subtotal = $request->foodItem->price * $request->quantity;
+                // Use stored price or calculate final price
+                $itemPrice = $request->price ?? $request->foodItem->getFinalPrice();
+                $subtotal = $itemPrice * $request->quantity;
                 $cartItems[] = [
                     'product' => $request->foodItem,
                     'quantity' => $request->quantity,
                     'subtotal' => $subtotal,
+                    'final_price' => $itemPrice,
                 ];
 
                 // Add to cart for checkout

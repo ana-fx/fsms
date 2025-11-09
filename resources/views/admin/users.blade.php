@@ -352,12 +352,12 @@
                     <div class="ml-3">
                         <h3 class="text-lg font-semibold text-gray-900">Confirm Action</h3>
                     </div>
-                </div>
+                                </div>
                 <p id="confirmMessage" class="text-sm text-gray-600 mb-6"></p>
-                <div class="flex justify-end space-x-3">
+                    <div class="flex justify-end space-x-3">
                     <button type="button" onclick="closeConfirmModal()" class="px-4 py-2 text-gray-700 bg-gray-200 rounded hover:bg-gray-300">Cancel</button>
                     <button type="button" onclick="executeConfirmAction()" class="px-4 py-2 bg-orange-600 text-white rounded hover:bg-orange-700">Confirm</button>
-                </div>
+                    </div>
             </div>
         </div>
     </div>

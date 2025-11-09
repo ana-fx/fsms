@@ -12,7 +12,8 @@ class FoodCategorySeeder extends Seeder
      */
     public function run(): void
     {
-        $categories = [
+        // Create parent categories
+        $parentCategories = [
             [
                 'name' => 'Karbohidrat',
                 'slug' => 'karbohidrat',
@@ -55,8 +56,247 @@ class FoodCategorySeeder extends Seeder
             ],
         ];
 
-        foreach ($categories as $category) {
-            FoodCategory::create($category);
+        $createdCategories = [];
+        foreach ($parentCategories as $category) {
+            $createdCategories[$category['slug']] = FoodCategory::firstOrCreate(
+                ['slug' => $category['slug']],
+                $category
+            );
+        }
+
+        // Create sub-categories for Karbohidrat
+        $carbSubCategories = [
+            [
+                'name' => 'Beras',
+                'slug' => 'beras',
+                'description' => 'Berbagai jenis beras seperti beras premium, beras medium, beras standard',
+                'icon' => 'fas fa-rice',
+                'color' => '#F59E0B',
+                'parent_id' => $createdCategories['karbohidrat']->id,
+                'sort_order' => 1,
+            ],
+            [
+                'name' => 'Mie',
+                'slug' => 'mie',
+                'description' => 'Berbagai jenis mie seperti mie instan, mie kering, mie basah',
+                'icon' => 'fas fa-utensils',
+                'color' => '#F59E0B',
+                'parent_id' => $createdCategories['karbohidrat']->id,
+                'sort_order' => 2,
+            ],
+            [
+                'name' => 'Jagung',
+                'slug' => 'jagung',
+                'description' => 'Jagung pipil dan jagung segar',
+                'icon' => 'fas fa-seedling',
+                'color' => '#F59E0B',
+                'parent_id' => $createdCategories['karbohidrat']->id,
+                'sort_order' => 3,
+            ],
+            [
+                'name' => 'Kentang',
+                'slug' => 'kentang',
+                'description' => 'Kentang segar untuk konsumsi',
+                'icon' => 'fas fa-drumstick-bite',
+                'color' => '#F59E0B',
+                'parent_id' => $createdCategories['karbohidrat']->id,
+                'sort_order' => 4,
+            ],
+            [
+                'name' => 'Tepung',
+                'slug' => 'tepung',
+                'description' => 'Berbagai jenis tepung seperti tepung terigu, tepung beras',
+                'icon' => 'fas fa-wheat-awn',
+                'color' => '#F59E0B',
+                'parent_id' => $createdCategories['karbohidrat']->id,
+                'sort_order' => 5,
+            ],
+        ];
+
+        foreach ($carbSubCategories as $subCategory) {
+            FoodCategory::firstOrCreate(
+                ['slug' => $subCategory['slug']],
+                $subCategory
+            );
+        }
+
+        // Create sub-categories for Protein
+        $proteinSubCategories = [
+            [
+                'name' => 'Daging',
+                'slug' => 'daging',
+                'description' => 'Berbagai jenis daging seperti ayam, sapi, kambing',
+                'icon' => 'fas fa-drumstick-bite',
+                'color' => '#EF4444',
+                'parent_id' => $createdCategories['protein']->id,
+                'sort_order' => 1,
+            ],
+            [
+                'name' => 'Ikan',
+                'slug' => 'ikan',
+                'description' => 'Berbagai jenis ikan segar',
+                'icon' => 'fas fa-fish',
+                'color' => '#EF4444',
+                'parent_id' => $createdCategories['protein']->id,
+                'sort_order' => 2,
+            ],
+            [
+                'name' => 'Telur',
+                'slug' => 'telur',
+                'description' => 'Berbagai jenis telur seperti telur ayam, telur bebek',
+                'icon' => 'fas fa-egg',
+                'color' => '#EF4444',
+                'parent_id' => $createdCategories['protein']->id,
+                'sort_order' => 3,
+            ],
+            [
+                'name' => 'Tahu & Tempe',
+                'slug' => 'tahu-tempe',
+                'description' => 'Tahu dan tempe segar',
+                'icon' => 'fas fa-cube',
+                'color' => '#EF4444',
+                'parent_id' => $createdCategories['protein']->id,
+                'sort_order' => 4,
+            ],
+            [
+                'name' => 'Udang & Seafood',
+                'slug' => 'udang-seafood',
+                'description' => 'Udang dan seafood lainnya',
+                'icon' => 'fas fa-shrimp',
+                'color' => '#EF4444',
+                'parent_id' => $createdCategories['protein']->id,
+                'sort_order' => 5,
+            ],
+        ];
+
+        foreach ($proteinSubCategories as $subCategory) {
+            FoodCategory::firstOrCreate(
+                ['slug' => $subCategory['slug']],
+                $subCategory
+            );
+        }
+
+        // Create sub-categories for Sayuran
+        $veggieSubCategories = [
+            [
+                'name' => 'Sayuran Daun',
+                'slug' => 'sayuran-daun',
+                'description' => 'Sayuran berdaun seperti bayam, kangkung, sawi',
+                'icon' => 'fas fa-leaf',
+                'color' => '#10B981',
+                'parent_id' => $createdCategories['sayuran']->id,
+                'sort_order' => 1,
+            ],
+            [
+                'name' => 'Sayuran Umbi',
+                'slug' => 'sayuran-umbi',
+                'description' => 'Sayuran umbi seperti wortel, kentang, singkong',
+                'icon' => 'fas fa-carrot',
+                'color' => '#10B981',
+                'parent_id' => $createdCategories['sayuran']->id,
+                'sort_order' => 2,
+            ],
+            [
+                'name' => 'Sayuran Buah',
+                'slug' => 'sayuran-buah',
+                'description' => 'Sayuran buah seperti tomat, terong, cabai',
+                'icon' => 'fas fa-pepper-hot',
+                'color' => '#10B981',
+                'parent_id' => $createdCategories['sayuran']->id,
+                'sort_order' => 3,
+            ],
+            [
+                'name' => 'Sayuran Kacang',
+                'slug' => 'sayuran-kacang',
+                'description' => 'Sayuran kacang seperti kacang panjang, buncis',
+                'icon' => 'fas fa-seedling',
+                'color' => '#10B981',
+                'parent_id' => $createdCategories['sayuran']->id,
+                'sort_order' => 4,
+            ],
+        ];
+
+        foreach ($veggieSubCategories as $subCategory) {
+            FoodCategory::firstOrCreate(
+                ['slug' => $subCategory['slug']],
+                $subCategory
+            );
+        }
+
+        // Create sub-categories for Buah-buahan
+        $fruitSubCategories = [
+            [
+                'name' => 'Buah Tropis',
+                'slug' => 'buah-tropis',
+                'description' => 'Buah-buahan tropis seperti pisang, mangga, pepaya',
+                'icon' => 'fas fa-apple-alt',
+                'color' => '#8B5CF6',
+                'parent_id' => $createdCategories['buah-buahan']->id,
+                'sort_order' => 1,
+            ],
+            [
+                'name' => 'Buah Import',
+                'slug' => 'buah-import',
+                'description' => 'Buah-buahan import seperti apel, jeruk, anggur',
+                'icon' => 'fas fa-apple-alt',
+                'color' => '#8B5CF6',
+                'parent_id' => $createdCategories['buah-buahan']->id,
+                'sort_order' => 2,
+            ],
+        ];
+
+        foreach ($fruitSubCategories as $subCategory) {
+            FoodCategory::firstOrCreate(
+                ['slug' => $subCategory['slug']],
+                $subCategory
+            );
+        }
+
+        // Create sub-categories for Bumbu & Rempah
+        $spiceSubCategories = [
+            [
+                'name' => 'Bumbu Dasar',
+                'slug' => 'bumbu-dasar',
+                'description' => 'Bumbu dasar seperti garam, gula, merica',
+                'icon' => 'fas fa-pepper-hot',
+                'color' => '#F97316',
+                'parent_id' => $createdCategories['bumbu-rempah']->id,
+                'sort_order' => 1,
+            ],
+            [
+                'name' => 'Bawang',
+                'slug' => 'bawang',
+                'description' => 'Berbagai jenis bawang seperti bawang merah, bawang putih',
+                'icon' => 'fas fa-onion',
+                'color' => '#F97316',
+                'parent_id' => $createdCategories['bumbu-rempah']->id,
+                'sort_order' => 2,
+            ],
+            [
+                'name' => 'Rempah-rempah',
+                'slug' => 'rempah-rempah',
+                'description' => 'Rempah-rempah seperti kunyit, jahe, lengkuas',
+                'icon' => 'fas fa-spa',
+                'color' => '#F97316',
+                'parent_id' => $createdCategories['bumbu-rempah']->id,
+                'sort_order' => 3,
+            ],
+            [
+                'name' => 'Minyak & Lemak',
+                'slug' => 'minyak-lemak',
+                'description' => 'Minyak goreng dan lemak',
+                'icon' => 'fas fa-oil-can',
+                'color' => '#F97316',
+                'parent_id' => $createdCategories['bumbu-rempah']->id,
+                'sort_order' => 4,
+            ],
+        ];
+
+        foreach ($spiceSubCategories as $subCategory) {
+            FoodCategory::firstOrCreate(
+                ['slug' => $subCategory['slug']],
+                $subCategory
+            );
         }
     }
 }
