@@ -14,6 +14,7 @@ class FoodItem extends Model
         'supplier_id',
         'food_category_id',
         'name',
+        'sub_name',
         'description',
         'price',
         'max_price',

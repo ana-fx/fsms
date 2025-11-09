@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('supplier_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('food_category_id')->constrained('food_categories')->onDelete('cascade');
             $table->string('name');
+            $table->string('sub_name')->nullable(); // Optional sub-name from supplier (e.g., "Merah", "Premium", "2 KARUNG")
             $table->text('description')->nullable();
             $table->decimal('price', 12, 2);
             $table->decimal('max_price', 12, 2)->nullable();

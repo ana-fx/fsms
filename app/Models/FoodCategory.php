@@ -16,6 +16,7 @@ class FoodCategory extends Model
         'description',
         'icon',
         'color',
+        'max_price',
         'is_active',
         'sort_order',
         'parent_id',
@@ -24,6 +25,7 @@ class FoodCategory extends Model
     protected $casts = [
         'is_active' => 'boolean',
         'sort_order' => 'integer',
+        'max_price' => 'decimal:2',
     ];
 
     /**

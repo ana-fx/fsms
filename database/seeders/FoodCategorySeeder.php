@@ -72,6 +72,7 @@ class FoodCategorySeeder extends Seeder
                 'description' => 'Berbagai jenis beras seperti beras premium, beras medium, beras standard',
                 'icon' => 'fas fa-rice',
                 'color' => '#F59E0B',
+                'max_price' => 15000, // Maximum price for all beras ingredients
                 'parent_id' => $createdCategories['karbohidrat']->id,
                 'sort_order' => 1,
             ],
@@ -81,6 +82,7 @@ class FoodCategorySeeder extends Seeder
                 'description' => 'Berbagai jenis mie seperti mie instan, mie kering, mie basah',
                 'icon' => 'fas fa-utensils',
                 'color' => '#F59E0B',
+                'max_price' => 15000, // Maximum price for all mie ingredients
                 'parent_id' => $createdCategories['karbohidrat']->id,
                 'sort_order' => 2,
             ],
@@ -90,6 +92,7 @@ class FoodCategorySeeder extends Seeder
                 'description' => 'Jagung pipil dan jagung segar',
                 'icon' => 'fas fa-seedling',
                 'color' => '#F59E0B',
+                'max_price' => 15000, // Maximum price for all jagung ingredients
                 'parent_id' => $createdCategories['karbohidrat']->id,
                 'sort_order' => 3,
             ],
@@ -99,6 +102,7 @@ class FoodCategorySeeder extends Seeder
                 'description' => 'Kentang segar untuk konsumsi',
                 'icon' => 'fas fa-drumstick-bite',
                 'color' => '#F59E0B',
+                'max_price' => 18000, // Maximum price for all kentang ingredients
                 'parent_id' => $createdCategories['karbohidrat']->id,
                 'sort_order' => 4,
             ],
@@ -108,6 +112,7 @@ class FoodCategorySeeder extends Seeder
                 'description' => 'Berbagai jenis tepung seperti tepung terigu, tepung beras',
                 'icon' => 'fas fa-wheat-awn',
                 'color' => '#F59E0B',
+                'max_price' => 17000, // Maximum price for all tepung ingredients
                 'parent_id' => $createdCategories['karbohidrat']->id,
                 'sort_order' => 5,
             ],
@@ -128,6 +133,7 @@ class FoodCategorySeeder extends Seeder
                 'description' => 'Berbagai jenis daging seperti ayam, sapi, kambing',
                 'icon' => 'fas fa-drumstick-bite',
                 'color' => '#EF4444',
+                'max_price' => 150000, // Maximum price for all daging ingredients
                 'parent_id' => $createdCategories['protein']->id,
                 'sort_order' => 1,
             ],
@@ -137,6 +143,7 @@ class FoodCategorySeeder extends Seeder
                 'description' => 'Berbagai jenis ikan segar',
                 'icon' => 'fas fa-fish',
                 'color' => '#EF4444',
+                'max_price' => 40000, // Maximum price for all ikan ingredients
                 'parent_id' => $createdCategories['protein']->id,
                 'sort_order' => 2,
             ],
@@ -146,6 +153,7 @@ class FoodCategorySeeder extends Seeder
                 'description' => 'Berbagai jenis telur seperti telur ayam, telur bebek',
                 'icon' => 'fas fa-egg',
                 'color' => '#EF4444',
+                'max_price' => 40000, // Maximum price for all telur ingredients
                 'parent_id' => $createdCategories['protein']->id,
                 'sort_order' => 3,
             ],
@@ -155,6 +163,7 @@ class FoodCategorySeeder extends Seeder
                 'description' => 'Tahu dan tempe segar',
                 'icon' => 'fas fa-cube',
                 'color' => '#EF4444',
+                'max_price' => 17000, // Maximum price for all tahu-tempe ingredients
                 'parent_id' => $createdCategories['protein']->id,
                 'sort_order' => 4,
             ],
@@ -164,6 +173,7 @@ class FoodCategorySeeder extends Seeder
                 'description' => 'Udang dan seafood lainnya',
                 'icon' => 'fas fa-shrimp',
                 'color' => '#EF4444',
+                'max_price' => 95000, // Maximum price for all udang-seafood ingredients
                 'parent_id' => $createdCategories['protein']->id,
                 'sort_order' => 5,
             ],
@@ -184,6 +194,7 @@ class FoodCategorySeeder extends Seeder
                 'description' => 'Sayuran berdaun seperti bayam, kangkung, sawi',
                 'icon' => 'fas fa-leaf',
                 'color' => '#10B981',
+                'max_price' => 10000, // Maximum price for all sayuran daun ingredients
                 'parent_id' => $createdCategories['sayuran']->id,
                 'sort_order' => 1,
             ],
@@ -193,6 +204,7 @@ class FoodCategorySeeder extends Seeder
                 'description' => 'Sayuran umbi seperti wortel, kentang, singkong',
                 'icon' => 'fas fa-carrot',
                 'color' => '#10B981',
+                'max_price' => 22000, // Maximum price for all sayuran umbi ingredients
                 'parent_id' => $createdCategories['sayuran']->id,
                 'sort_order' => 2,
             ],
@@ -202,6 +214,7 @@ class FoodCategorySeeder extends Seeder
                 'description' => 'Sayuran buah seperti tomat, terong, cabai',
                 'icon' => 'fas fa-pepper-hot',
                 'color' => '#10B981',
+                'max_price' => 55000, // Maximum price for all sayuran buah ingredients
                 'parent_id' => $createdCategories['sayuran']->id,
                 'sort_order' => 3,
             ],
@@ -211,6 +224,7 @@ class FoodCategorySeeder extends Seeder
                 'description' => 'Sayuran kacang seperti kacang panjang, buncis',
                 'icon' => 'fas fa-seedling',
                 'color' => '#10B981',
+                'max_price' => 20000, // Maximum price for all sayuran kacang ingredients
                 'parent_id' => $createdCategories['sayuran']->id,
                 'sort_order' => 4,
             ],
@@ -231,6 +245,7 @@ class FoodCategorySeeder extends Seeder
                 'description' => 'Buah-buahan tropis seperti pisang, mangga, pepaya',
                 'icon' => 'fas fa-apple-alt',
                 'color' => '#8B5CF6',
+                'max_price' => 30000, // Maximum price for all buah tropis ingredients
                 'parent_id' => $createdCategories['buah-buahan']->id,
                 'sort_order' => 1,
             ],
@@ -240,6 +255,7 @@ class FoodCategorySeeder extends Seeder
                 'description' => 'Buah-buahan import seperti apel, jeruk, anggur',
                 'icon' => 'fas fa-apple-alt',
                 'color' => '#8B5CF6',
+                'max_price' => 42000, // Maximum price for all buah import ingredients
                 'parent_id' => $createdCategories['buah-buahan']->id,
                 'sort_order' => 2,
             ],
@@ -260,6 +276,7 @@ class FoodCategorySeeder extends Seeder
                 'description' => 'Bumbu dasar seperti garam, gula, merica',
                 'icon' => 'fas fa-pepper-hot',
                 'color' => '#F97316',
+                'max_price' => 18000, // Maximum price for all bumbu dasar ingredients
                 'parent_id' => $createdCategories['bumbu-rempah']->id,
                 'sort_order' => 1,
             ],
@@ -269,6 +286,7 @@ class FoodCategorySeeder extends Seeder
                 'description' => 'Berbagai jenis bawang seperti bawang merah, bawang putih',
                 'icon' => 'fas fa-onion',
                 'color' => '#F97316',
+                'max_price' => 42000, // Maximum price for all bawang ingredients
                 'parent_id' => $createdCategories['bumbu-rempah']->id,
                 'sort_order' => 2,
             ],
@@ -278,6 +296,7 @@ class FoodCategorySeeder extends Seeder
                 'description' => 'Rempah-rempah seperti kunyit, jahe, lengkuas',
                 'icon' => 'fas fa-spa',
                 'color' => '#F97316',
+                'max_price' => 27000, // Maximum price for all rempah-rempah ingredients
                 'parent_id' => $createdCategories['bumbu-rempah']->id,
                 'sort_order' => 3,
             ],
@@ -287,6 +306,7 @@ class FoodCategorySeeder extends Seeder
                 'description' => 'Minyak goreng dan lemak',
                 'icon' => 'fas fa-oil-can',
                 'color' => '#F97316',
+                'max_price' => 30000, // Maximum price for all minyak-lemak ingredients
                 'parent_id' => $createdCategories['bumbu-rempah']->id,
                 'sort_order' => 4,
             ],
