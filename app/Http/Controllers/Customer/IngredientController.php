@@ -14,9 +14,27 @@ class IngredientController extends Controller
      */
     public function index(Request $request)
     {
+        $user = $request->user();
+        $accessibleSuppliers = collect();
+
         $query = FoodItem::with(['foodCategory.parent', 'foodCategory.children', 'supplier'])
             ->where('is_active', true)
             ->where('stock', '>', 0);
+
+        $supplierRestricted = false;
+
+        if ($user && $user->isCustomer()) {
+            $accessibleSuppliers = $user->accessibleSuppliers()->orderBy('name')->get();
+            $allowedSupplierIds = $accessibleSuppliers->pluck('id')->all();
+            $supplierRestricted = true;
+
+            if (!empty($allowedSupplierIds)) {
+                $query->whereIn('supplier_id', $allowedSupplierIds);
+            } else {
+                // No accessible suppliers configured - return empty result set
+                $query->whereRaw('1 = 0');
+            }
+        }
 
         // Filter by category if selected
         if ($request->has('category') && $request->category) {
@@ -89,7 +107,12 @@ class IngredientController extends Controller
             return response()->json(['html' => $html]);
         }
 
-        return view('customer.ingredient', compact('products', 'categories'));
+        return view('customer.ingredient', [
+            'products' => $products,
+            'categories' => $categories,
+            'accessibleSuppliers' => $accessibleSuppliers,
+            'supplierRestricted' => $supplierRestricted,
+        ]);
     }
 }
 

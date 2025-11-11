@@ -84,7 +84,9 @@
                                 <i class="fas fa-box-open text-5xl text-gray-400 mb-4"></i>
                                 <h3 class="text-xl font-medium text-gray-900 mb-2">No ingredients found</h3>
                                 <p class="text-gray-500 mb-6" id="emptyMessage">
-                                    @if(request('search') || request('category'))
+                                    @if($supplierRestricted && $accessibleSuppliers->isEmpty())
+                                        You do not have access to any suppliers yet. Please contact the administrator.
+                                    @elseif(request('search') || request('category'))
                                         Try different keywords or filters
                                     @else
                                         No ingredients available yet

@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\IngredientController as AdminIngredientController;
+use App\Http\Controllers\Admin\CustomerSupplierAccessController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Customer\IngredientController;
 use App\Http\Controllers\Supplier\IngredientController as SupplierIngredientController;
@@ -91,6 +92,11 @@ Route::middleware(['auth', 'role:super_admin'])->group(function () {
         ->name('admin.transactions.index');
     Route::get('/admin/transactions/{transaction}', [\App\Http\Controllers\Admin\TransactionReportController::class, 'show'])
         ->name('admin.transactions.show');
+
+    // Customer Supplier Access Management
+    Route::resource('admin/customer-access', CustomerSupplierAccessController::class)
+        ->parameters(['customer-access' => 'customerAccess'])
+        ->names('admin.customer-access');
 });
 
 Route::middleware(['auth', 'role:supplier'])->group(function () {

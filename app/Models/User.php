@@ -151,4 +151,42 @@ class User extends Authenticatable
     {
         return $this->hasMany(FoodItem::class, 'supplier_id');
     }
+
+    /**
+     * Get suppliers that the customer is allowed to view.
+     */
+    public function accessibleSuppliers(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            User::class,
+            'customer_supplier_accesses',
+            'customer_id',
+            'supplier_id'
+        )->withPivot('created_by')
+            ->withTimestamps()
+            ->orderBy('users.name');
+    }
+
+    /**
+     * Get customers that are allowed to view this supplier's ingredients.
+     */
+    public function authorizedCustomers(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            User::class,
+            'customer_supplier_accesses',
+            'supplier_id',
+            'customer_id'
+        )->withPivot('created_by')
+            ->withTimestamps()
+            ->orderBy('users.name');
+    }
+
+    /**
+     * Access assignments created by this admin user.
+     */
+    public function createdAccessAssignments(): HasMany
+    {
+        return $this->hasMany(CustomerSupplierAccess::class, 'created_by');
+    }
 }

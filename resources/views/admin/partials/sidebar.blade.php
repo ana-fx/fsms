@@ -52,7 +52,7 @@
                 <div class="px-4 py-2">
                     <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Management</p>
                 </div>
-                
+
                 <!-- Custom Requests -->
                 <a href="{{ route('admin.custom-requests.index') }}"
                    class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.custom-requests.*') ? 'bg-green-100 text-green-700 border-r-2 border-green-600' : 'text-gray-700 hover:bg-gray-100 hover:text-green-600' }}">
@@ -75,6 +75,13 @@
                    class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.max-price') ? 'bg-green-100 text-green-700 border-r-2 border-green-600' : 'text-gray-700 hover:bg-gray-100 hover:text-green-600' }}">
                     <i class="fas fa-carrot mr-3 text-lg"></i>
                     Ingredients
+                </a>
+
+                <!-- Customer Supplier Access -->
+                <a href="{{ route('admin.customer-access.index') }}"
+                   class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.customer-access.*') ? 'bg-green-100 text-green-700 border-r-2 border-green-600' : 'text-gray-700 hover:bg-gray-100 hover:text-green-600' }}">
+                    <i class="fas fa-link mr-3 text-lg"></i>
+                    Access Control
                 </a>
 
                 <!-- User Management -->

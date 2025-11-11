@@ -25,6 +25,9 @@ class DatabaseSeeder extends Seeder
         // Seed ingredients for suppliers
         $this->call(IngredientSeeder::class);
 
+        // Seed customer-supplier access assignments
+        $this->call(CustomerSupplierAccessSeeder::class);
+
         // User::factory(10)->create();
 
         // User::factory()->create([
